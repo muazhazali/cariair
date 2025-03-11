@@ -87,9 +87,9 @@ git push origin feature/AmazingFeature
 ## Project Structure
 
 cariair/
-├── app/ # Next.js app directory
-├── components/ # Reusable React components
-├── hooks/ # Custom React hooks
-├── lib/ # Utility functions and configurations
-├── public/ # Static files
-└── styles/ # Global styles and Tailwind configurations
+├── app/           # Next.js app directory
+├── components/    # Reusable React components
+├── hooks/         # Custom React hooks
+├── lib/           # Utility functions and configurations
+├── public/        # Static files
+└── styles/        # Global styles and Tailwind configurations
