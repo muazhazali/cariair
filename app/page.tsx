@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Search } from "@/components/search"
 import { WaterSourceMap } from "@/components/water-source-map"
-import { FeaturedSources } from "@/components/featured-sources"
+import { WaterSourcesDisplay } from "@/components/water-sources-display"
 import { Button } from "@/components/ui/button"
 import { Github, Info } from "lucide-react"
 
@@ -66,7 +66,7 @@ export default function HomePage() {
             <div className="h-[400px] mb-8 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800">
               <WaterSourceMap />
             </div>
-            <FeaturedSources />
+            <WaterSourcesDisplay />
           </div>
         </section>
 
