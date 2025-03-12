@@ -69,7 +69,7 @@ export interface WaterSource {
 // Example of how to use the schema
 export const exampleWaterSource: WaterSource = {
   id: 1,
-  name: "Spritzer",
+  name: "Spritzer Natural Mineral Water",
   company: "Spritzer Bhd",
   country: "Malaysia",
   website: "https://www.spritzer.com.my",
@@ -77,12 +77,14 @@ export const exampleWaterSource: WaterSource = {
     state: "Perak",
     district: "Taiping",
     coordinates: [4.7729, 101.1536],
+    watershed: "Tropical rainforest"
   },
   type: "Mineral",
   properties: {
     ph: 7.2,
     tds: 85,
     hardness: "Soft",
+    conductivity: 100
   },
   minerals: {
     calcium: 22.5,
@@ -92,14 +94,41 @@ export const exampleWaterSource: WaterSource = {
     bicarbonate: 65.0,
     chloride: 2.8,
     sulfate: 5.3,
+    silica: 55.2
   },
   bottleTypes: [
-    { size: "500ml", material: "PET", price: 1.2, lastUpdated: "2024-02-15" },
-    { size: "1.5L", material: "PET", price: 2.8, lastUpdated: "2024-02-15" },
-    { size: "6L", material: "PET", price: 8.5, lastUpdated: "2024-02-10" },
+    {
+      size: "250ml",
+      material: "PET",
+      price: 1.2,
+      lastUpdated: "2024-02-15"
+    },
+    {
+      size: "500ml",
+      material: "PET",
+      price: 1.5,
+      lastUpdated: "2024-02-15"
+    },
+    {
+      size: "1.5L",
+      material: "PET",
+      price: 2.8,
+      lastUpdated: "2024-02-15"
+    },
+    {
+      size: "6L",
+      material: "PET",
+      price: 8.5,
+      lastUpdated: "2024-02-10"
+    }
   ],
   image: "/placeholder.svg?height=500&width=200",
+  logo: "/images/logos/spritzer-logo.svg",
   lastVerified: "2024-02-15",
-  verifiedBy: "johndoe",
+  verifiedBy: "muaz",
+  description: "Spritzer Natural Mineral Water is extracted from deep underground sources in a protected rainforest, rich in minerals and silica.",
+  certifications: ["ISO 9001:2000", "QUASI"],
+  sourceDepth: 420,
+  yearEstablished: 1989
 }
 

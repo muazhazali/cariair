@@ -6,49 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, MapPin, Droplet, BarChart3, DollarSign, Calendar } from "lucide-react"
+import { WaterSource } from "@/lib/data-schema"
+import { waterSources } from "@/lib/data/water-sources"
 
-// This would be replaced with actual data fetching from your JSON files
-async function getWaterSource(id: string) {
-  // Sample data
-  const sources = {
-    "1": {
-      id: 1,
-      name: "Spritzer",
-      company: "Spritzer Bhd",
-      country: "Malaysia",
-      website: "https://www.spritzer.com.my",
-      location: {
-        state: "Perak",
-        district: "Taiping",
-        coordinates: [4.7729, 101.1536],
-      },
-      type: "Mineral",
-      properties: {
-        ph: 7.2,
-        tds: 85,
-        hardness: "Soft",
-      },
-      minerals: {
-        calcium: 22.5,
-        magnesium: 3.2,
-        potassium: 1.1,
-        sodium: 4.5,
-        bicarbonate: 65.0,
-        chloride: 2.8,
-        sulfate: 5.3,
-      },
-      bottleTypes: [
-        { size: "500ml", material: "PET", price: 1.2, lastUpdated: "2024-02-15" },
-        { size: "1.5L", material: "PET", price: 2.8, lastUpdated: "2024-02-15" },
-        { size: "6L", material: "PET", price: 8.5, lastUpdated: "2024-02-10" },
-      ],
-      image: "/placeholder.svg?height=500&width=200",
-      lastVerified: "2024-02-15",
-      verifiedBy: "johndoe",
-    },
-  }
-
-  return sources[id as keyof typeof sources] || null
+// This would be replaced with actual data fetching from your database
+async function getWaterSource(id: string): Promise<WaterSource | null> {
+  return waterSources[id] || null
 }
 
 export default async function SourcePage({ params }: { params: { id: string } }) {

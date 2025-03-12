@@ -12,7 +12,7 @@ const featuredSources = [
     type: "Mineral",
     ph: 7.2,
     tds: 85,
-    image: "/placeholder.svg?height=200&width=200",
+    image: "/images/logos/spritzer-logo.png",
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ const featuredSources = [
     type: "Mineral",
     ph: 7.5,
     tds: 110,
-    image: "/placeholder.svg?height=200&width=200",
+    image: "/images/logos/cactus-logo.png",
   },
   {
     id: 3,
@@ -30,7 +30,7 @@ const featuredSources = [
     type: "Spring",
     ph: 7.1,
     tds: 95,
-    image: "/placeholder.svg?height=200&width=200",
+    image: "/images/logos/bleu-logo.png",
   },
 ]
 
