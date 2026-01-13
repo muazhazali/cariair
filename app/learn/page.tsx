@@ -334,7 +334,7 @@ export default function LearnPage() {
                   </p>
                   <div className="mt-4">
                     <span className="text-xs font-medium">Typical range in mineral water:</span>
-                    <p className="text-sm">1-20 mg/L (low sodium) to >200 mg/L (high sodium)</p>
+                    <p className="text-sm">1-20 mg/L (low sodium) to &gt;200 mg/L (high sodium)</p>
                   </div>
                 </CardContent>
               </Card>
