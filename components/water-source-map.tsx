@@ -1,35 +1,28 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import dynamic from "next/dynamic"
-
-// Dynamically import the map components with no SSR
-const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false })
-const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false })
-const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false })
-const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false })
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
+import L from "leaflet"
+import "leaflet/dist/leaflet.css"
 
 export function WaterSourceMap() {
   // Center of Malaysia
-  const center = [4.2105, 101.9758]
+  const center: [number, number] = [4.2105, 101.9758]
   const zoom = 6
-  const [mapReady, setMapReady] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    // Only import Leaflet on the client side
-    import("leaflet").then((L) => {
-      // Fix for marker icons in production
-      delete L.Icon.Default.prototype._getIconUrl
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-        iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-        shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-      })
-      setMapReady(true)
+    setMounted(true)
+
+    // Fix for default marker icons in Leaflet with Next.js
+    const DefaultIcon = L.icon({
+      iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+      shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
     })
 
-    // Import the CSS files
-    import("leaflet/dist/leaflet.css")
+    L.Marker.prototype.options.icon = DefaultIcon
   }, [])
 
   // Sample data - would be replaced with actual data from your JSON files
@@ -39,7 +32,7 @@ export function WaterSourceMap() {
     { id: 3, name: "Bleu", lat: 5.4164, lng: 100.3327, type: "spring" },
   ]
 
-  if (!mapReady) {
+  if (!mounted) {
     return (
       <div className="h-full w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
         <p className="text-gray-500 dark:text-gray-400">Loading map...</p>
@@ -49,7 +42,7 @@ export function WaterSourceMap() {
 
   return (
     <div className="h-full w-full">
-      <MapContainer center={center as [number, number]} zoom={zoom} style={{ height: "100%", width: "100%" }}>
+      <MapContainer center={center} zoom={zoom} style={{ height: "100%", width: "100%" }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

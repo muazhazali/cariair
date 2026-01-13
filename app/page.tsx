@@ -1,9 +1,16 @@
+"use client"
+
 import Link from "next/link"
 import { Search } from "@/components/search"
-import { WaterSourceMap } from "@/components/water-source-map"
+import dynamic from "next/dynamic"
 import { WaterSourcesDisplay } from "@/components/water-sources-display"
 import { Button } from "@/components/ui/button"
 import { Github, Info } from "lucide-react"
+
+const WaterSourceMap = dynamic(() => import("@/components/water-source-map").then(mod => mod.WaterSourceMap), {
+  ssr: false,
+  loading: () => <div className="h-full w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">Loading map...</div>
+})
 
 export default function HomePage() {
   return (
