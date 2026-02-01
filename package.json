@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed": "node --env-file=.env scripts/seed-from-sql.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
