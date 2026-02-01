@@ -7,55 +7,41 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { SearchIcon, Filter } from "lucide-react"
+import { SearchIcon, Filter, MapPin } from "lucide-react"
+import { pb, getImageUrl } from "@/lib/pocketbase"
+import { Product } from "@/lib/types/pocketbase"
 
-// This would be replaced with actual data fetching from your JSON files
-async function searchWaterSources(query: string) {
-  // Sample data
-  const sources = [
-    {
-      id: 1,
-      name: "Spritzer",
-      location: "Taiping, Perak",
-      type: "Mineral",
-      ph: 7.2,
-      tds: 85,
-      image: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      id: 2,
-      name: "Cactus",
-      location: "Kuala Lumpur, Selangor",
-      type: "Mineral",
-      ph: 7.5,
-      tds: 110,
-      image: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      id: 3,
-      name: "Bleu",
-      location: "Penang",
-      type: "Spring",
-      ph: 7.1,
-      tds: 95,
-      image: "/placeholder.svg?height=200&width=200",
-    },
-  ]
+async function searchWaterSources(query: string): Promise<Product[]> {
+  try {
+    const filterParts = [];
+    if (query) {
+      // Search in product name, barcode, brand name, or source location
+      filterParts.push(`product_name ~ "${query}"`);
+      filterParts.push(`barcode ~ "${query}"`);
+      filterParts.push(`brand.brand_name ~ "${query}"`);
+      filterParts.push(`source.location_address ~ "${query}"`);
+    }
 
-  // Simple filtering based on query
-  if (!query) return sources
+    const filter = filterParts.length > 0 ? filterParts.join(" || ") : "";
 
-  const lowerQuery = query.toLowerCase()
-  return sources.filter(
-    (source) =>
-      source.name.toLowerCase().includes(lowerQuery) ||
-      source.location.toLowerCase().includes(lowerQuery) ||
-      source.type.toLowerCase().includes(lowerQuery),
-  )
+    const result = await pb.collection('products').getList<Product>(1, 50, {
+      filter,
+      expand: 'brand,source,manufacturer',
+      sort: '-created',
+    });
+
+    return result.items;
+  } catch (error) {
+    console.error("Error searching products:", error);
+    return [];
+  }
 }
 
-export default async function SearchPage({ searchParams }: { searchParams: { q?: string } }) {
-  const query = searchParams.q || ""
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+
+export default async function SearchPage(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams
+  const query = (searchParams.q as string) || ""
   const results = await searchWaterSources(query)
 
   return (
@@ -81,6 +67,7 @@ export default async function SearchPage({ searchParams }: { searchParams: { q?:
                 </div>
               </div>
 
+              {/* Filters are visual only for now */}
               <div>
                 <h3 className="text-sm font-medium mb-2">Water Type</h3>
                 <div className="space-y-2">
@@ -119,28 +106,6 @@ export default async function SearchPage({ searchParams }: { searchParams: { q?:
                     <span>0</span>
                     <span>500</span>
                     <span>1000+</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium mb-2">Bottle Size</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="size-250ml" />
-                    <Label htmlFor="size-250ml">250ml</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="size-500ml" />
-                    <Label htmlFor="size-500ml">500ml</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="size-1L" />
-                    <Label htmlFor="size-1L">1L</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="size-1.5L" />
-                    <Label htmlFor="size-1.5L">1.5L</Label>
                   </div>
                 </div>
               </div>
@@ -192,46 +157,61 @@ export default async function SearchPage({ searchParams }: { searchParams: { q?:
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {results.map((source) => (
-              <Card key={source.id} className="overflow-hidden">
-                <div className="relative h-48 w-full bg-gray-100 dark:bg-gray-800">
-                  <Image
-                    src={source.image || "/placeholder.svg"}
-                    alt={source.name}
-                    fill
-                    className="object-contain p-4"
-                  />
-                </div>
-                <CardContent className="p-4">
-                  <div className="mb-2 flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">{source.name}</h3>
-                    <Badge variant="outline">{source.type}</Badge>
+            {results.map((product) => {
+              const brand = product.expand?.brand;
+              const source = product.expand?.source;
+              const imageUrl = product.images && product.images.length > 0 
+                ? getImageUrl(product, product.images[0])
+                : '/placeholder.jpg'; // We don't have placeholder.svg locally maybe, fallback to placeholder logic or just handle it. 
+              // Actually the original code used /placeholder.svg?height=200...
+              // I will use a placeholder from my public folder if exists or just a generic one.
+              // I'll stick to what I used in WaterSourcesDisplay: /placeholder.jpg (wait, did I use that?)
+              // WaterSourcesDisplay used:
+              // const imageUrl = product.images && product.images.length > 0 ? getImageUrl(product, product.images[0]) : '/placeholder.jpg';
+              
+              return (
+                <Card key={product.id} className="overflow-hidden flex flex-col">
+                  <div className="relative h-48 w-full bg-gray-100 dark:bg-gray-800">
+                    <Image
+                      src={imageUrl}
+                      alt={product.product_name}
+                      fill
+                      className="object-contain p-4"
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500 dark:text-gray-400">Location:</span>
-                      <span className="text-sm font-medium">{source.location}</span>
+                  <CardContent className="p-4 flex-1">
+                    <div className="mb-2 flex items-center justify-between">
+                      <h3 className="text-lg font-semibold line-clamp-1" title={product.product_name}>{product.product_name}</h3>
+                      <Badge variant="outline">{source?.type || "Unknown"}</Badge>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500 dark:text-gray-400">pH Level:</span>
-                      <span className="text-sm font-medium">{source.ph}</span>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">Location:</span>
+                        <span className="text-sm font-medium line-clamp-1 text-right max-w-[50%]" title={source?.location_address}>
+                          {source?.location_address || "Unknown"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">pH Level:</span>
+                        <span className="text-sm font-medium">{product.ph_level || "N/A"}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">TDS:</span>
+                        <span className="text-sm font-medium">{product.tds ? `${product.tds} mg/L` : "N/A"}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500 dark:text-gray-400">TDS:</span>
-                      <span className="text-sm font-medium">{source.tds} mg/L</span>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="p-4 pt-0">
-                  <Link
-                    href={`/sources/${source.id}`}
-                    className="w-full text-center text-sm font-medium text-primary hover:underline"
-                  >
-                    View Details
-                  </Link>
-                </CardFooter>
-              </Card>
-            ))}
+                  </CardContent>
+                  <CardFooter className="p-4 pt-0 mt-auto">
+                    <Link
+                      href={`/sources/${product.id}`}
+                      className="w-full text-center text-sm font-medium text-primary hover:underline"
+                    >
+                      View Details
+                    </Link>
+                  </CardFooter>
+                </Card>
+              )
+            })}
           </div>
 
           {results.length === 0 && (

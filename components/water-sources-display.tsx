@@ -85,11 +85,10 @@ export function WaterSourcesDisplay() {
             : '/placeholder.jpg';
 
           return (
-            <Card key={product.id} className={`overflow-hidden ${viewMode === "list" ? "flex" : ""}`}>
-              {/* Using div instead of Link for now until detail page is ready */}
-              <div className={`flex-1 block cursor-default`}>
-                <div className={viewMode === "list" ? "flex" : ""}>
-                  <div className={`relative ${viewMode === "list" ? "w-48" : "aspect-video"}`}>
+              <Card key={product.id} className={`overflow-hidden ${viewMode === "list" ? "flex" : ""}`}>
+                <Link href={`/sources/${product.id}`} className={`flex-1 block cursor-pointer`}>
+                  <div className={viewMode === "list" ? "flex" : ""}>
+                    <div className={`relative ${viewMode === "list" ? "w-48" : "aspect-video"}`}>
                     <Image
                       src={imageUrl}
                       alt={product.product_name || "Product Image"}
@@ -108,7 +107,7 @@ export function WaterSourcesDisplay() {
                     )}
                   </div>
                 </div>
-              </div>
+              </Link>
               {brand?.website_url && (
                 <div className={`p-4 ${viewMode === "list" ? "flex items-center" : "border-t border-gray-200 dark:border-gray-800"}`}>
                   <Button variant="outline" size="sm" className="w-full" asChild>

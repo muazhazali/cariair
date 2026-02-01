@@ -4,45 +4,23 @@ import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
 
 // Import the map component dynamically to avoid SSR errors
-const Map = dynamic(() => import("@/components/map-component"), {
+const WaterSourceMap = dynamic(() => import("@/components/water-source-map").then(mod => mod.WaterSourceMap), {
     ssr: false,
-    loading: () => <div className="h-[400px] w-full bg-muted animate-pulse rounded-lg flex items-center justify-center">Loading map...</div>
+    loading: () => <div className="h-[600px] w-full bg-muted animate-pulse rounded-lg flex items-center justify-center">Loading map...</div>
 })
 
 export default function MapPage() {
-    const [mounted, setMounted] = useState(false)
-
-    useEffect(() => {
-        setMounted(true)
-    }, [])
-
     return (
-        <main className="container mx-auto py-10 px-4">
-            <div className="max-w-4xl mx-auto space-y-6">
-                <h1 className="text-4xl font-bold tracking-tight">OpenStreetMap Demo</h1>
-                <p className="text-muted-foreground">
-                    This is a demonstration of Leaflet with OpenStreetMap integrated into a Next.js application.
+        <div className="container flex flex-col h-[calc(100vh-4rem)] py-8 md:py-12">
+            <div className="flex flex-col gap-4 mb-8">
+                <h1 className="text-3xl font-bold tracking-tight">Water Sources Map</h1>
+                <p className="text-gray-500 dark:text-gray-400">
+                    Geographic distribution of registered mineral and drinking water sources in Malaysia.
                 </p>
-                {mounted ? <Map /> : <div className="h-[400px] w-full bg-muted animate-pulse rounded-lg flex items-center justify-center">Initializing...</div>}
-                <div className="grid gap-4 md:grid-cols-2">
-                    <div className="p-6 rounded-xl border bg-card text-card-foreground shadow">
-                        <h2 className="text-xl font-semibold mb-2">Location Data</h2>
-                        <p className="text-sm text-muted-foreground">
-                            Latitude: 51.505<br />
-                            Longitude: -0.09
-                        </p>
-                    </div>
-                    <div className="p-6 rounded-xl border bg-card text-card-foreground shadow">
-                        <h2 className="text-xl font-semibold mb-2">Features</h2>
-                        <ul className="text-sm text-muted-foreground list-disc list-inside">
-                            <li>OpenStreetMap Tiling</li>
-                            <li>Interactive Markers</li>
-                            <li>Responsive Layout</li>
-                            <li>Client-side Rendering</li>
-                        </ul>
-                    </div>
-                </div>
             </div>
-        </main>
+            <div className="flex-1 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
+                <WaterSourceMap />
+            </div>
+        </div>
     )
 }

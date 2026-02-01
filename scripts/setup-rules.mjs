@@ -1,6 +1,6 @@
 import PocketBase from 'pocketbase';
 
-const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'https://pb2.muaz.app';
+const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
 const email = process.env.POCKETBASE_ADMIN_EMAIL || 'tikushijo@gmail.com';
 const password = process.env.POCKETBASE_ADMIN_PASSWORD || 'Muazoreo123!';
 

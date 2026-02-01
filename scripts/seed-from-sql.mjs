@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Read .env manually if not loaded
-const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'https://pb2.muaz.app';
+const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
 const email = process.env.POCKETBASE_ADMIN_EMAIL;
 const password = process.env.POCKETBASE_ADMIN_PASSWORD;
 

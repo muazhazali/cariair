@@ -1,7 +1,9 @@
 import PocketBase from 'pocketbase';
 
 // Use the environment variable or fallback to the provided URL
-const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'https://pb2.muaz.app';
+const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
+
+console.log('Connecting to PocketBase at:', pbUrl);
 
 export const pb = new PocketBase(pbUrl);
 
