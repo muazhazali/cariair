@@ -61,9 +61,9 @@ export default function ContributePage() {
     const loadData = async () => {
       try {
         const [brandsRes, manufacturersRes, sourcesRes] = await Promise.all([
-          pb.collection('brands').getFullList<Brand>(),
-          pb.collection('manufacturers').getFullList<Manufacturer>(),
-          pb.collection('sources').getFullList<Source>(),
+          pb.collection('brands').getFullList<Brand>({ requestKey: null }),
+          pb.collection('manufacturers').getFullList<Manufacturer>({ requestKey: null }),
+          pb.collection('sources').getFullList<Source>({ requestKey: null }),
         ]);
         setBrands(brandsRes);
         setManufacturers(manufacturersRes);

@@ -32,6 +32,7 @@ export function WaterSourceMap() {
       try {
         const result = await pb.collection('products').getList<Product>(1, 50, {
           expand: 'source',
+          requestKey: null,
         });
         setProducts(result.items);
       } catch (error) {
