@@ -1,268 +1,316 @@
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { GitPullRequest, FileEdit, AlertTriangle, Github, Users } from "lucide-react"
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { pb } from '@/lib/pocketbase';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2, Upload } from 'lucide-react';
+import { Brand, Manufacturer, Source } from '@/lib/types/pocketbase';
+
+const formSchema = z.object({
+  product_name: z.string().min(2, "Product name must be at least 2 characters"),
+  barcode: z.string().optional(),
+  brand: z.string().min(1, "Brand is required"), // ID
+  manufacturer: z.string().min(1, "Manufacturer is required"), // ID
+  source: z.string().min(1, "Source is required"), // ID
+  ph_level: z.string().refine((val) => !isNaN(parseFloat(val)), "Must be a number").optional(),
+  tds: z.string().refine((val) => !isNaN(parseFloat(val)), "Must be a number").optional(),
+  image: z.any().optional(),
+});
 
 export default function ContributePage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Data for selects
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
+  const [sources, setSources] = useState<Source[]>([]);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      product_name: "",
+      barcode: "",
+      brand: "",
+      manufacturer: "",
+      source: "",
+      ph_level: "",
+      tds: "",
+    },
+  });
+
+  useEffect(() => {
+    // Check auth
+    if (!pb.authStore.isValid) {
+      router.push('/login?redirect=/contribute');
+      return;
+    }
+
+    // Load data
+    const loadData = async () => {
+      try {
+        const [brandsRes, manufacturersRes, sourcesRes] = await Promise.all([
+          pb.collection('brands').getFullList<Brand>(),
+          pb.collection('manufacturers').getFullList<Manufacturer>(),
+          pb.collection('sources').getFullList<Source>(),
+        ]);
+        setBrands(brandsRes);
+        setManufacturers(manufacturersRes);
+        setSources(sourcesRes);
+      } catch (error) {
+        console.error("Error loading data:", error);
+        toast({
+          variant: "destructive",
+          title: "Error loading data",
+          description: "Could not load options for the form.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [router, toast]);
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append('product_name', values.product_name);
+      if (values.barcode) formData.append('barcode', values.barcode);
+      formData.append('brand', values.brand);
+      formData.append('manufacturer', values.manufacturer);
+      formData.append('source', values.source);
+      if (values.ph_level) formData.append('ph_level', values.ph_level);
+      if (values.tds) formData.append('tds', values.tds);
+      formData.append('status', 'pending');
+      formData.append('submitted_by', pb.authStore.model?.id);
+
+      // Handle image
+      const fileInput = document.getElementById('image-upload') as HTMLInputElement;
+      if (fileInput?.files?.length) {
+        formData.append('images', fileInput.files[0]);
+      }
+
+      await pb.collection('products').create(formData);
+
+      toast({
+        title: "Submission Successful",
+        description: "Your product has been submitted for review.",
+      });
+      
+      form.reset();
+      // Optional: redirect to listing or show success state
+      
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Submission Failed",
+        description: error.message || "Something went wrong.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="container px-4 py-8 md:px-6 md:py-12">
-      <div className="mx-auto max-w-3xl space-y-8">
-        <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold tracking-tight">Contribute to the Registry</h1>
-          <p className="text-gray-500 dark:text-gray-400">
-            Help us build the most comprehensive database of Malaysian water sources
+      <div className="mx-auto max-w-2xl">
+        <div className="mb-8 space-y-2 text-center">
+          <h1 className="text-3xl font-bold tracking-tight">Submit a Water Product</h1>
+          <p className="text-muted-foreground">
+            Add a new bottled water to our registry. All submissions are reviewed.
           </p>
         </div>
 
-        <Tabs defaultValue="how-to-contribute">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="how-to-contribute">How to Contribute</TabsTrigger>
-            <TabsTrigger value="templates">Templates</TabsTrigger>
-            <TabsTrigger value="guidelines">Guidelines</TabsTrigger>
-          </TabsList>
+        <Card>
+          <CardHeader>
+            <CardTitle>Product Details</CardTitle>
+            <CardDescription>Enter the details as seen on the bottle.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                
+                <FormField
+                  control={form.control}
+                  name="product_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. Spritzer Natural Mineral Water" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-          <TabsContent value="how-to-contribute" className="space-y-6 pt-6">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold">Contributing to the Registry</h2>
-              <p className="text-gray-500 dark:text-gray-400">
-                This project is open-source and community-driven. All data is stored in JSON files in our GitHub
-                repository, making it easy for anyone to contribute.
-              </p>
-            </div>
+                <FormField
+                  control={form.control}
+                  name="barcode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Barcode (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Scan or type barcode" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <GitPullRequest className="mr-2 h-5 w-5" />
-                    GitHub Pull Request
-                  </CardTitle>
-                  <CardDescription>The standard way to contribute</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ol className="list-decimal pl-5 space-y-2">
-                    <li>Fork the repository on GitHub</li>
-                    <li>Create a new branch for your changes</li>
-                    <li>Add or update water source data files</li>
-                    <li>Submit a pull request with your changes</li>
-                    <li>Wait for review and approval</li>
-                  </ol>
-                  <Link
-                    href="https://github.com/your-username/malaysia-water-registry"
-                    target="_blank"
-                    className="inline-flex items-center text-sm font-medium text-blue-500 hover:underline"
-                  >
-                    <Github className="mr-1 h-4 w-4" />
-                    View on GitHub
-                  </Link>
-                </CardContent>
-              </Card>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="brand"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Brand</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a brand" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {brands.map((brand) => (
+                              <SelectItem key={brand.id} value={brand.id}>
+                                {brand.brand_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Brand not listed? <a href="#" className="text-primary hover:underline">Add it here</a>.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <FileEdit className="mr-2 h-5 w-5" />
-                    Issue Submission
-                  </CardTitle>
-                  <CardDescription>For those not familiar with Git</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ol className="list-decimal pl-5 space-y-2">
-                    <li>Create a GitHub account if you don't have one</li>
-                    <li>Open an issue in our repository</li>
-                    <li>Use the appropriate issue template</li>
-                    <li>Provide all required information</li>
-                    <li>A maintainer will add your data</li>
-                  </ol>
-                  <Link
-                    href="https://github.com/your-username/malaysia-water-registry/issues/new/choose"
-                    target="_blank"
-                    className="inline-flex items-center text-sm font-medium text-blue-500 hover:underline"
-                  >
-                    <AlertTriangle className="mr-1 h-4 w-4" />
-                    Create an Issue
-                  </Link>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="rounded-lg border border-gray-200 p-6 dark:border-gray-800">
-              <div className="flex items-start gap-4">
-                <Users className="h-6 w-6 text-blue-500" />
-                <div>
-                  <h3 className="text-lg font-semibold">Join Our Community</h3>
-                  <p className="mt-2 text-gray-500 dark:text-gray-400">
-                    Connect with other contributors and maintainers to discuss improvements, coordinate efforts, and get
-                    help with your contributions.
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <Link
-                      href="https://github.com/your-username/malaysia-water-registry/discussions"
-                      target="_blank"
-                      className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm font-medium dark:bg-gray-800"
-                    >
-                      GitHub Discussions
-                    </Link>
-                    <Link
-                      href="#"
-                      className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm font-medium dark:bg-gray-800"
-                    >
-                      Telegram Group
-                    </Link>
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="manufacturer"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Manufacturer</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a manufacturer" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {manufacturers.map((m) => (
+                              <SelectItem key={m.id} value={m.id}>
+                                {m.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              </div>
-            </div>
-          </TabsContent>
 
-          <TabsContent value="templates" className="space-y-6 pt-6">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold">Contribution Templates</h2>
-              <p className="text-gray-500 dark:text-gray-400">
-                Use these templates to ensure your contributions follow the project's data structure.
-              </p>
-            </div>
+                <FormField
+                  control={form.control}
+                  name="source"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Water Source</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select the source" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {sources.map((s) => (
+                            <SelectItem key={s.id} value={s.id}>
+                              {s.source_name || s.location_address || "Unknown Source"}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <Card>
-              <CardHeader>
-                <CardTitle>New Water Source Template</CardTitle>
-                <CardDescription>Use this template when adding a new water source to the registry</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <pre className="overflow-x-auto rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800">
-                  {`{
-  "id": "unique-id",
-  "name": "Brand Name",
-  "company": "Parent Company",
-  "country": "Malaysia",
-  "website": "https://example.com",
-  "location": {
-    "state": "State Name",
-    "district": "District Name",
-    "coordinates": [0.0000, 0.0000]
-  },
-  "type": "Mineral",
-  "properties": {
-    "ph": 7.0,
-    "tds": 100,
-    "hardness": "Soft"
-  },
-  "minerals": {
-    "calcium": 0.0,
-    "magnesium": 0.0,
-    "potassium": 0.0,
-    "sodium": 0.0,
-    "bicarbonate": 0.0,
-    "chloride": 0.0,
-    "sulfate": 0.0
-  },
-  "bottleTypes": [
-    {
-      "size": "500ml",
-      "material": "PET",
-      "price": 0.00,
-      "lastUpdated": "YYYY-MM-DD"
-    }
-  ],
-  "image": "/placeholder.svg",
-  "lastVerified": "YYYY-MM-DD",
-  "verifiedBy": "your-github-username"
-}`}
-                </pre>
-              </CardContent>
-            </Card>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="ph_level"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>pH Level (Optional)</FormLabel>
+                        <FormControl>
+                          <Input type="number" step="0.1" placeholder="e.g. 7.2" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Price Update Template</CardTitle>
-                <CardDescription>Use this template when updating prices for an existing water source</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <pre className="overflow-x-auto rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800">
-                  {`{
-  "id": "existing-id",
-  "bottleTypes": [
-    {
-      "size": "500ml",
-      "material": "PET",
-      "price": 0.00,
-      "lastUpdated": "YYYY-MM-DD",
-      "retailers": ["Retailer Name"]
-    }
-  ],
-  "lastVerified": "YYYY-MM-DD",
-  "verifiedBy": "your-github-username"
-}`}
-                </pre>
-              </CardContent>
-            </Card>
+                  <FormField
+                    control={form.control}
+                    name="tds"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>TDS (mg/L) (Optional)</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="e.g. 150" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Error Correction Template</CardTitle>
-                <CardDescription>Use this template when correcting errors in existing data</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <pre className="overflow-x-auto rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800">
-                  {`{
-  "id": "existing-id",
-  "fieldToCorrect": "corrected value",
-  "reason": "Brief explanation of the correction",
-  "source": "URL or reference for the correct information",
-  "lastVerified": "YYYY-MM-DD",
-  "verifiedBy": "your-github-username"
-}`}
-                </pre>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                <FormItem>
+                  <FormLabel>Product Image</FormLabel>
+                  <FormControl>
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                      <Input id="image-upload" type="file" accept="image/*" />
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    Upload a clear photo of the bottle/label.
+                  </FormDescription>
+                </FormItem>
 
-          <TabsContent value="guidelines" className="space-y-6 pt-6">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold">Contribution Guidelines</h2>
-              <p className="text-gray-500 dark:text-gray-400">
-                Follow these guidelines to ensure your contributions meet our quality standards.
-              </p>
-            </div>
-
-            <div className="space-y-6">
-              <div className="rounded-lg border border-gray-200 p-6 dark:border-gray-800">
-                <h3 className="text-lg font-semibold">Data Quality Standards</h3>
-                <ul className="mt-4 list-disc pl-5 space-y-2">
-                  <li>All data must be accurate and verifiable</li>
-                  <li>Include sources for your information when possible</li>
-                  <li>Use official product labels or company websites as primary sources</li>
-                  <li>Report actual measurements rather than marketing claims when possible</li>
-                  <li>Include the date when the information was collected or verified</li>
-                </ul>
-              </div>
-
-              <div className="rounded-lg border border-gray-200 p-6 dark:border-gray-800">
-                <h3 className="text-lg font-semibold">Image Guidelines</h3>
-                <ul className="mt-4 list-disc pl-5 space-y-2">
-                  <li>Bottle images should be transparent PNG files with 500px height</li>
-                  <li>Logo images should be 200x200px with transparent background</li>
-                  <li>Images should be optimized for web (compressed without quality loss)</li>
-                  <li>Only use images that you have the right to share or that are freely licensed</li>
-                  <li>Include proper attribution for images when required</li>
-                </ul>
-              </div>
-
-              <div className="rounded-lg border border-gray-200 p-6 dark:border-gray-800">
-                <h3 className="text-lg font-semibold">Review Process</h3>
-                <ol className="mt-4 list-decimal pl-5 space-y-2">
-                  <li>All contributions are reviewed by project maintainers</li>
-                  <li>Reviewers check for data accuracy, completeness, and formatting</li>
-                  <li>You may be asked to provide additional information or make corrections</li>
-                  <li>Once approved, your contribution will be merged into the main database</li>
-                  <li>Your GitHub username will be credited in the contribution history</li>
-                </ol>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Submit Product
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
       </div>
     </div>
-  )
+  );
 }
-

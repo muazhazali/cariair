@@ -4,12 +4,15 @@ import { useEffect, useState } from "react"
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
+import { pb } from "@/lib/pocketbase"
+import { Product } from "@/lib/types/pocketbase"
 
 export function WaterSourceMap() {
   // Center of Malaysia
   const center: [number, number] = [4.2105, 101.9758]
   const zoom = 6
   const [mounted, setMounted] = useState(false)
+  const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
     setMounted(true)
@@ -23,14 +26,21 @@ export function WaterSourceMap() {
     })
 
     L.Marker.prototype.options.icon = DefaultIcon
-  }, [])
 
-  // Sample data - would be replaced with actual data from your JSON files
-  const sampleSources = [
-    { id: 1, name: "Spritzer", lat: 4.7729, lng: 101.1536, type: "mineral" },
-    { id: 2, name: "Cactus", lat: 3.139, lng: 101.6869, type: "mineral" },
-    { id: 3, name: "Bleu", lat: 5.4164, lng: 100.3327, type: "spring" },
-  ]
+    // Load products
+    const loadProducts = async () => {
+      try {
+        const result = await pb.collection('products').getList<Product>(1, 50, {
+          expand: 'source',
+        });
+        setProducts(result.items);
+      } catch (error) {
+        console.error("Error loading products for map:", error);
+      }
+    };
+
+    loadProducts();
+  }, [])
 
   if (!mounted) {
     return (
@@ -47,21 +57,24 @@ export function WaterSourceMap() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {sampleSources.map((source) => (
-          <Marker key={source.id} position={[source.lat, source.lng]}>
-            <Popup>
-              <div>
-                <h3 className="font-bold">{source.name}</h3>
-                <p>Type: {source.type}</p>
-                <a href={`/sources/${source.id}`} className="text-blue-500 hover:underline">
-                  View details
-                </a>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+        {products.map((product) => {
+          const source = product.expand?.source;
+          if (!source || !source.lat || !source.lng) return null;
+
+          return (
+            <Marker key={product.id} position={[source.lat, source.lng]}>
+              <Popup>
+                <div>
+                  <h3 className="font-bold">{product.product_name}</h3>
+                  <p>Source: {source.source_name || "Unknown"}</p>
+                  <p>Type: {source.type || "Unknown"}</p>
+                  {/* Link to product detail if we had it */}
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
     </div>
   )
 }
-

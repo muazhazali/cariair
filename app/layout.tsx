@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
+import { Toaster } from "@/components/ui/toaster"
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'Cariair - Water Source Registry',
+  description: 'The definitive registry of all mineral and drinking water sources in Malaysia.',
 }
 
 export default function RootLayout({
@@ -14,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster />
+      </body>
     </html>
   )
 }
