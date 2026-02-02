@@ -20,31 +20,65 @@ import { Separator } from "@/components/ui/separator"
 
 interface ProductFiltersProps {
   brands: { id: string; brand_name: string }[]
+  basePath?: string
+  onApply?: (filters: any) => void
+  defaultValues?: {
+    types?: string[]
+    brands?: string[]
+    minPh?: number
+    maxPh?: number
+    minTds?: number
+    maxTds?: number
+  }
 }
 
-export function ProductFilters({ brands }: ProductFiltersProps) {
+const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated"]
+
+export function ProductFilters({ brands, basePath = "/search", onApply, defaultValues }: ProductFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  // State initialization from URL params
+  // State initialization
   const [types, setTypes] = React.useState<string[]>(
-    searchParams.getAll("type")
+    defaultValues?.types || searchParams.getAll("type")
   )
   const [phRange, setPhRange] = React.useState<[number, number]>([
-    Number(searchParams.get("min_ph")) || 0,
-    Number(searchParams.get("max_ph")) || 14,
+    defaultValues?.minPh ?? (Number(searchParams.get("min_ph")) || 0),
+    defaultValues?.maxPh ?? (Number(searchParams.get("max_ph")) || 14),
   ])
   const [tdsRange, setTdsRange] = React.useState<[number, number]>([
-    Number(searchParams.get("min_tds")) || 0,
-    Number(searchParams.get("max_tds")) || 500,
+    defaultValues?.minTds ?? (Number(searchParams.get("min_tds")) || 0),
+    defaultValues?.maxTds ?? (Number(searchParams.get("max_tds")) || 500),
   ])
   const [selectedBrands, setSelectedBrands] = React.useState<string[]>(
-    searchParams.getAll("brand")
+    defaultValues?.brands || searchParams.getAll("brand")
   )
   const [isOpen, setIsOpen] = React.useState(false)
 
+  // Initialize with all selected if no params and defaultValues provided (Client-side mode)
+  // Or if we want "Select All" to be the default state when empty.
+  React.useEffect(() => {
+    if (onApply && !searchParams.toString() && !defaultValues) {
+       // If in client mode (onApply exists) and no params, we might want to default to ALL.
+       // But usually the parent controls defaultValues.
+    }
+  }, [])
+
   // Update URL on apply
   const applyFilters = () => {
+    if (onApply) {
+      onApply({
+        types,
+        brands: selectedBrands,
+        minPh: phRange[0],
+        maxPh: phRange[1],
+        minTds: tdsRange[0],
+        maxTds: tdsRange[1]
+      })
+      setIsOpen(false)
+      return
+    }
+
     const params = new URLSearchParams(searchParams.toString())
     
     // Clear existing
@@ -70,16 +104,37 @@ export function ProductFilters({ brands }: ProductFiltersProps) {
       params.set("max_tds", tdsRange[1].toString())
     }
 
-    router.push(`/search?${params.toString()}`)
+    router.push(`${basePath}?${params.toString()}`)
     setIsOpen(false)
   }
 
   const resetFilters = () => {
+    if (onApply) {
+       // Reset to ALL if that's the desired default
+       const allTypes = WATER_TYPES
+       const allBrands = brands.map(b => b.id)
+       setTypes(allTypes)
+       setSelectedBrands(allBrands)
+       setPhRange([0, 14])
+       setTdsRange([0, 500])
+       
+       onApply({
+         types: allTypes,
+         brands: allBrands,
+         minPh: 0,
+         maxPh: 14,
+         minTds: 0,
+         maxTds: 500
+       })
+       setIsOpen(false)
+       return
+    }
+
     setTypes([])
     setPhRange([0, 14])
     setTdsRange([0, 500])
     setSelectedBrands([])
-    router.push("/search")
+    router.push(basePath)
     setIsOpen(false)
   }
 
@@ -88,7 +143,7 @@ export function ProductFilters({ brands }: ProductFiltersProps) {
       <div>
         <h3 className="text-sm font-medium mb-4">Water Type</h3>
         <div className="space-y-3">
-          {["Underground", "Spring", "Municipal", "Oxygenated"].map((type) => (
+          {WATER_TYPES.map((type) => (
             <div key={type} className="flex items-center space-x-2">
               <Checkbox
                 id={`type-${type}`}

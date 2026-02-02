@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { Github, Info, Menu } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 
 export function MainNav() {
@@ -65,6 +65,7 @@ export function MainNav() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="pr-0">
+            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             <Link
               href="/"
               className="flex items-center"

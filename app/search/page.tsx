@@ -2,74 +2,11 @@ import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
 import { SearchIcon } from "lucide-react"
-import { pb, getImageUrl } from "@/lib/pocketbase"
+import { getImageUrl } from "@/lib/pocketbase"
 import { Product } from "@/lib/types/pocketbase"
 import { ProductFilters } from "@/components/product-filters"
-
-interface SearchFilters {
-  query?: string
-  types?: string[]
-  brands?: string[]
-  minPh?: number
-  maxPh?: number
-  minTds?: number
-  maxTds?: number
-}
-
-async function getBrands() {
-  try {
-    return await pb.collection('brands').getFullList({ sort: 'brand_name' });
-  } catch (error) {
-    console.error("Error fetching brands:", error);
-    return [];
-  }
-}
-
-async function searchWaterSources(filters: SearchFilters): Promise<Product[]> {
-  try {
-    const filterParts: string[] = [];
-    
-    // Text Search
-    if (filters.query) {
-      filterParts.push(`(product_name ~ "${filters.query}" || barcode ~ "${filters.query}" || brand.brand_name ~ "${filters.query}" || source.location_address ~ "${filters.query}")`);
-    }
-
-    // Source Type
-    if (filters.types && filters.types.length > 0) {
-      const typeFilters = filters.types.map(t => `source.type = "${t}"`).join(" || ");
-      filterParts.push(`(${typeFilters})`);
-    }
-
-    // Brands
-    if (filters.brands && filters.brands.length > 0) {
-      const brandFilters = filters.brands.map(b => `brand = "${b}"`).join(" || ");
-      filterParts.push(`(${brandFilters})`);
-    }
-
-    // pH
-    if (filters.minPh !== undefined) filterParts.push(`ph_level >= ${filters.minPh}`);
-    if (filters.maxPh !== undefined) filterParts.push(`ph_level <= ${filters.maxPh}`);
-
-    // TDS
-    if (filters.minTds !== undefined) filterParts.push(`tds >= ${filters.minTds}`);
-    if (filters.maxTds !== undefined) filterParts.push(`tds <= ${filters.maxTds}`);
-
-    const filter = filterParts.length > 0 ? filterParts.join(" && ") : "";
-
-    const result = await pb.collection('products').getList<Product>(1, 50, {
-      filter,
-      expand: 'brand,source,manufacturer',
-      sort: '-created', // Default sort
-    });
-
-    return result.items;
-  } catch (error) {
-    console.error("Error searching products:", error);
-    return [];
-  }
-}
+import { getBrands, searchWaterSources } from "@/lib/products"
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
