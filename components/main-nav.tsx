@@ -96,7 +96,7 @@ export function MainNav() {
           </div>
           <nav className="flex items-center gap-2">
             <Button variant="ghost" size="icon" asChild>
-              <Link href="https://github.com/your-username/malaysia-water-registry" target="_blank" rel="noreferrer">
+              <Link href="https://github.com/muazhazali/cariair" target="_blank" rel="noreferrer">
                 <Github className="h-4 w-4" />
                 <span className="sr-only">GitHub</span>
               </Link>

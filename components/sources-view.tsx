@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, FormEvent } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { SearchIcon, MapPin } from "lucide-react"
 import { getImageUrl } from "@/lib/pocketbase"
 import { ProductFilters } from "@/components/product-filters"
@@ -27,6 +28,9 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
   const [loading, setLoading] = useState(false)
   const [selectedForComparison, setSelectedForComparison] = useState<string[]>([])
   const [sortOption, setSortOption] = useState<SortOption>("name_asc")
+  const [searchInput, setSearchInput] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [activeFilters, setActiveFilters] = useState<SearchFilters>({})
   
   // Initial filter state: Select All by default
   const initialFilters: SearchFilters = {
@@ -41,54 +45,72 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
   // We don't need to store the filter state here unless we want to debounce or something,
   // but ProductFilters manages its own form state until "Apply" is clicked.
   // When "Apply" is clicked, we get the new filters.
+  const performSearch = async (opts?: { query?: string; filters?: SearchFilters }) => {
+    setLoading(true)
+    try {
+      const filtersToUse = opts?.filters ?? activeFilters
+      const queryToUse = opts?.query ?? searchQuery
+
+      const results = await searchWaterSources({
+        ...filtersToUse,
+        query: queryToUse.trim() || undefined,
+      })
+
+      setProducts(results)
+    } catch (error) {
+      console.error("Error fetching products:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleFilterChange = async (newFilters: any) => {
-     setLoading(true)
-     try {
-       // Optimization: Use exclusion if more than half are selected
-       // Types
-       let typeFilters: { types?: string[], excludedTypes?: string[] } = {}
-       if (newFilters.types.length === WATER_TYPES.length) {
-         // All selected -> No filter
-       } else if (newFilters.types.length > WATER_TYPES.length / 2) {
-         // More than half selected -> Exclude unselected
-         typeFilters.excludedTypes = WATER_TYPES.filter(t => !newFilters.types.includes(t))
-       } else {
-         // Less than half selected -> Include selected
-         typeFilters.types = newFilters.types
-       }
+    // Optimization: Use exclusion if more than half are selected
+    // Types
+    let typeFilters: { types?: string[], excludedTypes?: string[] } = {}
+    if (newFilters.types.length === WATER_TYPES.length) {
+      // All selected -> No filter
+    } else if (newFilters.types.length > WATER_TYPES.length / 2) {
+      // More than half selected -> Exclude unselected
+      typeFilters.excludedTypes = WATER_TYPES.filter(t => !newFilters.types.includes(t))
+    } else {
+      // Less than half selected -> Include selected
+      typeFilters.types = newFilters.types
+    }
 
-       // Brands
-       let brandFilters: { brands?: string[], excludedBrands?: string[] } = {}
-       if (newFilters.brands.length === brands.length) {
-         // All selected -> No filter
-       } else if (newFilters.brands.length > brands.length / 2) {
-         // More than half selected -> Exclude unselected
-         const selectedSet = new Set(newFilters.brands)
-         brandFilters.excludedBrands = brands
-           .filter(b => !selectedSet.has(b.id))
-           .map(b => b.id)
-       } else {
-         // Less than half selected -> Include selected
-         brandFilters.brands = newFilters.brands
-       }
-       
-       const filters: SearchFilters = {
-         ...typeFilters,
-         ...brandFilters,
-         minPh: newFilters.minPh,
-         maxPh: newFilters.maxPh,
-         minTds: newFilters.minTds,
-         maxTds: newFilters.maxTds
-       }
-       
-       const results = await searchWaterSources(filters)
-       setProducts(results)
-     } catch (error) {
-       console.error("Error fetching filtered products:", error)
-     } finally {
-       setLoading(false)
-     }
+    // Brands
+    let brandFilters: { brands?: string[], excludedBrands?: string[] } = {}
+    if (newFilters.brands.length === brands.length) {
+      // All selected -> No filter
+    } else if (newFilters.brands.length > brands.length / 2) {
+      // More than half selected -> Exclude unselected
+      const selectedSet = new Set(newFilters.brands)
+      brandFilters.excludedBrands = brands
+        .filter(b => !selectedSet.has(b.id))
+        .map(b => b.id)
+    } else {
+      // Less than half selected -> Include selected
+      brandFilters.brands = newFilters.brands
+    }
+    
+    const filters: SearchFilters = {
+      ...typeFilters,
+      ...brandFilters,
+      minPh: newFilters.minPh,
+      maxPh: newFilters.maxPh,
+      minTds: newFilters.minTds,
+      maxTds: newFilters.maxTds
+    }
+
+    setActiveFilters(filters)
+    await performSearch({ filters })
+  }
+
+  const handleSearchSubmit = async (event: FormEvent) => {
+    event.preventDefault()
+    const value = searchInput.trim()
+    setSearchQuery(value)
+    await performSearch({ query: value })
   }
 
   // Sort products based on selected sort option
@@ -140,22 +162,46 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
       </div>
 
       <div>
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {loading ? (
-                <span className="inline-flex items-center gap-2">
-                  <span className="animate-pulse">Updating...</span>
-                </span>
-              ) : (
-                <>
-                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{products.length}</span>
-                  <span className="ml-2">{products.length === 1 ? "water source" : "water sources"} found</span>
-                </>
-              )}
-            </p>
+        <div className="mb-6 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {loading ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="animate-pulse">Updating...</span>
+                  </span>
+                ) : (
+                  <>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{products.length}</span>
+                    <span className="ml-2">{products.length === 1 ? "water source" : "water sources"} found</span>
+                  </>
+                )}
+              </p>
+            </div>
+            <form
+              onSubmit={handleSearchSubmit}
+              className="flex w-full sm:w-auto items-center gap-2"
+            >
+              <div className="relative flex-1 min-w-[200px]">
+                <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <Input
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  placeholder="Search by brand, product, or location"
+                  className="pl-9 pr-3 h-9"
+                />
+              </div>
+              <Button type="submit" variant="outline" className="h-9 px-3 whitespace-nowrap">
+                Search
+              </Button>
+              <ProductSort value={sortOption} onValueChange={setSortOption} />
+            </form>
           </div>
-          <ProductSort value={sortOption} onValueChange={setSortOption} />
+          {searchQuery && (
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Showing results for <span className="font-medium">“{searchQuery}”</span>
+            </p>
+          )}
         </div>
 
         <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ${loading ? "opacity-50 pointer-events-none" : ""}`}>
