@@ -4,8 +4,6 @@ import Link from "next/link"
 import { Search } from "@/components/search"
 import dynamic from "next/dynamic"
 import { WaterSourcesDisplay } from "@/components/water-sources-display"
-import { Button } from "@/components/ui/button"
-import { Github, Info } from "lucide-react"
 
 const WaterSourceMap = dynamic(() => import("@/components/water-source-map").then(mod => mod.WaterSourceMap), {
   ssr: false,
@@ -15,41 +13,6 @@ const WaterSourceMap = dynamic(() => import("@/components/water-source-map").the
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="sticky top-0 z-10 bg-white border-b border-gray-200 dark:bg-gray-950 dark:border-gray-800">
-        <div className="container flex items-center justify-between h-16 px-4 md:px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold">CariAir</span>
-          </Link>
-          <nav className="hidden md:flex gap-6">
-            <Link href="/sources" className="text-sm font-medium hover:underline underline-offset-4">
-              All Sources
-            </Link>
-            <Link href="/map" className="text-sm font-medium hover:underline underline-offset-4">
-              Map
-            </Link>
-            <Link href="/learn" className="text-sm font-medium hover:underline underline-offset-4">
-              Learn
-            </Link>
-            <Link href="/contribute" className="text-sm font-medium hover:underline underline-offset-4">
-              Contribute
-            </Link>
-          </nav>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" asChild>
-              <Link href="https://github.com/your-username/malaysia-water-registry" target="_blank">
-                <Github className="h-4 w-4" />
-                <span className="sr-only">GitHub</span>
-              </Link>
-            </Button>
-            <Button variant="outline" size="icon" asChild>
-              <Link href="/about">
-                <Info className="h-4 w-4" />
-                <span className="sr-only">About</span>
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </header>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-blue-50 to-white dark:from-blue-950 dark:to-gray-950">
           <div className="container px-4 md:px-6">

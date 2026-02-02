@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Toaster } from "@/components/ui/toaster"
+import { MainNav } from "@/components/main-nav"
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -13,8 +14,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        <MainNav />
         {children}
         <Toaster />
       </body>
