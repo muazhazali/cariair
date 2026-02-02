@@ -1,6 +1,8 @@
 import { SourcesView } from "@/components/sources-view"
 import { getBrands, searchWaterSources } from "@/lib/products"
 
+export const dynamic = 'force-dynamic'
+
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
 export default async function SourcesPage(props: { searchParams: SearchParams }) {
@@ -8,7 +10,7 @@ export default async function SourcesPage(props: { searchParams: SearchParams })
   // or we could support them if we wanted hybrid approach.
   // But user specifically asked to not use URL for search.
   // So we just load initial data (ALL).
-  
+
   const [initialProducts, availableBrands] = await Promise.all([
     searchWaterSources({}), // Empty filters = get all
     getBrands()
@@ -22,15 +24,15 @@ export default async function SourcesPage(props: { searchParams: SearchParams })
             Water Sources Registry
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
-            Explore our complete registry of mineral and drinking water sources in Malaysia. 
+            Explore our complete registry of mineral and drinking water sources in Malaysia.
             Compare properties, minerals, and locations to find the perfect water source for your needs.
           </p>
         </div>
 
-      <SourcesView 
-        initialProducts={initialProducts} 
-        brands={availableBrands.map(b => ({ id: b.id, brand_name: b.brand_name }))} 
-      />
+        <SourcesView
+          initialProducts={initialProducts}
+          brands={availableBrands.map(b => ({ id: b.id, brand_name: b.brand_name }))}
+        />
       </div>
     </div>
   )

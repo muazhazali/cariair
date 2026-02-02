@@ -9,6 +9,8 @@ import { pb, getImageUrl } from "@/lib/pocketbase"
 import { Product } from "@/lib/types/pocketbase"
 import { SingleSourceMap } from "@/components/single-source-map"
 
+export const dynamic = 'force-dynamic'
+
 // Fetch product from PocketBase
 async function getProduct(id: string): Promise<Product | null> {
   try {

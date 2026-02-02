@@ -8,6 +8,8 @@ import { Product } from "@/lib/types/pocketbase"
 import { ProductFilters } from "@/components/product-filters"
 import { getBrands, searchWaterSources } from "@/lib/products"
 
+export const dynamic = 'force-dynamic'
+
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
 export default async function SearchPage(props: { searchParams: SearchParams }) {
