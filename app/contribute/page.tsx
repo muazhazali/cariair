@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -27,10 +26,10 @@ const formSchema = z.object({
 });
 
 export default function ContributePage() {
-  const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [lastSubmittedAt, setLastSubmittedAt] = useState<number | null>(null);
   
   // Data for selects
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -51,13 +50,7 @@ export default function ContributePage() {
   });
 
   useEffect(() => {
-    // Check auth
-    if (!pb.authStore.isValid) {
-      router.push('/login?redirect=/contribute');
-      return;
-    }
-
-    // Load data
+    // Load data for selects
     const loadData = async () => {
       try {
         const [brandsRes, manufacturersRes, sourcesRes] = await Promise.all([
@@ -81,9 +74,23 @@ export default function ContributePage() {
     };
 
     loadData();
-  }, [router, toast]);
+  }, [toast]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // Simple client-side rate limiting to prevent spamming submissions
+    const now = Date.now();
+    const RATE_LIMIT_WINDOW_MS = 30_000; // 30 seconds
+
+    if (lastSubmittedAt && now - lastSubmittedAt < RATE_LIMIT_WINDOW_MS) {
+      const secondsLeft = Math.ceil((RATE_LIMIT_WINDOW_MS - (now - lastSubmittedAt)) / 1000);
+      toast({
+        variant: "destructive",
+        title: "You're going too fast",
+        description: `Please wait ${secondsLeft} more second${secondsLeft !== 1 ? 's' : ''} before submitting again.`,
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const formData = new FormData();
@@ -95,7 +102,10 @@ export default function ContributePage() {
       if (values.ph_level) formData.append('ph_level', values.ph_level);
       if (values.tds) formData.append('tds', values.tds);
       formData.append('status', 'pending');
-      formData.append('submitted_by', pb.authStore.model?.id);
+      // submitted_by is optional when user is not logged in
+      if (pb.authStore.model?.id) {
+        formData.append('submitted_by', pb.authStore.model.id);
+      }
 
       // Handle image
       const fileInput = document.getElementById('image-upload') as HTMLInputElement;
@@ -111,6 +121,7 @@ export default function ContributePage() {
       });
       
       form.reset();
+      setLastSubmittedAt(now);
       // Optional: redirect to listing or show success state
       
     } catch (error: any) {
