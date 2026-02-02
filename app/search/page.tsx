@@ -2,31 +2,66 @@ import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Slider } from "@/components/ui/slider"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { SearchIcon, Filter, MapPin } from "lucide-react"
+import { SearchIcon } from "lucide-react"
 import { pb, getImageUrl } from "@/lib/pocketbase"
 import { Product } from "@/lib/types/pocketbase"
+import { ProductFilters } from "@/components/product-filters"
 
-async function searchWaterSources(query: string): Promise<Product[]> {
+interface SearchFilters {
+  query?: string
+  types?: string[]
+  brands?: string[]
+  minPh?: number
+  maxPh?: number
+  minTds?: number
+  maxTds?: number
+}
+
+async function getBrands() {
   try {
-    const filterParts = [];
-    if (query) {
-      // Search in product name, barcode, brand name, or source location
-      filterParts.push(`product_name ~ "${query}"`);
-      filterParts.push(`barcode ~ "${query}"`);
-      filterParts.push(`brand.brand_name ~ "${query}"`);
-      filterParts.push(`source.location_address ~ "${query}"`);
+    return await pb.collection('brands').getFullList({ sort: 'brand_name' });
+  } catch (error) {
+    console.error("Error fetching brands:", error);
+    return [];
+  }
+}
+
+async function searchWaterSources(filters: SearchFilters): Promise<Product[]> {
+  try {
+    const filterParts: string[] = [];
+    
+    // Text Search
+    if (filters.query) {
+      filterParts.push(`(product_name ~ "${filters.query}" || barcode ~ "${filters.query}" || brand.brand_name ~ "${filters.query}" || source.location_address ~ "${filters.query}")`);
     }
 
-    const filter = filterParts.length > 0 ? filterParts.join(" || ") : "";
+    // Source Type
+    if (filters.types && filters.types.length > 0) {
+      const typeFilters = filters.types.map(t => `source.type = "${t}"`).join(" || ");
+      filterParts.push(`(${typeFilters})`);
+    }
+
+    // Brands
+    if (filters.brands && filters.brands.length > 0) {
+      const brandFilters = filters.brands.map(b => `brand = "${b}"`).join(" || ");
+      filterParts.push(`(${brandFilters})`);
+    }
+
+    // pH
+    if (filters.minPh !== undefined) filterParts.push(`ph_level >= ${filters.minPh}`);
+    if (filters.maxPh !== undefined) filterParts.push(`ph_level <= ${filters.maxPh}`);
+
+    // TDS
+    if (filters.minTds !== undefined) filterParts.push(`tds >= ${filters.minTds}`);
+    if (filters.maxTds !== undefined) filterParts.push(`tds <= ${filters.maxTds}`);
+
+    const filter = filterParts.length > 0 ? filterParts.join(" && ") : "";
 
     const result = await pb.collection('products').getList<Product>(1, 50, {
       filter,
       expand: 'brand,source,manufacturer',
+      sort: '-created', // Default sort
     });
 
     return result.items;
@@ -41,7 +76,27 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 export default async function SearchPage(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams
   const query = (searchParams.q as string) || ""
-  const results = await searchWaterSources(query)
+  
+  // Parse filters
+  const types = searchParams.type ? (Array.isArray(searchParams.type) ? searchParams.type : [searchParams.type]) : []
+  const brands = searchParams.brand ? (Array.isArray(searchParams.brand) ? searchParams.brand : [searchParams.brand]) : []
+  const minPh = searchParams.min_ph ? Number(searchParams.min_ph) : undefined
+  const maxPh = searchParams.max_ph ? Number(searchParams.max_ph) : undefined
+  const minTds = searchParams.min_tds ? Number(searchParams.min_tds) : undefined
+  const maxTds = searchParams.max_tds ? Number(searchParams.max_tds) : undefined
+
+  const [results, availableBrands] = await Promise.all([
+    searchWaterSources({
+      query,
+      types,
+      brands,
+      minPh,
+      maxPh,
+      minTds,
+      maxTds
+    }),
+    getBrands()
+  ])
 
   return (
     <div className="container px-4 py-8 md:px-6 md:py-12">
@@ -49,94 +104,7 @@ export default async function SearchPage(props: { searchParams: SearchParams }) 
 
       <div className="grid gap-6 md:grid-cols-[240px_1fr]">
         <div className="space-y-6">
-          <div className="sticky top-20">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Filters</h2>
-              <Button variant="ghost" size="sm">
-                Reset
-              </Button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium mb-2">Search</h3>
-                <div className="relative">
-                  <Input placeholder="Search..." defaultValue={query} className="pr-8" />
-                  <SearchIcon className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-                </div>
-              </div>
-
-              {/* Filters are visual only for now */}
-              <div>
-                <h3 className="text-sm font-medium mb-2">Water Type</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="type-mineral" />
-                    <Label htmlFor="type-mineral">Mineral Water</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="type-spring" />
-                    <Label htmlFor="type-spring">Spring Water</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="type-filtered" />
-                    <Label htmlFor="type-filtered">Filtered Water</Label>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium mb-2">pH Level</h3>
-                <div className="space-y-4">
-                  <Slider defaultValue={[6.5, 8.5]} min={0} max={14} step={0.1} />
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>0</span>
-                    <span>7</span>
-                    <span>14</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium mb-2">TDS Range (mg/L)</h3>
-                <div className="space-y-4">
-                  <Slider defaultValue={[0, 500]} min={0} max={1000} step={10} />
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>0</span>
-                    <span>500</span>
-                    <span>1000+</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium mb-2">Location</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="location-perak" />
-                    <Label htmlFor="location-perak">Perak</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="location-selangor" />
-                    <Label htmlFor="location-selangor">Selangor</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="location-penang" />
-                    <Label htmlFor="location-penang">Penang</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="location-johor" />
-                    <Label htmlFor="location-johor">Johor</Label>
-                  </div>
-                </div>
-              </div>
-
-              <Button className="w-full">
-                <Filter className="mr-2 h-4 w-4" />
-                Apply Filters
-              </Button>
-            </div>
-          </div>
+          <ProductFilters brands={availableBrands.map(b => ({ id: b.id, brand_name: b.brand_name }))} />
         </div>
 
         <div>
@@ -144,15 +112,7 @@ export default async function SearchPage(props: { searchParams: SearchParams }) 
             <p className="text-sm text-gray-500">
               {results.length} {results.length === 1 ? "result" : "results"} found
             </p>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-500">Sort by:</span>
-              <select className="rounded-md border border-gray-200 bg-transparent px-2 py-1 text-sm dark:border-gray-800">
-                <option>Relevance</option>
-                <option>Name (A-Z)</option>
-                <option>pH (Low to High)</option>
-                <option>TDS (Low to High)</option>
-              </select>
-            </div>
+            {/* Sorting could be implemented here as well, passing via URL params */}
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -161,19 +121,14 @@ export default async function SearchPage(props: { searchParams: SearchParams }) 
               const source = product.expand?.source;
               const imageUrl = product.images && product.images.length > 0 
                 ? getImageUrl(product, product.images[0])
-                : '/placeholder.jpg'; // We don't have placeholder.svg locally maybe, fallback to placeholder logic or just handle it. 
-              // Actually the original code used /placeholder.svg?height=200...
-              // I will use a placeholder from my public folder if exists or just a generic one.
-              // I'll stick to what I used in WaterSourcesDisplay: /placeholder.jpg (wait, did I use that?)
-              // WaterSourcesDisplay used:
-              // const imageUrl = product.images && product.images.length > 0 ? getImageUrl(product, product.images[0]) : '/placeholder.jpg';
+                : '/placeholder.jpg';
               
               return (
                 <Card key={product.id} className="overflow-hidden flex flex-col">
                   <div className="relative h-48 w-full bg-gray-100 dark:bg-gray-800">
                     <Image
                       src={imageUrl}
-                      alt={product.product_name}
+                      alt={product.product_name || "Product"}
                       fill
                       className="object-contain p-4"
                     />
@@ -192,7 +147,7 @@ export default async function SearchPage(props: { searchParams: SearchParams }) 
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-500 dark:text-gray-400">pH Level:</span>
-                        <span className="text-sm font-medium">{product.ph_level || "N/A"}</span>
+                        <span className="text-sm font-medium">{product.ph_level ?? "N/A"}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-500 dark:text-gray-400">TDS:</span>
@@ -229,4 +184,3 @@ export default async function SearchPage(props: { searchParams: SearchParams }) 
     </div>
   )
 }
-
