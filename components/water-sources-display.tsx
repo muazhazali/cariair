@@ -97,8 +97,8 @@ export function WaterSourcesDisplay() {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold">{product.product_name}</h3>
-                    <p className="text-sm text-gray-500">{brand?.brand_name}</p>
+                    <h3 className="font-semibold">{brand?.brand_name}</h3>
+                    <p className="text-sm text-gray-500">{product.product_name}</p>
                     {source && (
                       <div className="flex items-center mt-2 text-sm text-gray-500 dark:text-gray-400">
                         <MapPin className="h-4 w-4 mr-1" />

@@ -13,7 +13,9 @@
     "type": "base",
     "schema": [
       { "name": "name", "type": "text", "required": true },
-      { "name": "address", "type": "text" }
+      { "name": "address", "type": "text" },
+      { "name": "lat", "type": "number" },
+      { "name": "lng", "type": "number" }
     ]
   },
   {
