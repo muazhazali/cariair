@@ -27,20 +27,20 @@ export function WaterSourceMap() {
 
     L.Marker.prototype.options.icon = DefaultIcon
 
-    // Load products
+    // Load products with related data for a richer popup description
     const loadProducts = async () => {
       try {
-        const result = await pb.collection('products').getList<Product>(1, 50, {
-          expand: 'source',
+        const result = await pb.collection("products").getList<Product>(1, 50, {
+          expand: "brand,manufacturer,source",
           requestKey: null,
-        });
-        setProducts(result.items);
+        })
+        setProducts(result.items)
       } catch (error) {
-        console.error("Error loading products for map:", error);
+        console.error("Error loading products for map:", error)
       }
-    };
+    }
 
-    loadProducts();
+    loadProducts()
   }, [])
 
   if (!mounted) {
@@ -59,21 +59,60 @@ export function WaterSourceMap() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {products.map((product) => {
-          const source = product.expand?.source;
-          if (!source || !source.lat || !source.lng) return null;
+          const source = product.expand?.source
+          const brand = product.expand?.brand
+          const manufacturer = product.expand?.manufacturer
+
+          if (!source || !source.lat || !source.lng) return null
 
           return (
             <Marker key={product.id} position={[source.lat, source.lng]}>
               <Popup>
-                <div>
-                  <h3 className="font-bold">{product.product_name}</h3>
-                  <p>Source: {source.source_name || "Unknown"}</p>
-                  <p>Type: {source.type || "Unknown"}</p>
-                  {/* Link to product detail if we had it */}
+                <div className="space-y-1">
+                  <h3 className="font-semibold text-base">
+                    {brand?.brand_name || product.product_name || "Unnamed product"}
+                  </h3>
+                  {product.product_name && (
+                    <p className="text-sm">
+                      <span className="font-medium">Product:</span> {product.product_name}
+                    </p>
+                  )}
+                  {brand && (
+                    <p className="text-sm">
+                      <span className="font-medium">Brand:</span> {brand.brand_name}
+                    </p>
+                  )}
+                  {manufacturer && (
+                    <p className="text-sm">
+                      <span className="font-medium">Bottled by:</span> {manufacturer.name}
+                    </p>
+                  )}
+                  <p className="text-sm">
+                    <span className="font-medium">Source:</span> {source.source_name || "Unknown"}{" "}
+                    {source.type && <span>({source.type})</span>}
+                  </p>
+                  {source.location_address && (
+                    <p className="text-sm">
+                      <span className="font-medium">Location:</span> {source.location_address}
+                    </p>
+                  )}
+                  {(product.ph_level !== undefined || product.tds !== undefined) && (
+                    <p className="text-sm">
+                      <span className="font-medium">Water profile:</span>{" "}
+                      {product.ph_level !== undefined && <>pH {product.ph_level}</>}
+                      {product.ph_level !== undefined && product.tds !== undefined && " • "}
+                      {product.tds !== undefined && <>TDS {product.tds} mg/L</>}
+                    </p>
+                  )}
+                  {source.kkm_approval_number && (
+                    <p className="text-xs text-muted-foreground">
+                      KKM approval: {source.kkm_approval_number}
+                    </p>
+                  )}
                 </div>
               </Popup>
             </Marker>
-          );
+          )
         })}
       </MapContainer>
     </div>
