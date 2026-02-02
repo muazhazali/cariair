@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -8,11 +8,13 @@ import { Card } from "@/components/ui/card"
 import { LayoutGrid, List, MapPin, ExternalLink, Loader2 } from "lucide-react"
 import { pb, getImageUrl } from "@/lib/pocketbase"
 import { Product } from "@/lib/types/pocketbase"
+import { ProductSort, sortProducts, SortOption } from "@/components/product-sort"
 
 export function WaterSourcesDisplay() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [sortOption, setSortOption] = useState<SortOption>("name_asc")
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -31,6 +33,11 @@ export function WaterSourcesDisplay() {
 
     loadProducts();
   }, []);
+
+  // Sort products based on selected sort option
+  const sortedProducts = useMemo(() => {
+    return sortProducts(products, sortOption)
+  }, [products, sortOption])
 
   if (isLoading) {
     return (
@@ -53,7 +60,8 @@ export function WaterSourcesDisplay() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center gap-4">
+        <ProductSort value={sortOption} onValueChange={setSortOption} />
         <div className="inline-flex rounded-lg border border-gray-200 dark:border-gray-800">
           <Button
             variant="ghost"
@@ -77,18 +85,18 @@ export function WaterSourcesDisplay() {
       </div>
 
       <div className={viewMode === "grid" ? "grid gap-6 sm:grid-cols-2 lg:grid-cols-3" : "space-y-4"}>
-        {products.map((product) => {
+        {sortedProducts.map((product) => {
           const brand = product.expand?.brand;
           const source = product.expand?.source;
-          const imageUrl = product.images && product.images.length > 0 
+          const imageUrl = product.images && product.images.length > 0
             ? getImageUrl(product, product.images[0])
             : '/placeholder.jpg';
 
           return (
-              <Card key={product.id} className={`overflow-hidden ${viewMode === "list" ? "flex" : ""}`}>
-                <Link href={`/sources/${product.id}`} className={`flex-1 block cursor-pointer`}>
-                  <div className={viewMode === "list" ? "flex" : ""}>
-                    <div className={`relative ${viewMode === "list" ? "w-48" : "aspect-video"}`}>
+            <Card key={product.id} className={`overflow-hidden ${viewMode === "list" ? "flex" : ""}`}>
+              <Link href={`/sources/${product.id}`} className={`flex-1 block cursor-pointer`}>
+                <div className={viewMode === "list" ? "flex" : ""}>
+                  <div className={`relative ${viewMode === "list" ? "w-48" : "aspect-video"}`}>
                     <Image
                       src={imageUrl}
                       alt={product.product_name || "Product Image"}

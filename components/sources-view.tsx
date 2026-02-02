@@ -1,13 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 import { SearchIcon } from "lucide-react"
 import { getImageUrl } from "@/lib/pocketbase"
 import { ProductFilters } from "@/components/product-filters"
+import { ProductComparison } from "@/components/product-comparison"
+import { ProductSort, sortProducts, SortOption } from "@/components/product-sort"
 import { searchWaterSources, SearchFilters } from "@/lib/products"
 import { Product } from "@/lib/types/pocketbase"
 
@@ -21,6 +24,8 @@ const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated"]
 export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
   const [products, setProducts] = useState(initialProducts)
   const [loading, setLoading] = useState(false)
+  const [selectedForComparison, setSelectedForComparison] = useState<string[]>([])
+  const [sortOption, setSortOption] = useState<SortOption>("name_asc")
   
   // Initial filter state: Select All by default
   const initialFilters: SearchFilters = {
@@ -85,6 +90,37 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
      }
   }
 
+  // Sort products based on selected sort option
+  const sortedProducts = useMemo(() => {
+    return sortProducts(products, sortOption)
+  }, [products, sortOption])
+
+  // Get selected products for comparison
+  const comparisonProducts = useMemo(() => {
+    return sortedProducts.filter(p => selectedForComparison.includes(p.id))
+  }, [sortedProducts, selectedForComparison])
+
+  const handleToggleComparison = (productId: string) => {
+    setSelectedForComparison(prev => {
+      if (prev.includes(productId)) {
+        return prev.filter(id => id !== productId)
+      } else if (prev.length < 3) {
+        return [...prev, productId]
+      } else {
+        // Replace the first one if already at max
+        return [prev[1], prev[2], productId]
+      }
+    })
+  }
+
+  const handleRemoveFromComparison = (productId: string) => {
+    setSelectedForComparison(prev => prev.filter(id => id !== productId))
+  }
+
+  const handleClearComparison = () => {
+    setSelectedForComparison([])
+  }
+
   return (
     <div className="grid gap-6 md:grid-cols-[240px_1fr]">
       <div className="space-y-6">
@@ -103,22 +139,38 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
       </div>
 
       <div>
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between gap-4">
           <p className="text-sm text-gray-500">
             {loading ? "Updating..." : `${products.length} ${products.length === 1 ? "result" : "results"} found`}
           </p>
+          <ProductSort value={sortOption} onValueChange={setSortOption} />
         </div>
 
         <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ${loading ? "opacity-50" : ""}`}>
-          {products.map((product) => {
+          {sortedProducts.map((product) => {
             const brand = product.expand?.brand;
             const source = product.expand?.source;
             const imageUrl = product.images && product.images.length > 0 
               ? getImageUrl(product, product.images[0])
               : '/placeholder.jpg';
+            const isSelected = selectedForComparison.includes(product.id);
+            const canSelect = selectedForComparison.length < 3 || isSelected;
             
             return (
-              <Card key={product.id} className="overflow-hidden flex flex-col">
+              <Card key={product.id} className="overflow-hidden flex flex-col relative">
+                <div className="absolute top-2 right-2 z-10">
+                  <Checkbox
+                    checked={isSelected}
+                    disabled={!canSelect && !isSelected}
+                    onCheckedChange={() => handleToggleComparison(product.id)}
+                    className="bg-white dark:bg-gray-900"
+                    onClick={(e) => {
+                      if (!canSelect && !isSelected) {
+                        e.preventDefault();
+                      }
+                    }}
+                  />
+                </div>
                 <div className="relative h-48 w-full bg-gray-100 dark:bg-gray-800">
                   <Image
                     src={imageUrl}
@@ -174,6 +226,13 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
           </div>
         )}
       </div>
+
+      {/* Comparison Component */}
+      <ProductComparison
+        products={comparisonProducts}
+        onRemove={handleRemoveFromComparison}
+        onClear={handleClearComparison}
+      />
     </div>
   )
 }
