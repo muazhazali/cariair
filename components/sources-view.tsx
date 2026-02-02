@@ -6,7 +6,8 @@ import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
-import { SearchIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { SearchIcon, MapPin } from "lucide-react"
 import { getImageUrl } from "@/lib/pocketbase"
 import { ProductFilters } from "@/components/product-filters"
 import { ProductComparison } from "@/components/product-comparison"
@@ -139,14 +140,25 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
       </div>
 
       <div>
-        <div className="mb-4 flex items-center justify-between gap-4">
-          <p className="text-sm text-gray-500">
-            {loading ? "Updating..." : `${products.length} ${products.length === 1 ? "result" : "results"} found`}
-          </p>
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {loading ? (
+                <span className="inline-flex items-center gap-2">
+                  <span className="animate-pulse">Updating...</span>
+                </span>
+              ) : (
+                <>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{products.length}</span>
+                  <span className="ml-2">{products.length === 1 ? "water source" : "water sources"} found</span>
+                </>
+              )}
+            </p>
+          </div>
           <ProductSort value={sortOption} onValueChange={setSortOption} />
         </div>
 
-        <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ${loading ? "opacity-50" : ""}`}>
+        <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ${loading ? "opacity-50 pointer-events-none" : ""}`}>
           {sortedProducts.map((product) => {
             const brand = product.expand?.brand;
             const source = product.expand?.source;
@@ -157,13 +169,18 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
             const canSelect = selectedForComparison.length < 3 || isSelected;
             
             return (
-              <Card key={product.id} className="overflow-hidden flex flex-col relative">
-                <div className="absolute top-2 right-2 z-10">
+              <Card 
+                key={product.id} 
+                className={`group overflow-hidden flex flex-col relative border-2 transition-all duration-200 hover:shadow-xl hover:border-primary/50 ${
+                  isSelected ? 'ring-2 ring-primary border-primary' : ''
+                }`}
+              >
+                <div className="absolute top-3 right-3 z-10">
                   <Checkbox
                     checked={isSelected}
                     disabled={!canSelect && !isSelected}
                     onCheckedChange={() => handleToggleComparison(product.id)}
-                    className="bg-white dark:bg-gray-900"
+                    className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-md"
                     onClick={(e) => {
                       if (!canSelect && !isSelected) {
                         e.preventDefault();
@@ -171,44 +188,83 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
                     }}
                   />
                 </div>
-                <div className="relative h-48 w-full bg-gray-100 dark:bg-gray-800">
-                  <Image
-                    src={imageUrl}
-                    alt={product.product_name || "Product"}
-                    fill
-                    className="object-contain p-4"
-                  />
-                </div>
-                <CardContent className="p-4 flex-1">
-                  <div className="mb-2 flex items-center justify-between">
-                    <h3 className="text-lg font-semibold line-clamp-1" title={product.product_name}>{product.product_name}</h3>
-                    <Badge variant="outline">{source?.type || "Unknown"}</Badge>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500 dark:text-gray-400">Location:</span>
-                      <span className="text-sm font-medium line-clamp-1 text-right max-w-[50%]" title={source?.location_address}>
-                        {source?.location_address || "Unknown"}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500 dark:text-gray-400">pH Level:</span>
-                      <span className="text-sm font-medium">{product.ph_level ?? "N/A"}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500 dark:text-gray-400">TDS:</span>
-                      <span className="text-sm font-medium">{product.tds ? `${product.tds} mg/L` : "N/A"}</span>
+                
+                {/* Image Section */}
+                <Link href={`/sources/${product.id}`} className="block">
+                  <div className="relative h-56 w-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-hidden">
+                    <Image
+                      src={imageUrl}
+                      alt={product.product_name || "Product"}
+                      fill
+                      className="object-contain p-6 transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute top-3 left-3">
+                      <Badge variant="secondary" className="shadow-sm">
+                        {source?.type || "Unknown"}
+                      </Badge>
                     </div>
                   </div>
-                </CardContent>
-                <CardFooter className="p-4 pt-0 mt-auto">
-                  <Link
-                    href={`/sources/${product.id}`}
-                    className="w-full text-center text-sm font-medium text-primary hover:underline"
-                  >
-                    View Details
+                </Link>
+
+                <CardContent className="p-5 flex-1 flex flex-col">
+                  {/* Product Name */}
+                  <Link href={`/sources/${product.id}`} className="block mb-3">
+                    <h3 className="text-xl font-bold line-clamp-2 group-hover:text-primary transition-colors" title={product.product_name}>
+                      {product.product_name}
+                    </h3>
+                    {brand?.brand_name && (
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        {brand.brand_name}
+                      </p>
+                    )}
                   </Link>
-                </CardFooter>
+
+                  {/* Key Metrics */}
+                  <div className="space-y-3 mb-4 flex-1">
+                    {source?.location_address && (
+                      <div className="flex items-start gap-2">
+                        <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2" title={source.location_address}>
+                          {source.location_address}
+                        </span>
+                      </div>
+                    )}
+                    
+                    <div className="grid grid-cols-2 gap-3 pt-2 border-t border-gray-200 dark:border-gray-800">
+                      <div>
+                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">pH Level</div>
+                        <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                          {product.ph_level ?? (
+                            <span className="text-sm font-normal text-gray-400">N/A</span>
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">TDS</div>
+                        <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                          {product.tds ? (
+                            <>
+                              {product.tds}
+                              <span className="text-xs font-normal text-gray-500 ml-1">mg/L</span>
+                            </>
+                          ) : (
+                            <span className="text-sm font-normal text-gray-400">N/A</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  <Link href={`/sources/${product.id}`} className="block">
+                    <Button 
+                      variant="outline" 
+                      className="w-full border-2 group-hover:border-primary group-hover:text-primary transition-colors"
+                    >
+                      View Full Details
+                    </Button>
+                  </Link>
+                </CardContent>
               </Card>
             )
           })}

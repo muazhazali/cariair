@@ -15,18 +15,23 @@ export default async function SourcesPage(props: { searchParams: SearchParams })
   ])
 
   return (
-    <div className="container py-8 md:py-12">
-      <div className="flex flex-col gap-4 mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">All Water Sources</h1>
-        <p className="text-gray-500 dark:text-gray-400">
-          Explore our complete registry of mineral and drinking water sources in Malaysia.
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
+      <div className="container py-8 md:py-12">
+        <div className="flex flex-col gap-3 mb-10">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
+            Water Sources Registry
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
+            Explore our complete registry of mineral and drinking water sources in Malaysia. 
+            Compare properties, minerals, and locations to find the perfect water source for your needs.
+          </p>
+        </div>
 
       <SourcesView 
         initialProducts={initialProducts} 
         brands={availableBrands.map(b => ({ id: b.id, brand_name: b.brand_name }))} 
       />
+      </div>
     </div>
   )
 }
