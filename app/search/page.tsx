@@ -27,7 +27,6 @@ async function searchWaterSources(query: string): Promise<Product[]> {
     const result = await pb.collection('products').getList<Product>(1, 50, {
       filter,
       expand: 'brand,source,manufacturer',
-      sort: '-created',
     });
 
     return result.items;

@@ -19,7 +19,6 @@ export function WaterSourcesDisplay() {
       try {
         const result = await pb.collection('products').getList<Product>(1, 50, {
           expand: 'brand,source',
-          sort: '-created',
           requestKey: null,
         });
         setProducts(result.items);
