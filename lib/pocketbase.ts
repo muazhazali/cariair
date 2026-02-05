@@ -1,9 +1,8 @@
 import PocketBase from 'pocketbase';
 
 // Use the environment variable or fallback to the provided URL
-const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
-
-console.log('Connecting to PocketBase at:', pbUrl);
+// On Vercel, set NEXT_PUBLIC_POCKETBASE_URL to your public PocketBase URL (e.g. https://your-pb.example.com)
+const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL;
 
 export const pb = new PocketBase(pbUrl);
 
