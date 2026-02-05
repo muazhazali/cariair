@@ -1,27 +1,43 @@
 import PocketBase from 'pocketbase';
 
-// Use the environment variable or fallback to the provided URL
-// On Vercel, set NEXT_PUBLIC_POCKETBASE_URL to your public PocketBase URL (e.g. https://your-pb.example.com)
-const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL;
+// Lazy singleton: URL is read on first use (at request time on server), not at module load.
+// This fixes Vercel 404s where env was undefined at load time (e.g. build before env was set).
+let _pb: PocketBase | null = null;
 
-export const pb = new PocketBase(pbUrl);
+function getPbUrl(): string {
+  return 'https://pb2.muaz.app';
+}
+
+function getPb(): PocketBase {
+  if (!_pb) {
+    _pb = new PocketBase(getPbUrl());
+  }
+  return _pb;
+}
+
+// Lazy proxy so existing code using `pb` keeps working; first access initializes with current env.
+export const pb = new Proxy({} as PocketBase, {
+  get(_, prop) {
+    return (getPb() as unknown as Record<string, unknown>)[prop as string];
+  },
+});
 
 // Helper to check if user is logged in
 export const isUserLoggedIn = () => {
-  return pb.authStore.isValid;
+  return getPb().authStore.isValid;
 };
 
 // Helper to get current user
 export const getCurrentUser = () => {
-  return pb.authStore.model;
+  return getPb().authStore.model;
 };
 
 // Helper to logout
 export const logout = () => {
-  pb.authStore.clear();
+  getPb().authStore.clear();
 };
 
-// Helper to get image URL
+// Helper to get image URL (uses same base URL as client)
 export const getImageUrl = (record: any, filename: string) => {
-  return `${pbUrl}/api/files/${record.collectionId}/${record.id}/${filename}`;
+  return `${getPbUrl()}/api/files/${record.collectionId}/${record.id}/${filename}`;
 };

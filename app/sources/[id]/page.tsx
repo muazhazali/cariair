@@ -19,17 +19,22 @@ async function getProduct(id: string): Promise<Product | null> {
     });
     return product;
   } catch (error) {
-    console.error("Error fetching product:", error);
+    const msg = error instanceof Error ? error.message : String(error);
+    // Re-throw env errors so Vercel shows 500 with message instead of silent 404
+    if (msg.includes("NEXT_PUBLIC_POCKETBASE_URL")) {
+      throw error;
+    }
+    console.error("[sources/[id]] Error fetching product:", id, error);
     return null;
   }
 }
 
 export default async function SourcePage({ params }: { params: { id: string } }) {
   const { id } = await params;
-  const product = await getProduct(id)
+  const product = await getProduct(id);
 
   if (!product) {
-    notFound()
+    notFound();
   }
 
   const brand = product.expand?.brand;
