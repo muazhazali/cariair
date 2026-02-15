@@ -8,6 +8,8 @@ import { ArrowLeft, MapPin, Droplet, BarChart3, Calendar, Building2, Globe, Chec
 import { pb, getImageUrl } from "@/lib/pocketbase"
 import { Product } from "@/lib/types/pocketbase"
 import { SingleSourceMap } from "@/components/single-source-map"
+import { MineralCompositionPanel } from "@/components/mineral-composition-panel"
+import { HealthBenefitsPanel } from "@/components/health-benefits-panel"
 
 export const dynamic = 'force-dynamic'
 
@@ -222,59 +224,16 @@ export default async function SourcePage({ params }: { params: { id: string } })
               </CardContent>
             </Card>
 
-            {/* Mineral Composition Section */}
-            <Card className="border-2">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center text-xl">
-                  <BarChart3 className="mr-2 h-6 w-6 text-purple-500" />
-                  Mineral Composition
-                </CardTitle>
-                <CardDescription className="text-base mt-2">
-                  Detailed breakdown of minerals and their concentrations
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {minerals.length > 0 ? (
-                  <div className="space-y-5">
-                    {minerals.map((mineral: any, index: number) => {
-                      const maxAmount = Math.max(...minerals.map((m: any) => m.amount || 0))
-                      const percentage = maxAmount > 0 ? (mineral.amount / maxAmount) * 100 : 0
-                      
-                      return (
-                        <div key={index} className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <div className="text-base font-semibold capitalize">
-                                {mineral.name}
-                                {mineral.symbol && (
-                                  <span className="ml-2 text-sm font-normal text-gray-500 dark:text-gray-400">
-                                    ({mineral.symbol})
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                            <div className="text-base font-bold text-gray-900 dark:text-gray-100">
-                              {mineral.amount} {mineral.unit || "mg/L"}
-                            </div>
-                          </div>
-                          <div className="h-3 w-full rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-500"
-                              style={{ width: `${Math.min(100, percentage)}%` }}
-                            />
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <BarChart3 className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-700 mb-3" />
-                    <p className="text-sm text-gray-500 dark:text-gray-400">No mineral data available</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            {/* Mineral Composition Section - Enhanced */}
+            <MineralCompositionPanel minerals={minerals} productName={product.product_name || "Unknown"} />
+
+            {/* Health Benefits Section */}
+            <HealthBenefitsPanel
+              minerals={minerals}
+              phLevel={product.ph_level}
+              tds={product.tds}
+              productName={product.product_name || "Unknown"}
+            />
 
             {/* Map Section */}
             {source?.lat && source?.lng ? (

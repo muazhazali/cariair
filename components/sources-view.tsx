@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SearchIcon, MapPin } from "lucide-react"
 import { getImageUrl } from "@/lib/pocketbase"
-import { ProductFilters } from "@/components/product-filters"
+import { EnhancedProductFilters } from "@/components/enhanced-product-filters"
 import { ProductComparison } from "@/components/product-comparison"
 import { ProductSort, sortProducts, SortOption } from "@/components/product-sort"
 import { searchWaterSources, SearchFilters } from "@/lib/products"
@@ -145,11 +145,11 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-[240px_1fr]">
+    <div className="grid gap-6 md:grid-cols-[280px_1fr]">
       <div className="space-y-6">
-        <ProductFilters 
-          brands={brands} 
-          onApply={handleFilterChange} 
+        <EnhancedProductFilters
+          brands={brands}
+          onApply={handleFilterChange}
           defaultValues={{
             types: initialFilters.types,
             brands: initialFilters.brands,

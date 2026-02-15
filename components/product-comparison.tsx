@@ -11,10 +11,26 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { X, Scale } from "lucide-react"
+import { X, Scale, BarChart3, Table2 } from "lucide-react"
 import { getImageUrl } from "@/lib/pocketbase"
 import { Product } from "@/lib/types/pocketbase"
 import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { MobileComparisonCarousel } from "@/components/mobile-comparison-carousel"
+import { useIsMobile } from "@/hooks/use-mobile"
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Cell,
+  RadialBarChart,
+  RadialBar,
+} from "recharts"
 
 interface ProductComparisonProps {
   products: Product[]
@@ -24,9 +40,236 @@ interface ProductComparisonProps {
 
 export function ProductComparison({ products, onRemove, onClear }: ProductComparisonProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const isMobile = useIsMobile()
 
   if (products.length === 0) {
     return null
+  }
+
+  // Helper function to get pH color
+  const getPhColor = (ph: number | undefined) => {
+    if (!ph) return "#94a3b8" // gray
+    if (ph < 6.5) return "#ef4444" // red - acidic
+    if (ph > 8) return "#3b82f6" // blue - alkaline
+    return "#22c55e" // green - neutral
+  }
+
+  // Helper function to get pH label
+  const getPhLabel = (ph: number | undefined) => {
+    if (!ph) return "Unknown"
+    if (ph < 6.5) return "Acidic"
+    if (ph > 8) return "Alkaline"
+    return "Neutral"
+  }
+
+  // Helper function to get TDS color
+  const getTdsColor = (tds: number | undefined) => {
+    if (!tds) return "#94a3b8" // gray
+    if (tds < 100) return "#22c55e" // green - low
+    if (tds < 300) return "#eab308" // yellow - moderate
+    return "#ef4444" // red - high
+  }
+
+  // Helper function to get TDS level
+  const getTdsLevel = (tds: number | undefined) => {
+    if (!tds) return "Unknown"
+    if (tds < 100) return "Low"
+    if (tds < 300) return "Moderate"
+    return "High"
+  }
+
+  // Prepare pH comparison data
+  const phData = products.map((product) => ({
+    name: product.expand?.brand?.brand_name || "Unknown",
+    pH: product.ph_level || 0,
+    color: getPhColor(product.ph_level),
+    label: getPhLabel(product.ph_level),
+  }))
+
+  // Prepare TDS comparison data
+  const tdsData = products.map((product) => ({
+    name: product.expand?.brand?.brand_name || "Unknown",
+    tds: product.tds || 0,
+    color: getTdsColor(product.tds),
+    level: getTdsLevel(product.tds),
+    percentage: product.tds ? Math.min((product.tds / 500) * 100, 100) : 0,
+  }))
+
+  // Prepare minerals data - combine all unique minerals from all products
+  const getMineralsData = () => {
+    const mineralsMap = new Map<string, any>()
+
+    products.forEach((product) => {
+      let minerals: any[] = []
+      if (typeof product.minerals_json === 'string') {
+        try {
+          minerals = JSON.parse(product.minerals_json)
+        } catch (e) {
+          console.error("Error parsing minerals JSON", e)
+        }
+      } else if (Array.isArray(product.minerals_json)) {
+        minerals = product.minerals_json
+      }
+
+      minerals.forEach((mineral: any) => {
+        const key = mineral.name || mineral.symbol
+        if (!mineralsMap.has(key)) {
+          mineralsMap.set(key, {
+            name: key,
+            symbol: mineral.symbol,
+          })
+        }
+        // Add this product's mineral amount
+        const brandName = product.expand?.brand?.brand_name || "Unknown"
+        mineralsMap.get(key)![brandName] = mineral.amount || 0
+      })
+    })
+
+    return Array.from(mineralsMap.values())
+  }
+
+  const mineralsData = getMineralsData()
+
+  // Chart view components
+  const PhComparisonChart = () => (
+    <Card className="p-6">
+      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+        <BarChart3 className="h-5 w-5 text-blue-500" />
+        pH Level Comparison
+      </h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={phData} layout="horizontal">
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis type="number" domain={[0, 14]} label={{ value: 'pH Level', position: 'bottom' }} />
+          <YAxis type="category" dataKey="name" width={120} />
+          <Tooltip
+            content={({ active, payload }) => {
+              if (active && payload && payload.length) {
+                const data = payload[0].payload
+                return (
+                  <div className="bg-white dark:bg-gray-800 p-3 border rounded shadow-lg">
+                    <p className="font-semibold">{data.name}</p>
+                    <p className="text-sm">pH: {data.pH}</p>
+                    <p className="text-sm" style={{ color: data.color }}>
+                      {data.label}
+                    </p>
+                  </div>
+                )
+              }
+              return null
+            }}
+          />
+          <Bar dataKey="pH" radius={[0, 8, 8, 0]}>
+            {phData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+      <div className="flex justify-center gap-6 mt-4 text-sm">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded" style={{ backgroundColor: "#ef4444" }} />
+          <span>Acidic (&lt;6.5)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded" style={{ backgroundColor: "#22c55e" }} />
+          <span>Neutral (6.5-8)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded" style={{ backgroundColor: "#3b82f6" }} />
+          <span>Alkaline (&gt;8)</span>
+        </div>
+      </div>
+    </Card>
+  )
+
+  const TdsComparisonChart = () => (
+    <Card className="p-6">
+      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+        <BarChart3 className="h-5 w-5 text-green-500" />
+        TDS Comparison (Total Dissolved Solids)
+      </h3>
+      <div className="space-y-6">
+        {tdsData.map((item, index) => (
+          <div key={index} className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="font-medium">{item.name}</span>
+              <span className="text-sm font-semibold">
+                {item.tds} mg/L - <span style={{ color: item.color }}>{item.level}</span>
+              </span>
+            </div>
+            <div className="relative h-8 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+              <div
+                className="absolute h-full rounded-full transition-all duration-500"
+                style={{
+                  width: `${item.percentage}%`,
+                  backgroundColor: item.color,
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-center gap-6 mt-6 text-sm">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded" style={{ backgroundColor: "#22c55e" }} />
+          <span>Low (&lt;100)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded" style={{ backgroundColor: "#eab308" }} />
+          <span>Moderate (100-300)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded" style={{ backgroundColor: "#ef4444" }} />
+          <span>High (&gt;300)</span>
+        </div>
+      </div>
+    </Card>
+  )
+
+  const MineralsComparisonChart = () => {
+    if (mineralsData.length === 0) {
+      return (
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Mineral Composition</h3>
+          <p className="text-center text-gray-500 dark:text-gray-400 py-8">
+            No mineral data available for comparison
+          </p>
+        </Card>
+      )
+    }
+
+    // Colors for different products
+    const colors = ["#8b5cf6", "#3b82f6", "#10b981"]
+
+    return (
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <BarChart3 className="h-5 w-5 text-purple-500" />
+          Mineral Composition (mg/L)
+        </h3>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={mineralsData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis label={{ value: 'mg/L', angle: -90, position: 'insideLeft' }} />
+            <Tooltip />
+            <Legend />
+            {products.map((product, index) => {
+              const brandName = product.expand?.brand?.brand_name || "Unknown"
+              return (
+                <Bar
+                  key={product.id}
+                  dataKey={brandName}
+                  fill={colors[index % colors.length]}
+                  radius={[8, 8, 0, 0]}
+                />
+              )
+            })}
+          </BarChart>
+        </ResponsiveContainer>
+      </Card>
+    )
   }
 
   const ComparisonTable = () => (
@@ -147,7 +390,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
               Compare up to 3 products side by side
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <div className="text-sm text-muted-foreground">
@@ -158,7 +401,33 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
               </Button>
             </div>
 
-            {products.length > 0 && <ComparisonTable />}
+            {/* Mobile vs Desktop View */}
+            {isMobile ? (
+              <MobileComparisonCarousel products={products} />
+            ) : (
+              <Tabs defaultValue="charts" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="charts" className="flex items-center gap-2">
+                    <BarChart3 className="h-4 w-4" />
+                    Chart View
+                  </TabsTrigger>
+                  <TabsTrigger value="table" className="flex items-center gap-2">
+                    <Table2 className="h-4 w-4" />
+                    Table View
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="charts" className="space-y-6 mt-6">
+                  <PhComparisonChart />
+                  <TdsComparisonChart />
+                  <MineralsComparisonChart />
+                </TabsContent>
+
+                <TabsContent value="table" className="mt-6">
+                  <ComparisonTable />
+                </TabsContent>
+              </Tabs>
+            )}
 
             <div className="flex flex-wrap gap-2 pt-4 border-t">
               {products.map((product) => (

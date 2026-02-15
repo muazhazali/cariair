@@ -17,6 +17,10 @@ export function MainNav() {
       label: "All Sources",
     },
     {
+      href: "/analytics",
+      label: "Analytics",
+    },
+    {
       href: "/map",
       label: "Map",
     },
