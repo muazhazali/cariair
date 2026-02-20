@@ -104,6 +104,7 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
     defaultValues?.brands || brands.map(b => b.id)
   )
   const [isOpen, setIsOpen] = React.useState(false)
+  const [selectedPreset, setSelectedPreset] = React.useState<string | null>(null)
 
   // Collapsible sections state
   const [openSections, setOpenSections] = React.useState({
@@ -177,9 +178,15 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
 
   // Apply health preset
   const applyPreset = (preset: typeof HEALTH_PRESETS[0]) => {
-    setPhRange([preset.filters.minPh ?? 0, preset.filters.maxPh ?? 14])
-    setTdsRange([preset.filters.minTds ?? 0, preset.filters.maxTds ?? 500])
-    // Keep current type and brand selections
+    if (selectedPreset === preset.id) {
+      setSelectedPreset(null)
+      setPhRange([0, 14])
+      setTdsRange([0, 500])
+    } else {
+      setSelectedPreset(preset.id)
+      setPhRange([preset.filters.minPh ?? 0, preset.filters.maxPh ?? 14])
+      setTdsRange([preset.filters.minTds ?? 0, preset.filters.maxTds ?? 500])
+    }
   }
 
   // Remove individual filter
@@ -289,13 +296,13 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
                 variant="outline"
                 size="sm"
                 onClick={() => applyPreset(preset)}
-                className="h-auto p-3 flex flex-col items-start gap-1 hover:bg-purple-50 dark:hover:bg-purple-950/20"
+                className={`h-auto p-3 flex flex-col items-start gap-1 overflow-hidden min-w-0 transition-colors ${selectedPreset === preset.id ? "bg-purple-100 border-purple-400 dark:bg-purple-950/40 dark:border-purple-600" : "hover:bg-purple-50 dark:hover:bg-purple-950/20"}`}
               >
-                <div className="flex items-center gap-2 w-full">
-                  <preset.icon className="h-4 w-4" />
-                  <span className="text-xs font-semibold">{preset.name}</span>
+                <div className="flex items-center gap-2 w-full min-w-0">
+                  <preset.icon className="h-4 w-4 shrink-0" />
+                  <span className="text-xs font-semibold break-words">{preset.name}</span>
                 </div>
-                <span className="text-xs text-gray-500 dark:text-gray-400 text-left">
+                <span className="text-xs text-gray-500 dark:text-gray-400 text-left break-words">
                   {preset.description}
                 </span>
               </Button>
