@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Search } from "@/components/search"
 import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { pb } from "@/lib/pocketbase"
-import { Droplet, Map, Zap, ArrowRight } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { pb, getImageUrl } from "@/lib/pocketbase"
+import { Droplet, Map, Zap, ArrowRight, MapPin } from "lucide-react"
 
 const WaterSourceMap = dynamic(() => import("@/components/water-source-map").then(mod => mod.WaterSourceMap), {
   ssr: false,
@@ -51,11 +53,19 @@ function FeaturedProducts() {
 
   if (loading) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="relative h-64 overflow-hidden rounded-lg border border-white/30 bg-white/20 backdrop-blur-xl dark:border-white/20 dark:bg-black/20 animate-pulse">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5" />
-          </div>
+          <Card key={i} className="overflow-hidden animate-pulse">
+            <div className="relative h-48 sm:h-56 w-full bg-gray-200 dark:bg-gray-800" />
+            <CardContent className="p-4 sm:p-5 space-y-3">
+              <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded" />
+              <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-2/3" />
+              <div className="grid grid-cols-2 gap-3 pt-3">
+                <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded-lg" />
+                <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded-lg" />
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     )
@@ -70,82 +80,109 @@ function FeaturedProducts() {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {products.map((product) => {
         const brand = product.expand?.brand
         const source = product.expand?.source
+        const imageUrl = product.images && product.images.length > 0
+          ? getImageUrl(product, product.images[0])
+          : '/placeholder.jpg'
 
         return (
-          <Link
+          <Card
             key={product.id}
-            href={`/sources/${product.id}`}
-            className="group relative flex flex-col p-6 rounded-lg border border-white/30 bg-white/20 backdrop-blur-xl dark:border-white/20 dark:bg-black/20 hover:shadow-2xl hover:border-blue-400/50 dark:hover:border-blue-500/50 transition-all duration-300 hover:scale-[1.02] overflow-hidden"
+            className="group overflow-hidden flex flex-col border-2 border-gray-200 dark:border-gray-800 transition-all duration-200 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 rounded-lg"
           >
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-300" />
-
-            {/* Brand/Product Name */}
-            <div className="relative mb-4">
-              <h3 className="text-lg font-bold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
-                {brand?.brand_name || product.product_name || "Unknown Product"}
-              </h3>
-              {brand && product.product_name && (
-                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{product.product_name}</p>
-              )}
-            </div>
-
-            {/* Water Properties - Simple Display */}
-            <div className="relative flex items-center justify-around py-4 border-t border-b border-white/20 dark:border-white/10 gap-4">
-              {product.ph_level !== undefined && product.ph_level !== null && (
-                <div className="flex flex-col items-center gap-1.5">
-                  <div className={`text-2xl font-bold ${
-                    product.ph_level < 7
-                      ? "text-orange-600 dark:text-orange-400"
-                      : product.ph_level > 7.5
-                      ? "text-blue-600 dark:text-blue-400"
-                      : "text-green-600 dark:text-green-400"
-                  }`}>
-                    {product.ph_level.toFixed(1)}
-                  </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">pH Level</div>
-                </div>
-              )}
-
-              {product.tds !== undefined && product.tds !== null && (
-                <div className="flex flex-col items-center gap-1.5">
-                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                    {product.tds.toFixed(1)}
-                  </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">TDS</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-500">mg/L</div>
-                </div>
-              )}
-
-              {/* Source Location */}
-              {source?.location_address && (
-                <div className="flex items-start gap-2 pt-2 border-t border-white/20 dark:border-white/10">
-                  <Map className="h-4 w-4 text-blue-500 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                  <span className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">
-                    {source.location_address}
-                  </span>
-                </div>
-              )}
-
-              {/* Source Type Badge */}
-              {source?.type && (
-                <div className="pt-2">
-                  <Badge variant="secondary" className="text-xs bg-white/40 dark:bg-black/40 backdrop-blur-sm border-white/30 dark:border-white/20">
-                    {source.type}
+            {/* Image Section */}
+            <Link href={`/sources/${product.id}`} className="block">
+              <div className="relative h-48 sm:h-56 w-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-hidden rounded-t-lg">
+                <Image
+                  src={imageUrl}
+                  alt={product.product_name || "Product"}
+                  fill
+                  className="object-contain p-4 sm:p-6 transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+                  <Badge variant="secondary" className="shadow-sm text-xs">
+                    {source?.type || "Unknown"}
                   </Badge>
                 </div>
-              )}
-            </div>
+              </div>
+            </Link>
 
-            {/* Hover Arrow */}
-            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-              <ArrowRight className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            </div>
-          </Link>
+            <CardContent className="p-4 sm:p-5 flex-1 flex flex-col">
+              {/* Product Name */}
+              <Link href={`/sources/${product.id}`} className="block mb-2 sm:mb-3">
+                {brand?.brand_name && (
+                  <h3 className="text-lg sm:text-xl font-bold line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {brand.brand_name}
+                  </h3>
+                )}
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1" title={product.product_name}>
+                  {product.product_name}
+                </p>
+              </Link>
+
+              {/* Key Metrics */}
+              <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4 flex-1">
+                {source?.location_address && (
+                  <div className="flex items-start gap-2">
+                    <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2" title={source.location_address}>
+                      {source.location_address}
+                    </span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                  {product.ph_level !== undefined && product.ph_level !== null ? (
+                    <div className="flex flex-col items-center justify-center py-3 px-2 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
+                      <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">pH Level</div>
+                      <div className={`text-3xl font-bold ${
+                        product.ph_level < 7
+                          ? "text-orange-600 dark:text-orange-400"
+                          : product.ph_level > 7.5
+                          ? "text-blue-600 dark:text-blue-400"
+                          : "text-green-600 dark:text-green-400"
+                      }`}>
+                        {product.ph_level.toFixed(1)}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-3 px-2 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
+                      <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">pH Level</div>
+                      <div className="text-sm font-normal text-gray-400 mt-1">N/A</div>
+                    </div>
+                  )}
+
+                  {product.tds !== undefined && product.tds !== null ? (
+                    <div className="flex flex-col items-center justify-center py-3 px-2 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
+                      <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">TDS</div>
+                      <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                        {product.tds.toFixed(0)}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">mg/L</div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-3 px-2 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
+                      <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">TDS</div>
+                      <div className="text-sm font-normal text-gray-400 mt-1">N/A</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <Link href={`/sources/${product.id}`} className="block">
+                <Button
+                  variant="outline"
+                  className="w-full border-2 text-sm group-hover:border-blue-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+                >
+                  View Full Details
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         )
       })}
     </div>

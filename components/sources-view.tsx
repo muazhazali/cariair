@@ -274,14 +274,14 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
                 <CardContent className="p-4 sm:p-5 flex-1 flex flex-col">
                   {/* Product Name */}
                   <Link href={`/sources/${product.id}`} className="block mb-2 sm:mb-3">
-                    <h3 className="text-lg sm:text-xl font-bold line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" title={product.product_name}>
-                      {product.product_name}
-                    </h3>
                     {brand?.brand_name && (
-                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      <h3 className="text-lg sm:text-xl font-bold line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         {brand.brand_name}
-                      </p>
+                      </h3>
                     )}
+                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1" title={product.product_name}>
+                      {product.product_name}
+                    </p>
                   </Link>
 
                   {/* Key Metrics */}
