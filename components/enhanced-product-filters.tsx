@@ -7,13 +7,13 @@ import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Badge } from "@/components/ui/badge"
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import {
   Collapsible,
   CollapsibleContent,
@@ -34,6 +34,8 @@ interface EnhancedProductFiltersProps {
     minTds?: number
     maxTds?: number
   }
+  /** "sidebar" renders the filter content inline (desktop). "dialog" wraps in a button+dialog (default). */
+  mode?: "sidebar" | "dialog"
 }
 
 const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated"]
@@ -87,7 +89,7 @@ const HEALTH_PRESETS = [
   },
 ]
 
-export function EnhancedProductFilters({ brands, onApply, defaultValues }: EnhancedProductFiltersProps) {
+export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = "dialog" }: EnhancedProductFiltersProps) {
   // State initialization
   const [types, setTypes] = React.useState<string[]>(defaultValues?.types || WATER_TYPES)
   const [phRange, setPhRange] = React.useState<[number, number]>([
@@ -483,6 +485,12 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues }: Enhan
     </div>
   )
 
+  // Sidebar mode: render filter content inline (for desktop sidebar)
+  if (mode === "sidebar") {
+    return <>{FilterContent}</>
+  }
+
+  // Dialog mode: render a trigger button that opens a dialog (legacy / not used directly)
   return (
     <>
       {/* Active Filter Chips (shown above results) */}
@@ -513,10 +521,10 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues }: Enhan
         </div>
       )}
 
-      {/* Mobile Filter Button */}
-      <div className="md:hidden mb-4">
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild>
+      {/* Filter Button - Dialog trigger */}
+      <div className="mb-4">
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild>
             <Button variant="outline" className="w-full relative">
               <Filter className="mr-2 h-4 w-4" />
               Filters
@@ -526,37 +534,22 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues }: Enhan
                 </Badge>
               )}
             </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-            <SheetHeader>
-              <SheetTitle>Filters</SheetTitle>
-              <SheetDescription>
-                Refine your search results
-              </SheetDescription>
-            </SheetHeader>
-            <div className="py-6 h-full overflow-y-auto pb-20">
+          </DialogTrigger>
+          <DialogContent className="max-w-[95vw] w-full sm:max-w-[600px] max-h-[85vh] p-0">
+            <DialogHeader className="px-6 pt-6 pb-4">
+              <DialogTitle className="flex items-center gap-2">
+                <Filter className="h-5 w-5" />
+                Filter Water Sources
+              </DialogTitle>
+              <DialogDescription>
+                Refine your search results by adjusting the filters below
+              </DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="h-[calc(85vh-120px)] px-6">
               {FilterContent}
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
-
-      {/* Desktop Filter Sidebar */}
-      <div className="hidden md:block">
-        <div className="sticky top-20">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Filter className="h-5 w-5" />
-              Filters
-              {activeFilterCount > 0 && (
-                <Badge variant="default" className="h-5 min-w-5 px-1.5">
-                  {activeFilterCount}
-                </Badge>
-              )}
-            </h2>
-          </div>
-          {FilterContent}
-        </div>
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   )

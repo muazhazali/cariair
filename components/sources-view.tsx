@@ -147,11 +147,12 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-      {/* Filters - Hidden on mobile by default, can be shown with a toggle button */}
+      {/* Filters - Sidebar on desktop, hidden on mobile (mobile uses MobileFiltersSheet) */}
       <div className="hidden lg:block space-y-6">
         <EnhancedProductFilters
           brands={brands}
           onApply={handleFilterChange}
+          mode="sidebar"
           defaultValues={{
             types: initialFilters.types,
             brands: initialFilters.brands,

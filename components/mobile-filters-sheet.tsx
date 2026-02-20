@@ -98,6 +98,7 @@ export function MobileFiltersSheet({ brands, onApply, defaultValues }: MobileFil
                   brands={brands}
                   onApply={handleApply}
                   defaultValues={defaultValues}
+                  mode="sidebar"
                 />
               </div>
             </div>
