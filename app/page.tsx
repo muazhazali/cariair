@@ -139,13 +139,12 @@ function FeaturedProducts() {
                   {product.ph_level !== undefined && product.ph_level !== null ? (
                     <div className="flex flex-col items-center justify-center py-3 px-2 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
                       <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">pH Level</div>
-                      <div className={`text-3xl font-bold ${
-                        product.ph_level < 7
+                      <div className={`text-3xl font-bold ${product.ph_level < 7
                           ? "text-orange-600 dark:text-orange-400"
                           : product.ph_level > 7.5
-                          ? "text-blue-600 dark:text-blue-400"
-                          : "text-green-600 dark:text-green-400"
-                      }`}>
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-green-600 dark:text-green-400"
+                        }`}>
                         {product.ph_level.toFixed(1)}
                       </div>
                     </div>
@@ -385,38 +384,6 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-
-      {/* Footer - Glassy */}
-      <footer className="relative mt-12 overflow-hidden">
-        {/* Glassy footer background */}
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-100 to-transparent dark:from-gray-950 dark:to-transparent" />
-        <div className="relative border-t border-white/30 dark:border-white/20 bg-white/20 backdrop-blur-xl dark:bg-black/20">
-          <div className="container flex flex-col gap-4 py-8 px-4 md:px-6">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 group">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md transition-transform group-hover:scale-110">
-                  <Droplet className="h-5 w-5 text-white" />
-                </div>
-                <span className="font-bold text-lg bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-cyan-400">CariAir</span>
-              </div>
-              <p className="text-xs text-gray-600 dark:text-gray-300 font-medium">
-                © 2025 CariAir. Open-source project for the community.
-              </p>
-              <nav className="flex gap-4">
-                <Link href="/about" className="text-xs text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors font-medium">
-                  About
-                </Link>
-                <Link href="/contribute" className="text-xs text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors font-medium">
-                  Contribute
-                </Link>
-                <Link href="/learn" className="text-xs text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors font-medium">
-                  Learn
-                </Link>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

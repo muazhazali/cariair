@@ -370,7 +370,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
   return (
     <>
       {/* Floating Comparison Button */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-24 md:bottom-6 right-6 z-50">
         <Button
           onClick={() => setIsOpen(true)}
           className="shadow-lg"
