@@ -14,7 +14,8 @@
       "Bash(npm run build:*)",
       "Bash(npm run lint:*)",
       "Bash(npx eslint:*)",
-      "Skill(claude-developer-platform)"
+      "Skill(claude-developer-platform)",
+      "Bash(pnpm:*)"
     ]
   }
 }

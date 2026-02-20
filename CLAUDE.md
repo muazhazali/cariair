@@ -6,34 +6,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 CariAir is a comprehensive web platform serving as Malaysia's definitive mineral and spring water source registry. The application enables users to search, compare, and learn about various mineral water brands with detailed composition analysis, health insights, and interactive visualizations.
 
-**Tech Stack**: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS, PocketBase (backend), shadcn/ui components
+**Tech Stack**: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS, PocketBase (backend), shadcn/ui components
 
 ## Development Commands
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Development server (runs on http://localhost:3000)
-npm run dev
+pnpm dev
 
 # Build for production
-npm run build
+pnpm build
 
 # Run production build
-npm start
+pnpm start
 
 # Lint code
-npm run lint
+pnpm lint
 
 # Seed database from SQL file (requires .env setup)
-npm run seed
+pnpm seed
 ```
+
+> **Package Manager**: This project uses **pnpm**. Do not use `npm` or `yarn`.
 
 ## Architecture
 
 ### App Router Structure
-- **App directory** (`/app`): Next.js 15 App Router with file-based routing
+- **App directory** (`/app`): Next.js 16 App Router with file-based routing
   - `/` - Landing page with featured sources and search
   - `/sources` - Browse all water sources with filters
   - `/sources/[id]` - Individual product detail pages
@@ -100,7 +102,7 @@ npm run seed
 - Handle auth state: Check `isUserLoggedIn()` before protected operations
 
 ### Component Patterns
-- Server Components by default (Next.js 15 App Router)
+- Server Components by default (Next.js 16 App Router)
 - Use `"use client"` directive for:
   - Interactive components (filters, carousels, maps)
   - Components using React hooks
