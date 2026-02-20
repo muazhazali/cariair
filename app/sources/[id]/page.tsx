@@ -86,7 +86,7 @@ export default async function SourcePage({ params }: { params: { id: string } })
                 )}
               </div>
             </div>
-            <div className="relative w-full md:w-64 h-64 md:h-64 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg">
+            <div className="relative w-full md:w-64 h-64 md:h-64 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg">
               <Image 
                 src={imageUrl} 
                 alt={product.product_name || "Product Image"} 
@@ -191,7 +191,7 @@ export default async function SourcePage({ params }: { params: { id: string } })
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-xl border-2 border-gray-200 dark:border-gray-800 p-6 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20">
+                  <div className="rounded-lg border-2 border-gray-200 dark:border-gray-800 p-6 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20">
                     <div className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">pH Level</div>
                     <div className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-1">
                       {product.ph_level || "-"}
@@ -208,7 +208,7 @@ export default async function SourcePage({ params }: { params: { id: string } })
                       ) : ""}
                     </div>
                   </div>
-                  <div className="rounded-xl border-2 border-gray-200 dark:border-gray-800 p-6 bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20">
+                  <div className="rounded-lg border-2 border-gray-200 dark:border-gray-800 p-6 bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20">
                     <div className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">TDS</div>
                     <div className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-1">
                       {product.tds || "-"}

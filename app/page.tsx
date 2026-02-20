@@ -53,7 +53,7 @@ function FeaturedProducts() {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="relative h-64 overflow-hidden rounded-xl border border-white/30 bg-white/20 backdrop-blur-xl dark:border-white/20 dark:bg-black/20 animate-pulse">
+          <div key={i} className="relative h-64 overflow-hidden rounded-lg border border-white/30 bg-white/20 backdrop-blur-xl dark:border-white/20 dark:bg-black/20 animate-pulse">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5" />
           </div>
         ))}
@@ -79,7 +79,7 @@ function FeaturedProducts() {
           <Link
             key={product.id}
             href={`/sources/${product.id}`}
-            className="group relative flex flex-col p-6 rounded-xl border border-white/30 bg-white/20 backdrop-blur-xl dark:border-white/20 dark:bg-black/20 hover:shadow-2xl hover:border-blue-400/50 dark:hover:border-blue-500/50 transition-all duration-300 hover:scale-[1.02] overflow-hidden"
+            className="group relative flex flex-col p-6 rounded-lg border border-white/30 bg-white/20 backdrop-blur-xl dark:border-white/20 dark:bg-black/20 hover:shadow-2xl hover:border-blue-400/50 dark:hover:border-blue-500/50 transition-all duration-300 hover:scale-[1.02] overflow-hidden"
           >
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-300" />
@@ -244,7 +244,7 @@ export default function HomePage() {
 
               {/* Live Statistics - Glassy */}
               <div className="w-full max-w-2xl mt-8">
-                <div className="relative overflow-hidden rounded-2xl border border-white/30 bg-white/20 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-black/20">
+                <div className="relative overflow-hidden rounded-lg border border-white/30 bg-white/20 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-black/20">
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-cyan-500/10" />
 
@@ -310,7 +310,7 @@ export default function HomePage() {
               </Button>
             </div>
 
-            <div className="h-[500px] md:h-[600px] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-lg">
+            <div className="h-[500px] md:h-[600px] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 shadow-lg">
               <WaterSourceMap />
             </div>
 

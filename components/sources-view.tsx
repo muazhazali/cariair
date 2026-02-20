@@ -236,7 +236,7 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
             return (
               <Card
                 key={product.id}
-                className={`group overflow-hidden flex flex-col relative border-2 border-gray-200 dark:border-gray-800 transition-all duration-200 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 ${
+                className={`group overflow-hidden flex flex-col relative border-2 border-gray-200 dark:border-gray-800 transition-all duration-200 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 rounded-lg ${
                   isSelected ? 'ring-2 ring-blue-500 border-blue-500 dark:ring-blue-400 dark:border-blue-400' : ''
                 }`}
               >
@@ -256,7 +256,7 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
 
                 {/* Image Section */}
                 <Link href={`/sources/${product.id}`} className="block">
-                  <div className="relative h-48 sm:h-56 w-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-hidden">
+                  <div className="relative h-48 sm:h-56 w-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-hidden rounded-t-lg">
                     <Image
                       src={imageUrl}
                       alt={product.product_name || "Product"}
@@ -349,8 +349,8 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
         </div>
 
         {products.length === 0 && !loading && (
-          <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-8 sm:p-12 text-center bg-gray-50 dark:bg-gray-900/50">
-            <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-4 mb-4">
+          <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 p-8 sm:p-12 text-center bg-gray-50 dark:bg-gray-900/50">
+            <div className="rounded-lg bg-blue-100 dark:bg-blue-950 p-4 mb-4">
               <SearchIcon className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 dark:text-blue-400" />
             </div>
             <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">No results found</h3>
