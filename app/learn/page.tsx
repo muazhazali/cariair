@@ -4,21 +4,28 @@ import { BookOpen, Award, FlaskRoundIcon as Flask, Droplet } from "lucide-react"
 
 export default function LearnPage() {
   return (
-    <div className="container px-4 py-8 md:px-6 md:py-12">
-      <div className="mx-auto max-w-4xl space-y-8">
-        <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold tracking-tight">Learn About Mineral Water</h1>
-          <p className="text-gray-500 dark:text-gray-400">
-            Educational resources about water quality, standards, and terminology
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
+      <div className="container px-4 py-12 md:px-6 md:py-16">
+        <div className="mx-auto max-w-4xl space-y-8">
+          {/* Hero Section */}
+          <div className="space-y-4 text-center mb-12">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <BookOpen className="h-10 w-10 md:h-12 md:w-12 text-blue-600 dark:text-blue-400" />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
+              Learn About Mineral Water
+            </h1>
+            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Educational resources about water quality, standards, and terminology
+            </p>
+          </div>
 
-        <Tabs defaultValue="water-types">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="water-types">Water Types</TabsTrigger>
-            <TabsTrigger value="quality-standards">Quality Standards</TabsTrigger>
-            <TabsTrigger value="mineral-benefits">Mineral Benefits</TabsTrigger>
-            <TabsTrigger value="testing-methods">Testing Methods</TabsTrigger>
+        <Tabs defaultValue="water-types" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto gap-1">
+            <TabsTrigger value="water-types" className="text-xs md:text-sm py-2 md:py-2.5">Water Types</TabsTrigger>
+            <TabsTrigger value="quality-standards" className="text-xs md:text-sm py-2 md:py-2.5">Quality Standards</TabsTrigger>
+            <TabsTrigger value="mineral-benefits" className="text-xs md:text-sm py-2 md:py-2.5">Mineral Benefits</TabsTrigger>
+            <TabsTrigger value="testing-methods" className="text-xs md:text-sm py-2 md:py-2.5">Testing Methods</TabsTrigger>
           </TabsList>
 
           <TabsContent value="water-types" className="space-y-6 pt-6">
@@ -30,10 +37,10 @@ export default function LearnPage() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
-              <Card>
+              <Card className="border-2 border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow duration-200">
                 <CardHeader className="flex flex-row items-center gap-4">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <Droplet className="h-6 w-6 text-primary" />
+                  <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-2">
+                    <Droplet className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <CardTitle>Mineral Water</CardTitle>
@@ -49,10 +56,10 @@ export default function LearnPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="border-2 border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow duration-200">
                 <CardHeader className="flex flex-row items-center gap-4">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <Droplet className="h-6 w-6 text-primary" />
+                  <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-2">
+                    <Droplet className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <CardTitle>Spring Water</CardTitle>
@@ -68,10 +75,10 @@ export default function LearnPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="border-2 border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow duration-200">
                 <CardHeader className="flex flex-row items-center gap-4">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <Droplet className="h-6 w-6 text-primary" />
+                  <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-2">
+                    <Droplet className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <CardTitle>Purified Water</CardTitle>
@@ -87,10 +94,10 @@ export default function LearnPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="border-2 border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow duration-200">
                 <CardHeader className="flex flex-row items-center gap-4">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <Droplet className="h-6 w-6 text-primary" />
+                  <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-2">
+                    <Droplet className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <CardTitle>Drinking Water</CardTitle>
@@ -116,10 +123,12 @@ export default function LearnPage() {
               </p>
             </div>
 
-            <Card>
+            <Card className="border-2 border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow duration-200">
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Award className="mr-2 h-5 w-5" />
+                <CardTitle className="flex items-center text-xl">
+                  <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-2 mr-3">
+                    <Award className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  </div>
                   Malaysian Regulatory Framework
                 </CardTitle>
                 <CardDescription>Key regulations governing bottled water in Malaysia</CardDescription>
@@ -150,16 +159,16 @@ export default function LearnPage() {
             </Card>
 
             <div className="grid gap-6 md:grid-cols-2">
-              <Card>
+              <Card className="border-2 border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow duration-200">
                 <CardHeader>
-                  <CardTitle>Key Quality Parameters</CardTitle>
+                  <CardTitle className="text-lg">Key Quality Parameters</CardTitle>
                   <CardDescription>Important measurements for water quality</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <span className="rounded-full bg-primary/10 p-1">
-                        <Droplet className="h-4 w-4 text-primary" />
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950 p-1">
+                        <Droplet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
                         <span className="font-medium">Total Dissolved Solids (TDS)</span>
@@ -170,8 +179,8 @@ export default function LearnPage() {
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="rounded-full bg-primary/10 p-1">
-                        <Droplet className="h-4 w-4 text-primary" />
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950 p-1">
+                        <Droplet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
                         <span className="font-medium">pH Level</span>
@@ -181,8 +190,8 @@ export default function LearnPage() {
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="rounded-full bg-primary/10 p-1">
-                        <Droplet className="h-4 w-4 text-primary" />
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950 p-1">
+                        <Droplet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
                         <span className="font-medium">Microbiological Parameters</span>
@@ -203,8 +212,8 @@ export default function LearnPage() {
                 <CardContent>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <span className="rounded-full bg-primary/10 p-1">
-                        <Droplet className="h-4 w-4 text-primary" />
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950 p-1">
+                        <Droplet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
                         <span className="font-medium">Source Information</span>
@@ -214,8 +223,8 @@ export default function LearnPage() {
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="rounded-full bg-primary/10 p-1">
-                        <Droplet className="h-4 w-4 text-primary" />
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950 p-1">
+                        <Droplet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
                         <span className="font-medium">Mineral Composition</span>
@@ -225,8 +234,8 @@ export default function LearnPage() {
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="rounded-full bg-primary/10 p-1">
-                        <Droplet className="h-4 w-4 text-primary" />
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950 p-1">
+                        <Droplet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
                         <span className="font-medium">Treatment Methods</span>
@@ -252,8 +261,8 @@ export default function LearnPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               <Card>
                 <CardHeader className="flex flex-row items-center gap-4">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <Flask className="h-6 w-6 text-primary" />
+                  <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-2">
+                    <Flask className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <CardTitle>Calcium</CardTitle>
@@ -274,8 +283,8 @@ export default function LearnPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center gap-4">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <Flask className="h-6 w-6 text-primary" />
+                  <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-2">
+                    <Flask className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <CardTitle>Magnesium</CardTitle>
@@ -297,8 +306,8 @@ export default function LearnPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center gap-4">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <Flask className="h-6 w-6 text-primary" />
+                  <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-2">
+                    <Flask className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <CardTitle>Potassium</CardTitle>
@@ -319,8 +328,8 @@ export default function LearnPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center gap-4">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <Flask className="h-6 w-6 text-primary" />
+                  <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-2">
+                    <Flask className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <CardTitle>Sodium</CardTitle>
@@ -341,8 +350,8 @@ export default function LearnPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center gap-4">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <Flask className="h-6 w-6 text-primary" />
+                  <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-2">
+                    <Flask className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <CardTitle>Bicarbonate</CardTitle>
@@ -363,8 +372,8 @@ export default function LearnPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center gap-4">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <Flask className="h-6 w-6 text-primary" />
+                  <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-2">
+                    <Flask className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <CardTitle>Silica</CardTitle>
@@ -393,9 +402,9 @@ export default function LearnPage() {
               </p>
             </div>
 
-            <Card>
+            <Card className="border-2 border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow duration-200">
               <CardHeader>
-                <CardTitle>Laboratory Testing Procedures</CardTitle>
+                <CardTitle className="text-xl">Laboratory Testing Procedures</CardTitle>
                 <CardDescription>Professional methods for comprehensive water analysis</CardDescription>
               </CardHeader>
               <CardContent>
@@ -435,8 +444,8 @@ export default function LearnPage() {
                 <CardContent>
                   <ul className="space-y-4">
                     <li className="flex items-start gap-2">
-                      <span className="rounded-full bg-primary/10 p-1">
-                        <BookOpen className="h-4 w-4 text-primary" />
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950 p-1">
+                        <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
                         <span className="font-medium">Digital TDS Meters</span>
@@ -447,8 +456,8 @@ export default function LearnPage() {
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="rounded-full bg-primary/10 p-1">
-                        <BookOpen className="h-4 w-4 text-primary" />
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950 p-1">
+                        <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
                         <span className="font-medium">pH Test Strips and Meters</span>
@@ -459,8 +468,8 @@ export default function LearnPage() {
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="rounded-full bg-primary/10 p-1">
-                        <BookOpen className="h-4 w-4 text-primary" />
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950 p-1">
+                        <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
                         <span className="font-medium">Hardness Test Kits</span>
@@ -482,8 +491,8 @@ export default function LearnPage() {
                 <CardContent>
                   <ul className="space-y-4">
                     <li className="flex items-start gap-2">
-                      <span className="rounded-full bg-primary/10 p-1">
-                        <BookOpen className="h-4 w-4 text-primary" />
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950 p-1">
+                        <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
                         <span className="font-medium">TDS Interpretation</span>
@@ -499,8 +508,8 @@ export default function LearnPage() {
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="rounded-full bg-primary/10 p-1">
-                        <BookOpen className="h-4 w-4 text-primary" />
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950 p-1">
+                        <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
                         <span className="font-medium">pH Scale</span>
@@ -514,8 +523,8 @@ export default function LearnPage() {
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="rounded-full bg-primary/10 p-1">
-                        <BookOpen className="h-4 w-4 text-primary" />
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950 p-1">
+                        <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
                         <span className="font-medium">Water Hardness</span>
@@ -536,6 +545,7 @@ export default function LearnPage() {
             </div>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
     </div>
   )

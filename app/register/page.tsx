@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Droplet } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -83,14 +83,28 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
-          <CardDescription className="text-center">
-            Enter your email below to create your account
-          </CardDescription>
-        </CardHeader>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md">
+        {/* Hero Section */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Droplet className="h-10 w-10 md:h-12 md:w-12 text-blue-600 dark:text-blue-400" />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent mb-2">
+            Join CariAir
+          </h1>
+          <p className="text-base text-gray-600 dark:text-gray-400">
+            Start exploring Malaysia's water sources
+          </p>
+        </div>
+
+        <Card className="w-full border-2 border-gray-200 dark:border-gray-800 shadow-lg">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-xl font-bold text-center">Create an account</CardTitle>
+            <CardDescription className="text-center text-base">
+              Enter your email below to create your account
+            </CardDescription>
+          </CardHeader>
         <CardContent className="space-y-4">
           <Button 
             variant="outline" 
@@ -161,12 +175,13 @@ export default function RegisterPage() {
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline">
+            <Link href="/login" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
               Sign in
             </Link>
           </p>
         </CardFooter>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }

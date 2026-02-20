@@ -10,7 +10,8 @@
       "Bash(test:*)",
       "Bash(netstat:*)",
       "Bash(curl:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)"
     ]
   }
 }
