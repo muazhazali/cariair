@@ -6,6 +6,9 @@ export const dynamic = 'force-dynamic'
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
 export default async function SourcesPage(props: { searchParams: SearchParams }) {
+  // Await searchParams as required by Next.js 15
+  await props.searchParams
+
   // We ignore searchParams for initial load in this new mode, 
   // or we could support them if we wanted hybrid approach.
   // But user specifically asked to not use URL for search.

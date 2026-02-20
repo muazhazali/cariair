@@ -18,6 +18,7 @@ async function getProduct(id: string): Promise<Product | null> {
   try {
     const product = await pb.collection('products').getOne<Product>(id, {
       expand: 'brand,source,manufacturer',
+      requestKey: null, // Disable auto-cancellation
     });
     return product;
   } catch (error) {
@@ -41,10 +42,10 @@ export default async function SourcePage({ params }: { params: { id: string } })
 
   const brand = product.expand?.brand;
   const source = product.expand?.source;
-  const imageUrl = product.images && product.images.length > 0 
+  const imageUrl = product.images && product.images.length > 0
     ? getImageUrl(product, product.images[0])
     : '/placeholder.jpg';
-  
+
   // Parse minerals if it's a string, or use as is if it's already an object/array
   let minerals: any[] = [];
   if (typeof product.minerals_json === 'string') {
@@ -87,11 +88,11 @@ export default async function SourcePage({ params }: { params: { id: string } })
               </div>
             </div>
             <div className="relative w-full md:w-64 h-64 md:h-64 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg">
-              <Image 
-                src={imageUrl} 
-                alt={product.product_name || "Product Image"} 
-                fill 
-                className="object-contain p-6" 
+              <Image
+                src={imageUrl}
+                alt={product.product_name || "Product Image"}
+                fill
+                className="object-contain p-6"
               />
             </div>
           </div>
@@ -159,10 +160,10 @@ export default async function SourcePage({ params }: { params: { id: string } })
                   <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Created</span>
                   <p className="text-base font-medium mt-1 flex items-center">
                     <Calendar className="mr-2 h-4 w-4" />
-                    {new Date(product.created).toLocaleDateString('en-US', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
+                    {new Date(product.created).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
                     })}
                   </p>
                 </div>

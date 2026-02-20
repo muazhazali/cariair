@@ -15,7 +15,10 @@ export interface SearchFilters {
 
 export async function getBrands() {
   try {
-    return await pb.collection('brands').getFullList({ sort: 'brand_name' });
+    return await pb.collection('brands').getFullList({
+      sort: 'brand_name',
+      requestKey: null // Disable auto-cancellation
+    });
   } catch (error) {
     console.error("Error fetching brands:", error);
     return [];
@@ -25,7 +28,7 @@ export async function getBrands() {
 export async function searchWaterSources(filters: SearchFilters): Promise<Product[]> {
   try {
     const filterParts: string[] = [];
-    
+
     // Text Search
     if (filters.query && filters.query.trim()) {
       filterParts.push(`(product_name ~ "${filters.query}" || barcode ~ "${filters.query}" || brand.brand_name ~ "${filters.query}" || source.location_address ~ "${filters.query}")`);

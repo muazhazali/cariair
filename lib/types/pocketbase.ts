@@ -25,6 +25,7 @@ export interface Source extends BaseModel {
   lat?: number;
   lng?: number;
   kkm_approval_number?: string;
+  country?: string;
 }
 
 export interface Product extends BaseModel {
@@ -39,7 +40,7 @@ export interface Product extends BaseModel {
   minerals_json?: any; // JSON
   status?: "pending" | "approved" | "rejected";
   submitted_by?: string; // Relation ID
-  
+
   // Expanded fields (optional, populated when using expand)
   expand?: {
     brand?: Brand;
