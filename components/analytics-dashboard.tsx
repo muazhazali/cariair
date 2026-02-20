@@ -440,7 +440,7 @@ export function AnalyticsDashboard({ products, brands }: AnalyticsDashboardProps
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={mineralDistribution} layout="horizontal">
+                <BarChart data={mineralDistribution} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" label={{ value: 'Average Amount (mg/L)', position: 'bottom' }} />
                   <YAxis type="category" dataKey="name" width={120} />
