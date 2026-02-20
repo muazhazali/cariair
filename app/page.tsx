@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { pb } from "@/lib/pocketbase"
 import { Droplet, Map, Zap, ArrowRight } from "lucide-react"
-import { AnimatedGauge } from "@/components/animated-gauge"
 
 const WaterSourceMap = dynamic(() => import("@/components/water-source-map").then(mod => mod.WaterSourceMap), {
   ssr: false,
@@ -95,31 +94,31 @@ function FeaturedProducts() {
               )}
             </div>
 
-            {/* Water Properties - Animated Gauges */}
-            <div className="relative flex items-center justify-around py-4 border-t border-b border-white/20 dark:border-white/10">
+            {/* Water Properties - Simple Display */}
+            <div className="relative flex items-center justify-around py-4 border-t border-b border-white/20 dark:border-white/10 gap-4">
               {product.ph_level !== undefined && product.ph_level !== null && (
-                <AnimatedGauge
-                  value={product.ph_level}
-                  min={0}
-                  max={14}
-                  label="pH Level"
-                  color={product.ph_level < 7 ? "orange" : product.ph_level > 7.5 ? "blue" : "green"}
-                  size="sm"
-                  showValue={true}
-                />
+                <div className="flex flex-col items-center gap-1.5">
+                  <div className={`text-2xl font-bold ${
+                    product.ph_level < 7
+                      ? "text-orange-600 dark:text-orange-400"
+                      : product.ph_level > 7.5
+                      ? "text-blue-600 dark:text-blue-400"
+                      : "text-green-600 dark:text-green-400"
+                  }`}>
+                    {product.ph_level.toFixed(1)}
+                  </div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">pH Level</div>
+                </div>
               )}
 
               {product.tds !== undefined && product.tds !== null && (
-                <AnimatedGauge
-                  value={product.tds}
-                  min={0}
-                  max={500}
-                  label="TDS"
-                  unit="mg/L"
-                  color="purple"
-                  size="sm"
-                  showValue={true}
-                />
+                <div className="flex flex-col items-center gap-1.5">
+                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                    {product.tds.toFixed(1)}
+                  </div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">TDS</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-500">mg/L</div>
+                </div>
               )}
 
               {/* Source Location */}
