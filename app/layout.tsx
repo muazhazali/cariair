@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { MainNav } from "@/components/main-nav"
 import { MobileBottomNav } from "@/components/mobile-bottom-nav"
 import { Footer } from "@/components/footer"
+import { WaterChatbot } from "@/components/water-chatbot"
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -23,6 +24,7 @@ export default function RootLayout({
         <Footer />
         <MobileBottomNav />
         <Toaster />
+        <WaterChatbot />
       </body>
     </html>
   )

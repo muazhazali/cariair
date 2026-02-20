@@ -10,6 +10,7 @@
     "seed": "node --env-file=.env scripts/seed-from-sql.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.4",
@@ -44,6 +45,7 @@
     "cmdk": "1.0.4",
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.1",
+    "groq-sdk": "^0.37.0",
     "input-otp": "1.4.1",
     "leaflet": "latest",
     "lucide-react": "^0.454.0",
@@ -55,6 +57,7 @@
     "react-dom": "19.2.3",
     "react-hook-form": "^7.54.1",
     "react-leaflet": "latest",
+    "react-markdown": "^10.1.0",
     "react-resizable-panels": "^2.1.7",
     "recharts": "2.15.0",
     "sonner": "^1.7.1",
