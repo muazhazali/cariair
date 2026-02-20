@@ -20,6 +20,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Filter, X, ChevronDown, Sparkles, Heart, Bone, Droplets, Zap } from "lucide-react"
+import { WATER_TYPE_LABEL_CLASSES, WATER_TYPE_DOT_CLASSES } from "@/lib/water-type-colors"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 
@@ -39,6 +40,7 @@ interface EnhancedProductFiltersProps {
 }
 
 const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated"]
+
 
 // Health goal presets
 const HEALTH_PRESETS = [
@@ -351,7 +353,8 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
                     }
                   }}
                 />
-                <Label htmlFor={`type-${type}`} className="text-sm font-normal cursor-pointer">
+                <Label htmlFor={`type-${type}`} className={`text-sm font-medium cursor-pointer flex items-center gap-1.5 ${WATER_TYPE_LABEL_CLASSES[type] ?? ""}`}>
+                  <span className={`inline-block w-2 h-2 rounded-full ${WATER_TYPE_DOT_CLASSES[type] ?? "bg-muted-foreground"}`} />
                   {type}
                 </Label>
               </div>

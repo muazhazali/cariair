@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SearchIcon, MapPin } from "lucide-react"
+import { getWaterTypeBadgeClass } from "@/lib/water-type-colors"
 import { getImageUrl } from "@/lib/pocketbase"
 import { EnhancedProductFilters } from "@/components/enhanced-product-filters"
 import { MobileFiltersSheet } from "@/components/mobile-filters-sheet"
@@ -23,6 +24,7 @@ interface SourcesViewProps {
 }
 
 const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated"]
+
 
 export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
   const [products, setProducts] = useState(initialProducts)
@@ -265,7 +267,10 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
                       className="object-contain p-4 sm:p-6 transition-transform duration-300 group-hover:scale-105"
                     />
                     <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-                      <Badge variant="secondary" className="shadow-sm text-xs">
+                      <Badge
+                        variant="outline"
+                        className={`shadow-sm text-xs font-medium ${getWaterTypeBadgeClass(source?.type)}`}
+                      >
                         {source?.type || "Unknown"}
                       </Badge>
                     </div>

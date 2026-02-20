@@ -2,6 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { getWaterTypeBadgeClass } from "@/lib/water-type-colors"
 
 // Sample data - would be replaced with actual data from your JSON files
 const featuredSources = [
@@ -60,7 +61,7 @@ export function FeaturedSources() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500 dark:text-gray-400">Type:</span>
-                  <Badge variant="outline">{source.type}</Badge>
+                  <Badge variant="outline" className={`text-xs font-medium ${getWaterTypeBadgeClass(source.type)}`}>{source.type}</Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500 dark:text-gray-400">pH Level:</span>

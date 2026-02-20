@@ -3,6 +3,7 @@ import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { SearchIcon } from "lucide-react"
+import { getWaterTypeBadgeClass } from "@/lib/water-type-colors"
 import { getImageUrl } from "@/lib/pocketbase"
 import { Product } from "@/lib/types/pocketbase"
 import { ProductFilters } from "@/components/product-filters"
@@ -91,7 +92,7 @@ export default async function SearchPage(props: { searchParams: SearchParams }) 
                   <CardContent className="p-4 flex-1">
                     <div className="mb-2 flex items-center justify-between">
                       <h3 className="text-lg font-semibold line-clamp-1" title={product.product_name}>{product.product_name}</h3>
-                      <Badge variant="outline">{source?.type || "Unknown"}</Badge>
+                      <Badge variant="outline" className={`text-xs font-medium ${getWaterTypeBadgeClass(source?.type)}`}>{source?.type || "Unknown"}</Badge>
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">

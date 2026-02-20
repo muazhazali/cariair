@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { pb, getImageUrl } from "@/lib/pocketbase"
 import { Droplet, Map, Zap, ArrowRight, MapPin } from "lucide-react"
+import { getWaterTypeBadgeClass } from "@/lib/water-type-colors"
 
 const WaterSourceMap = dynamic(() => import("@/components/water-source-map").then(mod => mod.WaterSourceMap), {
   ssr: false,
@@ -103,7 +104,7 @@ function FeaturedProducts() {
                   className="object-contain p-4 sm:p-6 transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-                  <Badge variant="secondary" className="shadow-sm text-xs">
+                  <Badge variant="outline" className={`shadow-sm text-xs font-medium ${getWaterTypeBadgeClass(source?.type)}`}>
                     {source?.type || "Unknown"}
                   </Badge>
                 </div>
