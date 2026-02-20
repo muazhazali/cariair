@@ -48,7 +48,7 @@ export function MobileFiltersSheet({ brands, onApply, defaultValues }: MobileFil
       {/* Sheet Overlay */}
       <div
         className={cn(
-          "fixed inset-0 z-50 lg:hidden transition-all duration-300",
+          "fixed inset-0 z-[100] lg:hidden transition-all duration-300",
           open
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"
@@ -93,7 +93,7 @@ export function MobileFiltersSheet({ brands, onApply, defaultValues }: MobileFil
 
             {/* Scrollable content */}
             <div className="relative overflow-y-auto max-h-[calc(85vh-80px)] overscroll-contain">
-              <div className="p-6">
+              <div className="p-6 pb-12">
                 <EnhancedProductFilters
                   brands={brands}
                   onApply={handleApply}
