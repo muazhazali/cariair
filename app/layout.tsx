@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Toaster } from "@/components/ui/toaster"
 import { MainNav } from "@/components/main-nav"
 import { MobileBottomNav } from "@/components/mobile-bottom-nav"
-import { MobileFAB } from "@/components/mobile-fab"
 import { Footer } from "@/components/footer"
 import './globals.css'
 
@@ -23,7 +22,6 @@ export default function RootLayout({
         {children}
         <Footer />
         <MobileBottomNav />
-        <MobileFAB />
         <Toaster />
       </body>
     </html>
