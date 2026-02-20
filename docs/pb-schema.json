@@ -1,0 +1,51 @@
+[
+  {
+    "name": "brands",
+    "type": "base",
+    "schema": [
+      { "name": "brand_name", "type": "text", "required": true },
+      { "name": "parent_company", "type": "text" },
+      { "name": "website_url", "type": "url" }
+    ]
+  },
+  {
+    "name": "manufacturers",
+    "type": "base",
+    "schema": [
+      { "name": "name", "type": "text", "required": true },
+      { "name": "address", "type": "text" },
+      { "name": "lat", "type": "number" },
+      { "name": "lng", "type": "number" }
+    ]
+  },
+  {
+    "name": "sources",
+    "type": "base",
+    "schema": [
+      { "name": "source_name", "type": "text" },
+      { "name": "type", "type": "select", "options": { "values": ["Underground", "Spring", "Municipal", "Oxygenated"] } },
+      { "name": "location_address", "type": "text" },
+      { "name": "lat", "type": "number" },
+      { "name": "lng", "type": "number" },
+      { "name": "kkm_approval_number", "type": "text" }
+    ]
+  },
+  {
+    "name": "products",
+    "type": "base",
+    "schema": [
+      { "name": "brand", "type": "relation", "options": { "collectionId": "brands", "maxSelect": 1 } },
+      { "name": "manufacturer", "type": "relation", "options": { "collectionId": "manufacturers", "maxSelect": 1 } },
+      { "name": "source", "type": "relation", "options": { "collectionId": "sources", "maxSelect": 1 } },
+      { "name": "product_name", "type": "text" },
+      { "name": "barcode", "type": "text", "unique": true },
+      { "name": "ph_level", "type": "number" },
+      { "name": "tds", "type": "number" },
+      { "name": "images", "type": "file", "options": { "maxSelect": 5, "maxSize": 5242880 } },
+      { "name": "minerals_json", "type": "json" },
+      { "name": "status", "type": "select", "options": { "values": ["pending", "approved", "rejected"] } },
+      { "name": "submitted_by", "type": "relation", "options": { "collectionId": "users", "maxSelect": 1 } }
+    ]
+  }
+]
+

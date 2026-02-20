@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(jq:*)",
+      "Bash(node --version:*)",
+      "Bash(export PATH=\"$HOME/.local/bin:$PATH\")",
+      "Bash(\"$HOME/.local/bin/jq.exe\" --version)",
+      "Bash(npm install:*)",
+      "Bash(ralphy --version:*)",
+      "Bash(test:*)",
+      "Bash(netstat:*)",
+      "Bash(curl:*)",
+      "Bash(npm run dev:*)"
+    ]
+  }
+}
