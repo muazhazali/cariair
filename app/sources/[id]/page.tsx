@@ -10,6 +10,7 @@ import { Product } from "@/lib/types/pocketbase"
 import { SingleSourceMap } from "@/components/single-source-map"
 import { MineralCompositionPanel } from "@/components/mineral-composition-panel"
 import { HealthBenefitsPanel } from "@/components/health-benefits-panel"
+import { getWaterTypeBadgeClass } from "@/lib/water-type-colors"
 
 export const dynamic = 'force-dynamic'
 
@@ -76,7 +77,7 @@ export default async function SourcePage({ params }: { params: { id: string } })
                 {product.product_name}
               </h1>
               <div className="flex flex-wrap items-center gap-3 mb-4">
-                <Badge variant="outline" className="text-sm px-3 py-1">
+                <Badge variant="outline" className={`text-sm px-3 py-1 ${getWaterTypeBadgeClass(source?.type)}`}>
                   {source?.type || "Mineral Water"}
                 </Badge>
                 {source?.location_address && (
