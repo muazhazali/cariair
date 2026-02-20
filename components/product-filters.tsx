@@ -14,7 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { Filter } from "lucide-react"
+import { Filter, Mountain, Waves, Building2, Zap, Sparkles, GlassWater } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 
@@ -32,7 +32,7 @@ interface ProductFiltersProps {
   }
 }
 
-const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated"]
+const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated", "Mineral", "Drinking"]
 
 export function ProductFilters({ brands, basePath = "/search", onApply, defaultValues }: ProductFiltersProps) {
   const router = useRouter()
@@ -59,8 +59,8 @@ export function ProductFilters({ brands, basePath = "/search", onApply, defaultV
   // Or if we want "Select All" to be the default state when empty.
   React.useEffect(() => {
     if (onApply && !searchParams.toString() && !defaultValues) {
-       // If in client mode (onApply exists) and no params, we might want to default to ALL.
-       // But usually the parent controls defaultValues.
+      // If in client mode (onApply exists) and no params, we might want to default to ALL.
+      // But usually the parent controls defaultValues.
     }
   }, [])
 
@@ -80,7 +80,7 @@ export function ProductFilters({ brands, basePath = "/search", onApply, defaultV
     }
 
     const params = new URLSearchParams(searchParams.toString())
-    
+
     // Clear existing
     params.delete("type")
     params.delete("brand")
@@ -93,12 +93,12 @@ export function ProductFilters({ brands, basePath = "/search", onApply, defaultV
     // Set new values
     types.forEach((t) => params.append("type", t))
     selectedBrands.forEach((b) => params.append("brand", b))
-    
+
     if (phRange[0] > 0 || phRange[1] < 14) {
       params.set("min_ph", phRange[0].toString())
       params.set("max_ph", phRange[1].toString())
     }
-    
+
     if (tdsRange[0] > 0 || tdsRange[1] < 500) {
       params.set("min_tds", tdsRange[0].toString())
       params.set("max_tds", tdsRange[1].toString())
@@ -110,24 +110,24 @@ export function ProductFilters({ brands, basePath = "/search", onApply, defaultV
 
   const resetFilters = () => {
     if (onApply) {
-       // Reset to ALL if that's the desired default
-       const allTypes = WATER_TYPES
-       const allBrands = brands.map(b => b.id)
-       setTypes(allTypes)
-       setSelectedBrands(allBrands)
-       setPhRange([0, 14])
-       setTdsRange([0, 500])
-       
-       onApply({
-         types: allTypes,
-         brands: allBrands,
-         minPh: 0,
-         maxPh: 14,
-         minTds: 0,
-         maxTds: 500
-       })
-       setIsOpen(false)
-       return
+      // Reset to ALL if that's the desired default
+      const allTypes = WATER_TYPES
+      const allBrands = brands.map(b => b.id)
+      setTypes(allTypes)
+      setSelectedBrands(allBrands)
+      setPhRange([0, 14])
+      setTdsRange([0, 500])
+
+      onApply({
+        types: allTypes,
+        brands: allBrands,
+        minPh: 0,
+        maxPh: 14,
+        minTds: 0,
+        maxTds: 500
+      })
+      setIsOpen(false)
+      return
     }
 
     setTypes([])
@@ -156,7 +156,15 @@ export function ProductFilters({ brands, basePath = "/search", onApply, defaultV
                   }
                 }}
               />
-              <Label htmlFor={`type-${type}`} className="text-sm font-normal cursor-pointer">
+              <Label htmlFor={`type-${type}`} className="text-sm font-normal cursor-pointer flex items-center gap-2">
+                <span className="opacity-70 scale-90">
+                  {type === "Underground" && <Mountain className="h-3.5 w-3.5" />}
+                  {type === "Spring" && <Waves className="h-3.5 w-3.5" />}
+                  {type === "Municipal" && <Building2 className="h-3.5 w-3.5" />}
+                  {type === "Oxygenated" && <Zap className="h-3.5 w-3.5" />}
+                  {type === "Mineral" && <Sparkles className="h-3.5 w-3.5" />}
+                  {type === "Drinking" && <GlassWater className="h-3.5 w-3.5" />}
+                </span>
                 {type}
               </Label>
             </div>
@@ -239,10 +247,10 @@ export function ProductFilters({ brands, basePath = "/search", onApply, defaultV
     </div>
   )
 
-  const activeFilterCount = 
-    types.length + 
-    selectedBrands.length + 
-    (phRange[0] > 0 || phRange[1] < 14 ? 1 : 0) + 
+  const activeFilterCount =
+    types.length +
+    selectedBrands.length +
+    (phRange[0] > 0 || phRange[1] < 14 ? 1 : 0) +
     (tdsRange[0] > 0 || tdsRange[1] < 500 ? 1 : 0)
 
   return (

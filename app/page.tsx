@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { pb, getImageUrl } from "@/lib/pocketbase"
 import { Droplet, Map, Zap, ArrowRight, MapPin } from "lucide-react"
-import { getWaterTypeBadgeClass } from "@/lib/water-type-colors"
+import { WaterTypeBadge } from "@/components/water-type-badge"
 
 const WaterSourceMap = dynamic(() => import("@/components/water-source-map").then(mod => mod.WaterSourceMap), {
   ssr: false,
@@ -104,9 +104,7 @@ function FeaturedProducts() {
                   className="object-contain p-4 sm:p-6 transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-                  <Badge variant="outline" className={`shadow-sm text-xs font-medium ${getWaterTypeBadgeClass(source?.type)}`}>
-                    {source?.type || "Unknown"}
-                  </Badge>
+                  <WaterTypeBadge type={source?.type} className="shadow-sm" />
                 </div>
               </div>
             </Link>
@@ -140,10 +138,10 @@ function FeaturedProducts() {
                     <div className="flex flex-col items-center justify-center py-3 px-2 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
                       <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">pH Level</div>
                       <div className={`text-3xl font-bold ${product.ph_level < 7
-                          ? "text-orange-600 dark:text-orange-400"
-                          : product.ph_level > 7.5
-                            ? "text-blue-600 dark:text-blue-400"
-                            : "text-green-600 dark:text-green-400"
+                        ? "text-orange-600 dark:text-orange-400"
+                        : product.ph_level > 7.5
+                          ? "text-blue-600 dark:text-blue-400"
+                          : "text-green-600 dark:text-green-400"
                         }`}>
                         {product.ph_level.toFixed(1)}
                       </div>

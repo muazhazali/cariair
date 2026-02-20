@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { LayoutGrid, List, MapPin, ExternalLink, Loader2 } from "lucide-react"
-import { getWaterTypeBadgeClass } from "@/lib/water-type-colors"
+import { WaterTypeBadge } from "@/components/water-type-badge"
 import { pb, getImageUrl } from "@/lib/pocketbase"
 import { Product } from "@/lib/types/pocketbase"
 import { ProductSort, sortProducts, SortOption } from "@/components/product-sort"
 
-const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated"]
+const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated", "Mineral", "Drinking"]
 
 export function WaterSourcesDisplay() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
@@ -158,9 +158,7 @@ export function WaterSourcesDisplay() {
                     </div>
                     {source?.type && (
                       <div className="mt-3">
-                        <Badge variant="outline" className={`text-xs font-medium ${getWaterTypeBadgeClass(source.type)}`}>
-                          {source.type}
-                        </Badge>
+                        <WaterTypeBadge type={source.type} />
                       </div>
                     )}
                   </div>
