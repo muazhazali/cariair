@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, FormEvent } from "react"
+import { useState, useMemo, useEffect, FormEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SearchIcon } from "lucide-react"
@@ -37,6 +37,14 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
     minTds: 0,
     maxTds: 500
   }
+
+  // If server-side fetch returned empty (e.g. cold start on Vercel), auto-retry on the client
+  useEffect(() => {
+    if (initialProducts.length === 0) {
+      performSearch({})
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const performSearch = async (opts?: { query?: string; filters?: SearchFilters }) => {
     setLoading(true)

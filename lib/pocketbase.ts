@@ -21,16 +21,21 @@ function getPb(): PocketBase {
 
 // Lazy proxy so existing code using `pb` keeps working; first access initializes with current env.
 export const pb = new Proxy({} as PocketBase, {
-  get(target, prop) {
+  get(_target, prop) {
     const instance = getPb();
     const value = (instance as any)[prop];
-    
+
     // If it's a function, bind it to the instance to preserve 'this' context
     if (typeof value === 'function') {
       return value.bind(instance);
     }
-    
+
     return value;
+  },
+  set(_target, prop, value) {
+    const instance = getPb();
+    (instance as any)[prop] = value;
+    return true;
   },
 });
 
