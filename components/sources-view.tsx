@@ -9,8 +9,10 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SearchIcon, MapPin } from "lucide-react"
+import { CircularProgress } from "@/components/animated-gauge"
 import { getImageUrl } from "@/lib/pocketbase"
 import { EnhancedProductFilters } from "@/components/enhanced-product-filters"
+import { MobileFiltersSheet } from "@/components/mobile-filters-sheet"
 import { ProductComparison } from "@/components/product-comparison"
 import { ProductSort, sortProducts, SortOption } from "@/components/product-sort"
 import { searchWaterSources, SearchFilters } from "@/lib/products"
@@ -180,9 +182,18 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
               </p>
               {/* Mobile Filters Button */}
               <div className="lg:hidden">
-                <Button variant="outline" size="sm" className="h-9">
-                  Filters
-                </Button>
+                <MobileFiltersSheet
+                  brands={brands}
+                  onApply={handleFilterChange}
+                  defaultValues={{
+                    types: initialFilters.types,
+                    brands: initialFilters.brands,
+                    minPh: initialFilters.minPh,
+                    maxPh: initialFilters.maxPh,
+                    minTds: initialFilters.minTds,
+                    maxTds: initialFilters.maxTds
+                  }}
+                />
               </div>
             </div>
             <form
@@ -285,28 +296,40 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
                       </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-2 sm:gap-3 pt-2 border-t border-gray-200 dark:border-gray-800">
-                      <div>
-                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">pH Level</div>
-                        <div className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
-                          {product.ph_level ?? (
-                            <span className="text-xs sm:text-sm font-normal text-gray-400">N/A</span>
-                          )}
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-3 border-t border-white/20 dark:border-white/10">
+                      {product.ph_level !== undefined && product.ph_level !== null ? (
+                        <CircularProgress
+                          value={product.ph_level}
+                          max={14}
+                          label="pH Level"
+                          color={product.ph_level < 7 ? "orange" : product.ph_level > 7.5 ? "blue" : "green"}
+                          size={90}
+                          strokeWidth={6}
+                          showPercentage={false}
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center">
+                          <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">pH Level</div>
+                          <div className="text-sm font-normal text-gray-400 mt-1">N/A</div>
                         </div>
-                      </div>
-                      <div>
-                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">TDS</div>
-                        <div className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
-                          {product.tds ? (
-                            <>
-                              {product.tds}
-                              <span className="text-xs font-normal text-gray-500 ml-0.5 sm:ml-1">mg/L</span>
-                            </>
-                          ) : (
-                            <span className="text-xs sm:text-sm font-normal text-gray-400">N/A</span>
-                          )}
+                      )}
+
+                      {product.tds !== undefined && product.tds !== null ? (
+                        <CircularProgress
+                          value={product.tds}
+                          max={500}
+                          label="TDS (mg/L)"
+                          color="purple"
+                          size={90}
+                          strokeWidth={6}
+                          showPercentage={false}
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center">
+                          <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">TDS</div>
+                          <div className="text-sm font-normal text-gray-400 mt-1">N/A</div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
 

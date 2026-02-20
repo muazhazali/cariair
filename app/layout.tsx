@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Toaster } from "@/components/ui/toaster"
 import { MainNav } from "@/components/main-nav"
+import { MobileBottomNav } from "@/components/mobile-bottom-nav"
+import { MobileFAB } from "@/components/mobile-fab"
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -18,6 +20,8 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <MainNav />
         {children}
+        <MobileBottomNav />
+        <MobileFAB />
         <Toaster />
       </body>
     </html>
