@@ -1,13 +1,8 @@
 import Link from "next/link"
-import Image from "next/image"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { SearchIcon } from "lucide-react"
-import { WaterTypeBadge } from "@/components/water-type-badge"
-import { getImageUrl } from "@/lib/pocketbase"
-import { Product } from "@/lib/types/pocketbase"
 import { ProductFilters } from "@/components/product-filters"
 import { getBrands, searchWaterSources } from "@/lib/products"
+import { ProductCard } from "@/components/product-card"
 
 export const dynamic = 'force-dynamic'
 
@@ -68,60 +63,12 @@ export default async function SearchPage(props: { searchParams: SearchParams }) 
               <p className="text-sm md:text-base font-medium text-gray-600 dark:text-gray-400">
                 {results.length} {results.length === 1 ? "result" : "results"} found
               </p>
-              {/* Sorting could be implemented here as well, passing via URL params */}
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {results.map((product) => {
-                const brand = product.expand?.brand;
-                const source = product.expand?.source;
-                const imageUrl = product.images && product.images.length > 0
-                  ? getImageUrl(product, product.images[0])
-                  : '/placeholder.jpg';
-
-                return (
-                  <Card key={product.id} className="overflow-hidden flex flex-col border-2 border-gray-200 dark:border-gray-800 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200">
-                    <div className="relative h-48 w-full bg-gray-50 dark:bg-gray-900">
-                      <Image
-                        src={imageUrl}
-                        alt={product.product_name || "Product"}
-                        fill
-                        className="object-contain p-4"
-                      />
-                    </div>
-                    <CardContent className="p-4 flex-1">
-                      <div className="mb-2 flex items-center justify-between">
-                        <h3 className="text-lg font-semibold line-clamp-1" title={product.product_name}>{product.product_name}</h3>
-                        <WaterTypeBadge type={source?.type} />
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-500 dark:text-gray-400">Location:</span>
-                          <span className="text-sm font-medium line-clamp-1 text-right max-w-[50%]" title={source?.location_address}>
-                            {source?.location_address || "Unknown"}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-500 dark:text-gray-400">pH Level:</span>
-                          <span className="text-sm font-medium">{product.ph_level ?? "N/A"}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-500 dark:text-gray-400">TDS:</span>
-                          <span className="text-sm font-medium">{product.tds ? `${product.tds} mg/L` : "N/A"}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="p-4 pt-0 mt-auto">
-                      <Link
-                        href={`/sources/${product.id}`}
-                        className="w-full text-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-                      >
-                        View Details
-                      </Link>
-                    </CardFooter>
-                  </Card>
-                )
-              })}
+              {results.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
             </div>
 
             {results.length === 0 && (
