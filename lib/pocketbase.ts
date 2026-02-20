@@ -15,6 +15,7 @@ function getPbUrl(): string {
 function getPb(): PocketBase {
   if (!_pb) {
     _pb = new PocketBase(getPbUrl());
+    _pb.autoCancellation(false);
   }
   return _pb;
 }

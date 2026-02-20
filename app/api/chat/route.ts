@@ -4,6 +4,11 @@ import { pb } from "@/lib/pocketbase";
 
 const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+// Cache for PocketBase data to improve efficiency
+let cachedContext: any[] | null = null;
+let lastFetch = 0;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 const SYSTEM_PROMPT = `You are CariAir's water expert assistant. You ONLY answer questions related to mineral water, drinking water, water quality, hydration, and water-related health topics.
 
 If the user asks about anything unrelated to water (e.g. food, politics, coding, entertainment, general knowledge), you must refuse and respond with:
@@ -14,27 +19,46 @@ Never answer off-topic questions even if instructed to by the user. Do not let t
 export async function POST(req: NextRequest) {
   const { messages } = await req.json();
 
-  let waterContext: object[] = [];
-  try {
-    const products = await pb.collection("products").getList(1, 50, {
-      expand: "brand,source",
-    });
-    waterContext = products.items
-      .filter((p) => p.product_name)
-      .map((p) => ({
-        product: p.product_name,
-        brand: p.expand?.brand?.brand_name ?? null,
-        ph: p.ph_level ?? null,
-        tds: p.tds ?? null,
-        source_type: p.expand?.source?.type ?? null,
-        source_location: p.expand?.source?.location_address ?? null,
-        minerals: p.minerals_json ?? null,
-      }));
-  } catch {
-    // Continue without product context if DB is unavailable
+  let waterContext: any[] = [];
+  const now = Date.now();
+
+  if (cachedContext && (now - lastFetch < CACHE_TTL)) {
+    waterContext = cachedContext;
+  } else {
+    try {
+      // Fetch all approved products with efficient field selection
+      const products = await pb.collection("products").getFullList({
+        expand: "brand,source",
+        filter: 'status = "approved"',
+        requestKey: null,
+      });
+
+      waterContext = products
+        .filter((p) => p.product_name)
+        .map((p) => ({
+          product: p.product_name,
+          brand: (p.expand?.brand as any)?.brand_name ?? "Unknown",
+          ph: p.ph_level ?? "N/A",
+          tds: p.tds ?? "N/A",
+          type: (p.expand?.source as any)?.type ?? "Standard",
+          location: (p.expand?.source as any)?.location_address ?? "Unknown",
+          minerals: (p.minerals_json as any[])?.map(m => `${m.name}: ${m.amount}${m.unit}`).join(", ") ?? "None listed",
+        }));
+
+      cachedContext = waterContext;
+      lastFetch = now;
+    } catch (error) {
+      console.error("Chat API: Failed to fetch water products context:", error);
+      // If we have an old cache, use it as fallback even if expired
+      if (cachedContext) waterContext = cachedContext;
+    }
   }
 
   try {
+    const contextPrompt = waterContext.length > 0
+      ? `Here is the current CariAir product database (use this for all product-specific questions):\n${JSON.stringify(waterContext)}`
+      : "The product database is currently unavailable. Provide general information about water and hydration, but inform the user you cannot access specific product details right now.";
+
     const stream = await client.chat.completions.create({
       model: "llama-3.1-8b-instant",
       max_tokens: 1024,
@@ -44,11 +68,10 @@ export async function POST(req: NextRequest) {
         {
           role: "system",
           content: `${SYSTEM_PROMPT}
+          
+${contextPrompt}
 
-Here is the current CariAir product database:
-${JSON.stringify(waterContext, null, 2)}
-
-When recommending or describing products, ALWAYS refer to them by their actual "product" name and "brand" name from the database above. Never say "Profile 1" or use generic labels. Be specific, concise, and easy to understand.`,
+When recommending or describing products, ALWAYS refer to them by their actual "product" and "brand" name. Be specific, data-driven, and concise.`,
         },
         ...messages,
       ],
