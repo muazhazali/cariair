@@ -12,5 +12,6 @@
       "Bash(curl:*)",
       "Bash(netstat:*)"
     ]
-  }
+  },
+  "prefersReducedMotion": true
 }

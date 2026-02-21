@@ -26,13 +26,28 @@ import {
 import { Product, Brand } from "@/lib/types/pocketbase"
 import { TrendingUp, Droplets, BarChart3, Map, Heart, Info } from "lucide-react"
 import { getMineralInfo } from "@/lib/mineral-data"
+import { getAllProducts, getBrands } from "@/lib/products"
+import { useState, useEffect } from "react"
 
 interface AnalyticsDashboardProps {
   products: Product[]
   brands: Brand[]
 }
 
-export function AnalyticsDashboard({ products, brands }: AnalyticsDashboardProps) {
+export function AnalyticsDashboard({ products: initialProducts, brands: initialBrands }: AnalyticsDashboardProps) {
+  const [products, setProducts] = useState(initialProducts)
+  const [brands, setBrands] = useState(initialBrands)
+
+  // If server-side fetch returned empty (e.g. cold start on Vercel), auto-retry on the client
+  useEffect(() => {
+    if (initialProducts.length === 0) {
+      Promise.all([getAllProducts(), getBrands()]).then(([p, b]) => {
+        setProducts(p)
+        setBrands(b)
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   // Calculate average pH by brands
   const getAveragePhByBrand = () => {
     const brandPh: Record<string, { total: number; count: number; name: string }> = {}
