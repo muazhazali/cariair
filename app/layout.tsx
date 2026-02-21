@@ -9,8 +9,9 @@ import { WaterChatbot } from "@/components/water-chatbot"
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Cariair - Water Source Registry',
-  description: 'The definitive registry of all mineral and drinking water sources in Malaysia.',
+  title: 'CariAir | Malaysia Mineral & Drinking Water Source Registry',
+  description: 'The definitive registry of mineral and drinking water sources in Malaysia. Compare pH levels, TDS, and mineral composition of brands like Spritzer, Cactus, and more.',
+  keywords: ['mineral water Malaysia', 'drinking water sources', 'water quality Malaysia', 'pH level mineral water', 'best mineral water brand Malaysia', 'CariAir'],
 }
 
 export default async function RootLayout({
