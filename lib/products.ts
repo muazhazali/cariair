@@ -25,6 +25,19 @@ export async function getBrands() {
   }
 }
 
+export async function getAllProducts(): Promise<Product[]> {
+  try {
+    return await pb.collection('products').getFullList<Product>({
+      expand: 'brand,source,manufacturer',
+      sort: 'product_name',
+      requestKey: null,
+    });
+  } catch (error) {
+    console.error("Error fetching all products:", error);
+    return [];
+  }
+}
+
 export async function searchWaterSources(filters: SearchFilters): Promise<Product[]> {
   try {
     const filterParts: string[] = [];

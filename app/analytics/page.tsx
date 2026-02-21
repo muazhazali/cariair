@@ -1,5 +1,5 @@
 import { AnalyticsDashboard } from "@/components/analytics-dashboard"
-import { searchWaterSources, getBrands } from "@/lib/products"
+import { getAllProducts, getBrands } from "@/lib/products"
 import { getTranslations } from "next-intl/server"
 
 export const dynamic = 'force-dynamic'
@@ -8,7 +8,7 @@ export default async function AnalyticsPage() {
   const t = await getTranslations("analytics")
 
   const [allProducts, brands] = await Promise.all([
-    searchWaterSources({}),
+    getAllProducts(),
     getBrands()
   ])
 
