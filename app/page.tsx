@@ -157,17 +157,13 @@ export default function HomePage() {
 
           <div className="container relative px-4 md:px-6">
             <div className="flex flex-col items-center space-y-8 text-center">
-              {/* Title with icon */}
-              <div className="flex items-center gap-3 mb-2">
-                <Droplet className="h-10 w-10 text-blue-600 dark:text-blue-400" />
-                <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-br from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">
-                  CariAir
+              {/* Tagline as Main Title */}
+              <div className="flex flex-col items-center gap-4 mb-2">
+                <Droplet className="h-12 w-12 text-blue-600 dark:text-blue-400 animate-pulse-glow" />
+                <h1 className="max-w-[900px] text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl bg-gradient-to-br from-gray-900 via-gray-700 to-gray-600 dark:from-gray-100 dark:via-gray-300 dark:to-gray-500 bg-clip-text text-transparent px-4">
+                  {t("tagline")}
                 </h1>
               </div>
-
-              <p className="max-w-[800px] text-lg md:text-xl text-gray-600 dark:text-gray-300">
-                {t("tagline")}
-              </p>
 
               {/* Prominent Search Bar */}
               <div className="w-full max-w-2xl">
