@@ -20,6 +20,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts"
+import { useTranslations } from "next-intl"
 
 interface Mineral {
   name: string
@@ -34,22 +35,24 @@ interface MineralCompositionPanelProps {
 }
 
 export function MineralCompositionPanel({ minerals, productName }: MineralCompositionPanelProps) {
+  const t = useTranslations('mineralPanel')
+
   if (!minerals || minerals.length === 0) {
     return (
       <Card className="border-2">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center text-xl">
             <BarChart3 className="mr-2 h-6 w-6 text-purple-500" />
-            Mineral Profile
+            {t('title')}
           </CardTitle>
           <CardDescription className="text-base mt-2">
-            Detailed breakdown of minerals and their health benefits
+            {t('description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <BarChart3 className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-700 mb-3" />
-            <p className="text-sm text-gray-500 dark:text-gray-400">No mineral data available</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t('noData')}</p>
           </div>
         </CardContent>
       </Card>
@@ -86,14 +89,14 @@ export function MineralCompositionPanel({ minerals, productName }: MineralCompos
           <div>
             <CardTitle className="flex items-center text-xl">
               <BarChart3 className="mr-2 h-6 w-6 text-purple-500" />
-              Mineral Profile
+              {t('title')}
             </CardTitle>
             <CardDescription className="text-base mt-2">
-              Detailed breakdown of minerals and their health benefits
+              {t('description')}
             </CardDescription>
           </div>
           <Badge variant="secondary" className="text-sm">
-            {enrichedMinerals.length} minerals detected
+            {t('mineralsDetected', { count: enrichedMinerals.length })}
           </Badge>
         </div>
       </CardHeader>
@@ -130,24 +133,24 @@ export function MineralCompositionPanel({ minerals, productName }: MineralCompos
 
         {/* Detailed Table */}
         <div className="space-y-4">
-          <h4 className="font-semibold text-lg">Mineral Composition Details</h4>
+          <h4 className="font-semibold text-lg">{t('compositionDetails')}</h4>
           <div className="rounded-lg border overflow-hidden">
             <table className="w-full">
               <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Mineral</th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold">Amount</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Health Benefit</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">{t('mineral')}</th>
+                  <th className="px-4 py-3 text-right text-sm font-semibold">{t('amount')}</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">{t('healthBenefit')}</th>
                   <th className="px-4 py-3 text-center text-sm font-semibold">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger className="flex items-center gap-1 mx-auto">
-                          Daily %
+                          {t('dailyPct')}
                           <Info className="h-3 w-3" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="max-w-xs">
-                            Percentage of recommended daily intake based on drinking 2L per day
+                            {t('dailyTooltip')}
                           </p>
                         </TooltipContent>
                       </Tooltip>
@@ -206,7 +209,7 @@ export function MineralCompositionPanel({ minerals, productName }: MineralCompos
         <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-4 border border-blue-200 dark:border-blue-900">
           <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
             <Info className="h-4 w-4 text-blue-600" />
-            Key Highlights
+            {t('keyHighlights')}
           </h4>
           <ul className="space-y-1 text-sm">
             {enrichedMinerals
@@ -216,15 +219,15 @@ export function MineralCompositionPanel({ minerals, productName }: MineralCompos
                 <li key={index} className="flex items-start gap-2">
                   <span className="text-blue-600 dark:text-blue-400">✓</span>
                   <span>
-                    <strong>{mineral.info.name}:</strong> Provides{" "}
-                    {mineral.dailyIntakePercentage?.toFixed(0)}% of daily recommended intake
+                    <strong>{mineral.info.name}:</strong> {t('provides')}{" "}
+                    {mineral.dailyIntakePercentage?.toFixed(0)}% {t('ofDailyIntake')}
                   </span>
                 </li>
               ))}
             {enrichedMinerals.filter((m) => m.dailyIntakePercentage && m.dailyIntakePercentage >= 10)
               .length === 0 && (
               <li className="text-gray-600 dark:text-gray-400">
-                Contains trace amounts of essential minerals
+                {t('traceAmounts')}
               </li>
             )}
           </ul>

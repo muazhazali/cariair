@@ -23,6 +23,7 @@ import { Filter, X, ChevronDown, Sparkles, Heart, Bone, Droplets, Zap } from "lu
 import { WATER_TYPE_LABEL_CLASSES, WATER_TYPE_DOT_CLASSES } from "@/lib/water-type-colors"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { useTranslations } from "next-intl"
 
 interface EnhancedProductFiltersProps {
   brands: { id: string; brand_name: string }[]
@@ -41,57 +42,56 @@ interface EnhancedProductFiltersProps {
 
 const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated"]
 
-
-// Health goal presets
-const HEALTH_PRESETS = [
-  {
-    id: "bone",
-    name: "Bone Health",
-    icon: Bone,
-    description: "High calcium content",
-    filters: {
-      minPh: 7.0,
-      maxPh: 8.5,
-      // Would filter by calcium content if we had that capability
-    },
-  },
-  {
-    id: "heart",
-    name: "Heart Health",
-    icon: Heart,
-    description: "Low sodium, high potassium",
-    filters: {
-      minPh: 7.0,
-      maxPh: 8.0,
-    },
-  },
-  {
-    id: "hydration",
-    name: "Optimal Hydration",
-    icon: Droplets,
-    description: "Balanced minerals, neutral pH",
-    filters: {
-      minPh: 6.5,
-      maxPh: 7.5,
-      minTds: 50,
-      maxTds: 150,
-    },
-  },
-  {
-    id: "energy",
-    name: "Energy & Performance",
-    icon: Zap,
-    description: "Rich in magnesium",
-    filters: {
-      minPh: 7.0,
-      maxPh: 8.5,
-      minTds: 100,
-      maxTds: 300,
-    },
-  },
-]
-
 export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = "dialog" }: EnhancedProductFiltersProps) {
+  const t = useTranslations('filters')
+
+  // Health goal presets
+  const HEALTH_PRESETS = [
+    {
+      id: "bone",
+      name: t('presetBone'),
+      icon: Bone,
+      description: t('presetBoneDesc'),
+      filters: {
+        minPh: 7.0,
+        maxPh: 8.5,
+      },
+    },
+    {
+      id: "heart",
+      name: t('presetHeart'),
+      icon: Heart,
+      description: t('presetHeartDesc'),
+      filters: {
+        minPh: 7.0,
+        maxPh: 8.0,
+      },
+    },
+    {
+      id: "hydration",
+      name: t('presetHydration'),
+      icon: Droplets,
+      description: t('presetHydrationDesc'),
+      filters: {
+        minPh: 6.5,
+        maxPh: 7.5,
+        minTds: 50,
+        maxTds: 150,
+      },
+    },
+    {
+      id: "energy",
+      name: t('presetEnergy'),
+      icon: Zap,
+      description: t('presetEnergyDesc'),
+      filters: {
+        minPh: 7.0,
+        maxPh: 8.5,
+        minTds: 100,
+        maxTds: 300,
+      },
+    },
+  ]
   // State initialization
   const [types, setTypes] = React.useState<string[]>(defaultValues?.types || WATER_TYPES)
   const [phRange, setPhRange] = React.useState<[number, number]>([
@@ -224,7 +224,7 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
       types.forEach(type => {
         filters.push({
           type: 'waterType',
-          label: 'Type',
+          label: t('type'),
           value: type,
           onRemove: () => removeTypeFilter(type)
         })
@@ -238,7 +238,7 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
         if (brand) {
           filters.push({
             type: 'brand',
-            label: 'Brand',
+            label: t('brand'),
             value: brand.brand_name,
             onRemove: () => removeBrandFilter(brandId)
           })
@@ -286,7 +286,7 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
         <CollapsibleTrigger className="flex items-center justify-between w-full group">
           <h3 className="text-sm font-semibold flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-purple-500" />
-            Recommended for Me
+            {t('recommendedForMe')}
           </h3>
           <ChevronDown className={`h-4 w-4 transition-transform ${openSections.presets ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
@@ -318,7 +318,7 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
       {/* Water Type Filter */}
       <Collapsible open={openSections.waterType} onOpenChange={() => toggleSection('waterType')}>
         <CollapsibleTrigger className="flex items-center justify-between w-full group">
-          <h3 className="text-sm font-semibold">Water Type</h3>
+          <h3 className="text-sm font-semibold">{t('waterType')}</h3>
           <ChevronDown className={`h-4 w-4 transition-transform ${openSections.waterType ? 'rotate-180' : ''}`} />
         </CollapsibleTrigger>
         <CollapsibleContent className="pt-3">
@@ -336,7 +336,7 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
                 }}
               />
               <Label htmlFor="select-all-types" className="text-sm font-medium cursor-pointer">
-                Select All
+                {t('selectAll')}
               </Label>
             </div>
             <Separator />
@@ -368,7 +368,7 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
       {/* pH Level Filter */}
       <Collapsible open={openSections.ph} onOpenChange={() => toggleSection('ph')}>
         <CollapsibleTrigger className="flex items-center justify-between w-full group">
-          <h3 className="text-sm font-semibold">pH Level</h3>
+          <h3 className="text-sm font-semibold">{t('phLevel')}</h3>
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted-foreground">
               {phRange[0]} - {phRange[1]}
@@ -394,7 +394,7 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
       {/* TDS Filter */}
       <Collapsible open={openSections.tds} onOpenChange={() => toggleSection('tds')}>
         <CollapsibleTrigger className="flex items-center justify-between w-full group">
-          <h3 className="text-sm font-semibold">TDS (mg/L)</h3>
+          <h3 className="text-sm font-semibold">{t('tds')}</h3>
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted-foreground">
               {tdsRange[0]} - {tdsRange[1]}
@@ -420,10 +420,10 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
       {/* Brands Filter */}
       <Collapsible open={openSections.brands} onOpenChange={() => toggleSection('brands')}>
         <CollapsibleTrigger className="flex items-center justify-between w-full group">
-          <h3 className="text-sm font-semibold">Brands</h3>
+          <h3 className="text-sm font-semibold">{t('brands')}</h3>
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted-foreground">
-              {selectedBrands.length} selected
+              {t('selected', { count: selectedBrands.length })}
             </span>
             <ChevronDown className={`h-4 w-4 transition-transform ${openSections.brands ? 'rotate-180' : ''}`} />
           </div>
@@ -443,7 +443,7 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
                 }}
               />
               <Label htmlFor="select-all-brands" className="text-sm font-medium cursor-pointer">
-                Select All
+                {t('selectAll')}
               </Label>
             </div>
           </div>
@@ -476,7 +476,7 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
       {/* Action Buttons */}
       <div className="flex flex-col gap-2 pt-4">
         <Button onClick={applyFilters} className="w-full">
-          Apply Filters
+          {t('applyFilters')}
           {activeFilterCount > 0 && (
             <Badge variant="secondary" className="ml-2">
               {activeFilterCount}
@@ -485,10 +485,10 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
         </Button>
         <div className="flex gap-2">
           <Button variant="outline" onClick={clearAllFilters} className="flex-1" size="sm">
-            Clear All
+            {t('clearAll')}
           </Button>
           <Button variant="outline" onClick={resetFilters} className="flex-1" size="sm">
-            Reset
+            {t('reset')}
           </Button>
         </div>
       </div>
@@ -506,7 +506,7 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
       {/* Active Filter Chips (shown above results) */}
       {activeFilters.length > 0 && (
         <div className="mb-4 flex flex-wrap gap-2">
-          <span className="text-sm text-gray-600 dark:text-gray-400 self-center">Active filters:</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400 self-center">{t('activeFilters')}</span>
           {activeFilters.map((filter, index) => (
             <Badge
               key={`${filter.type}-${index}`}
@@ -537,7 +537,7 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
           <DialogTrigger asChild>
             <Button variant="outline" className="w-full relative">
               <Filter className="mr-2 h-4 w-4" />
-              Filters
+              {t('filterButton')}
               {activeFilterCount > 0 && (
                 <Badge variant="default" className="ml-2 h-5 min-w-5 px-1.5">
                   {activeFilterCount}
@@ -549,10 +549,10 @@ export function EnhancedProductFilters({ brands, onApply, defaultValues, mode = 
             <DialogHeader className="px-6 pt-6 pb-4">
               <DialogTitle className="flex items-center gap-2">
                 <Filter className="h-5 w-5" />
-                Filter Water Sources
+                {t('title')}
               </DialogTitle>
               <DialogDescription>
-                Refine your search results by adjusting the filters below
+                {t('description')}
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="h-[calc(85vh-120px)] px-6">

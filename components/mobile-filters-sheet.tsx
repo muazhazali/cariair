@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { SlidersHorizontal, X } from "lucide-react"
 import { EnhancedProductFilters } from "@/components/enhanced-product-filters"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 
 interface MobileFiltersSheetProps {
   brands: { id: string; brand_name: string }[]
@@ -13,6 +14,7 @@ interface MobileFiltersSheetProps {
 }
 
 export function MobileFiltersSheet({ brands, onApply, defaultValues }: MobileFiltersSheetProps) {
+  const t = useTranslations('filters')
   const [open, setOpen] = useState(false)
 
   // Prevent body scroll when sheet is open
@@ -42,7 +44,7 @@ export function MobileFiltersSheet({ brands, onApply, defaultValues }: MobileFil
         className="h-9 gap-2 bg-white/40 dark:bg-black/40 backdrop-blur-sm border border-white/30 dark:border-white/20 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all duration-300"
       >
         <SlidersHorizontal className="h-4 w-4" />
-        Filters
+        {t('filterButton')}
       </Button>
 
       {/* Sheet Overlay */}
@@ -81,7 +83,7 @@ export function MobileFiltersSheet({ brands, onApply, defaultValues }: MobileFil
             {/* Header */}
             <div className="relative flex items-center justify-between px-6 py-4 border-b border-white/30 dark:border-white/20">
               <h2 className="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
-                Filter Water Sources
+                {t('title')}
               </h2>
               <button
                 onClick={() => setOpen(false)}

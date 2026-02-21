@@ -1,12 +1,14 @@
 import { AnalyticsDashboard } from "@/components/analytics-dashboard"
 import { searchWaterSources, getBrands } from "@/lib/products"
+import { getTranslations } from "next-intl/server"
 
 export const dynamic = 'force-dynamic'
 
 export default async function AnalyticsPage() {
-  // Fetch all products and brands for analytics
+  const t = await getTranslations("analytics")
+
   const [allProducts, brands] = await Promise.all([
-    searchWaterSources({}), // Get all products
+    searchWaterSources({}),
     getBrands()
   ])
 
@@ -15,11 +17,10 @@ export default async function AnalyticsPage() {
       <div className="container py-8 md:py-12">
         <div className="flex flex-col gap-3 mb-10">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
-            Water Analytics & Insights
+            {t("title")}
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
-            Explore market trends, mineral distributions, and data-driven insights about
-            mineral and drinking water sources in Malaysia.
+            {t("description")}
           </p>
         </div>
 

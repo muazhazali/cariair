@@ -19,6 +19,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts"
+import { useTranslations } from "next-intl"
 
 interface Mineral {
   name: string
@@ -35,6 +36,8 @@ interface HealthBenefitsPanelProps {
 }
 
 export function HealthBenefitsPanel({ minerals, phLevel, tds, productName }: HealthBenefitsPanelProps) {
+  const t = useTranslations('healthPanel')
+
   // Calculate wellness score (1-10 scale)
   const calculateWellnessScore = (): number => {
     let score = 5 // Base score
@@ -72,7 +75,7 @@ export function HealthBenefitsPanel({ minerals, phLevel, tds, productName }: Hea
   // Prepare radar chart data
   const radarData = [
     {
-      category: 'pH Balance',
+      category: t('phBalance'),
       value: phLevel
         ? phLevel >= 6.5 && phLevel <= 8.5
           ? 90
@@ -82,11 +85,11 @@ export function HealthBenefitsPanel({ minerals, phLevel, tds, productName }: Hea
         : 50,
     },
     {
-      category: 'Mineral Richness',
+      category: t('mineralRichness'),
       value: Math.min(100, (minerals.length / 10) * 100),
     },
     {
-      category: 'Purity',
+      category: t('purity'),
       value: tds
         ? tds >= 50 && tds <= 150
           ? 90
@@ -196,16 +199,16 @@ export function HealthBenefitsPanel({ minerals, phLevel, tds, productName }: Hea
   // Key highlights
   const keyHighlights = []
   if (minerals.some(m => m.name.toLowerCase().includes('calcium') && m.amount > 20)) {
-    keyHighlights.push({ text: "High in Calcium", benefit: "Great for Bone Health", icon: "🦴" })
+    keyHighlights.push({ text: t('highCalcium'), benefit: t('highCalciumBenefit'), icon: "🦴" })
   }
   if (minerals.some(m => m.name.toLowerCase().includes('magnesium') && m.amount > 10)) {
-    keyHighlights.push({ text: "Rich in Magnesium", benefit: "Supports Energy & Relaxation", icon: "⚡" })
+    keyHighlights.push({ text: t('richMagnesium'), benefit: t('richMagnesiumBenefit'), icon: "⚡" })
   }
   if (phLevel && phLevel >= 7.5 && phLevel <= 8.5) {
-    keyHighlights.push({ text: "Alkaline Water", benefit: "May Help Balance pH", icon: "⚖️" })
+    keyHighlights.push({ text: t('alkalineWater'), benefit: t('alkalineWaterBenefit'), icon: "⚖️" })
   }
   if (minerals.length >= 8) {
-    keyHighlights.push({ text: "Mineral-Rich", benefit: "Diverse Nutrition Profile", icon: "💎" })
+    keyHighlights.push({ text: t('mineralRich'), benefit: t('mineralRichBenefit'), icon: "💎" })
   }
 
   return (
@@ -215,22 +218,22 @@ export function HealthBenefitsPanel({ minerals, phLevel, tds, productName }: Hea
           <div>
             <CardTitle className="flex items-center text-xl">
               <Heart className="mr-2 h-6 w-6 text-red-500" />
-              Health Benefits
+              {t('title')}
             </CardTitle>
             <CardDescription className="text-base mt-2">
-              Discover how {productName} supports your wellbeing
+              {t('description', { productName })}
             </CardDescription>
           </div>
           <div className="text-center">
             <div className="text-4xl font-bold text-primary">{wellnessScore}</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">Wellness Score</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">{t('wellnessScore')}</div>
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Wellness Radar Chart */}
         <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 rounded-lg p-4">
-          <h4 className="font-semibold text-sm mb-3 text-center">Water Quality Profile</h4>
+          <h4 className="font-semibold text-sm mb-3 text-center">{t('waterQualityProfile')}</h4>
           <ResponsiveContainer width="100%" height={250}>
             <RadarChart data={radarData}>
               <PolarGrid />
@@ -274,7 +277,7 @@ export function HealthBenefitsPanel({ minerals, phLevel, tds, productName }: Hea
         {/* Health Categories Accordion */}
         {activeCategories.length > 0 && (
           <div>
-            <h4 className="font-semibold text-lg mb-3">Health Benefits by Category</h4>
+            <h4 className="font-semibold text-lg mb-3">{t('healthBenefitsTitle')}</h4>
             <Accordion type="single" collapsible className="w-full">
               {activeCategories.map((category) => (
                 <AccordionItem key={category.id} value={category.id}>
@@ -307,10 +310,7 @@ export function HealthBenefitsPanel({ minerals, phLevel, tds, productName }: Hea
         <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
           <div className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400">
             <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
-            <p>
-              Health benefits are based on mineral composition and general nutritional science. Individual
-              results may vary. Consult with a healthcare professional for personalized advice.
-            </p>
+            <p>{t('disclaimer')}</p>
           </div>
         </div>
       </CardContent>

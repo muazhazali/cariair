@@ -11,6 +11,7 @@ import { SingleSourceMap } from "@/components/single-source-map"
 import { MineralCompositionPanel } from "@/components/mineral-composition-panel"
 import { HealthBenefitsPanel } from "@/components/health-benefits-panel"
 import { WaterTypeBadge } from "@/components/water-type-badge"
+import { getTranslations } from "next-intl/server"
 
 export const dynamic = 'force-dynamic'
 
@@ -35,7 +36,7 @@ async function getProduct(id: string): Promise<Product | null> {
 
 export default async function SourcePage({ params }: { params: { id: string } }) {
   const { id } = await params;
-  const product = await getProduct(id);
+  const [product, t] = await Promise.all([getProduct(id), getTranslations('product')]);
 
   if (!product) {
     notFound();
@@ -65,7 +66,7 @@ export default async function SourcePage({ params }: { params: { id: string } })
         <Button variant="ghost" asChild className="mb-6 -ml-2">
           <Link href="/sources">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to all sources
+            {t('backToSources')}
           </Link>
         </Button>
 
@@ -105,22 +106,22 @@ export default async function SourcePage({ params }: { params: { id: string } })
               <CardHeader>
                 <CardTitle className="flex items-center text-lg">
                   <Building2 className="mr-2 h-5 w-5" />
-                  Company Information
+                  {t('companyInfo')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Brand</span>
-                  <p className="text-base font-semibold mt-1">{brand?.brand_name || "Unknown"}</p>
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('brand')}</span>
+                  <p className="text-base font-semibold mt-1">{brand?.brand_name || t('unknown')}</p>
                 </div>
                 {brand?.parent_company && (
                   <div>
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Parent Company</span>
+                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('parentCompany')}</span>
                     <p className="text-base font-medium mt-1">{brand.parent_company}</p>
                   </div>
                 )}
                 <div>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Country</span>
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('country')}</span>
                   <p className="text-base font-medium mt-1">{source?.country || "Malaysia"}</p>
                 </div>
                 {brand?.website_url && (
@@ -132,7 +133,7 @@ export default async function SourcePage({ params }: { params: { id: string } })
                       className="inline-flex items-center text-sm font-medium text-primary hover:underline"
                     >
                       <Globe className="mr-2 h-4 w-4" />
-                      Visit website
+                      {t('visitWebsite')}
                     </a>
                   </div>
                 )}
@@ -143,12 +144,12 @@ export default async function SourcePage({ params }: { params: { id: string } })
               <CardHeader>
                 <CardTitle className="flex items-center text-lg">
                   <CheckCircle2 className="mr-2 h-5 w-5" />
-                  Verification
+                  {t('verification')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Status</span>
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('status')}</span>
                   <div className="mt-1">
                     <Badge variant={product.status === 'approved' ? 'default' : 'secondary'} className="text-sm">
                       {product.status || 'Pending'}
@@ -156,7 +157,7 @@ export default async function SourcePage({ params }: { params: { id: string } })
                   </div>
                 </div>
                 <div>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Created</span>
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('created')}</span>
                   <p className="text-base font-medium mt-1 flex items-center">
                     <Calendar className="mr-2 h-4 w-4" />
                     {new Date(product.created).toLocaleDateString('en-US', {
@@ -168,7 +169,7 @@ export default async function SourcePage({ params }: { params: { id: string } })
                 </div>
                 {source?.kkm_approval_number && (
                   <div>
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">KKM Approval</span>
+                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('kkmApproval')}</span>
                     <p className="text-base font-medium mt-1 font-mono text-sm">{source.kkm_approval_number}</p>
                   </div>
                 )}
@@ -183,33 +184,33 @@ export default async function SourcePage({ params }: { params: { id: string } })
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center text-xl">
                   <Droplet className="mr-2 h-6 w-6 text-blue-500" />
-                  Water Properties
+                  {t('waterProperties')}
                 </CardTitle>
                 <CardDescription className="text-base mt-2">
-                  Physical and chemical properties of the water source
+                  {t('waterPropertiesDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="rounded-lg border-2 border-gray-200 dark:border-gray-800 p-6 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20">
-                    <div className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">pH Level</div>
+                    <div className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">{t('phLevel')}</div>
                     <div className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-1">
                       {product.ph_level || "-"}
                     </div>
                     <div className="text-sm font-medium text-gray-600 dark:text-gray-500">
                       {product.ph_level ? (
                         product.ph_level < 7 ? (
-                          <span className="text-red-600 dark:text-red-400">Acidic</span>
+                          <span className="text-red-600 dark:text-red-400">{t('acidic')}</span>
                         ) : product.ph_level > 7 ? (
-                          <span className="text-blue-600 dark:text-blue-400">Alkaline</span>
+                          <span className="text-blue-600 dark:text-blue-400">{t('alkaline')}</span>
                         ) : (
-                          <span className="text-gray-600 dark:text-gray-400">Neutral</span>
+                          <span className="text-gray-600 dark:text-gray-400">{t('neutral')}</span>
                         )
                       ) : ""}
                     </div>
                   </div>
                   <div className="rounded-lg border-2 border-gray-200 dark:border-gray-800 p-6 bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20">
-                    <div className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">TDS</div>
+                    <div className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">{t('tds')}</div>
                     <div className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-1">
                       {product.tds || "-"}
                     </div>
@@ -217,7 +218,7 @@ export default async function SourcePage({ params }: { params: { id: string } })
                       {product.tds ? "mg/L" : ""}
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Total Dissolved Solids
+                      {t('totalDissolvedSolids')}
                     </div>
                   </div>
                 </div>
@@ -241,10 +242,10 @@ export default async function SourcePage({ params }: { params: { id: string } })
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center text-xl">
                     <MapPin className="mr-2 h-6 w-6 text-red-500" />
-                    Source Location
+                    {t('sourceLocation')}
                   </CardTitle>
                   <CardDescription className="text-base mt-2">
-                    Geographic location of the water source
+                    {t('sourceLocationDesc')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -262,10 +263,10 @@ export default async function SourcePage({ params }: { params: { id: string } })
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center text-xl">
                     <MapPin className="mr-2 h-6 w-6 text-red-500" />
-                    Source Location
+                    {t('sourceLocation')}
                   </CardTitle>
                   <CardDescription className="text-base mt-2">
-                    Geographic location of the water source
+                    {t('sourceLocationDesc')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -273,7 +274,7 @@ export default async function SourcePage({ params }: { params: { id: string } })
                     <div className="text-center">
                       <MapPin className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-700 mb-3" />
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Location data not available
+                        {t('locationNotAvailable')}
                       </p>
                       {source?.location_address && (
                         <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">

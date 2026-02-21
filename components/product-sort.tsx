@@ -9,8 +9,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
+import { useTranslations } from "next-intl"
 
-export type SortOption = 
+export type SortOption =
   | "name_asc"
   | "name_desc"
   | "ph_asc"
@@ -23,22 +24,23 @@ interface ProductSortProps {
   onValueChange: (value: SortOption) => void
 }
 
-const sortOptions: { value: SortOption; label: string }[] = [
-  { value: "name_asc", label: "Name (A-Z)" },
-  { value: "name_desc", label: "Name (Z-A)" },
-  { value: "ph_asc", label: "pH (Low to High)" },
-  { value: "ph_desc", label: "pH (High to Low)" },
-  { value: "tds_asc", label: "TDS (Low to High)" },
-  { value: "tds_desc", label: "TDS (High to Low)" },
-]
-
 export function ProductSort({ value, onValueChange }: ProductSortProps) {
+  const t = useTranslations('sort')
+  const sortOptions: { value: SortOption; label: string }[] = [
+    { value: "name_asc", label: t('nameAsc') },
+    { value: "name_desc", label: t('nameDesc') },
+    { value: "ph_asc", label: t('phAsc') },
+    { value: "ph_desc", label: t('phDesc') },
+    { value: "tds_asc", label: t('tdsAsc') },
+    { value: "tds_desc", label: t('tdsDesc') },
+  ]
+
   return (
     <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger className="w-[200px]">
         <div className="flex items-center gap-2">
           <ArrowUpDown className="h-4 w-4" />
-          <SelectValue placeholder="Sort by..." />
+          <SelectValue placeholder={t('placeholder')} />
         </div>
       </SelectTrigger>
       <SelectContent>

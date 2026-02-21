@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MobileComparisonCarousel } from "@/components/mobile-comparison-carousel"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useTranslations } from "next-intl"
 import {
   BarChart,
   Bar,
@@ -39,6 +40,7 @@ interface ProductComparisonProps {
 }
 
 export function ProductComparison({ products, onRemove, onClear }: ProductComparisonProps) {
+  const t = useTranslations('comparison')
   const [isOpen, setIsOpen] = useState(false)
   const isMobile = useIsMobile()
 
@@ -135,7 +137,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
         <BarChart3 className="h-5 w-5 text-blue-500" />
-        pH Level Comparison
+        {t('phComparison')}
       </h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={phData} layout="horizontal">
@@ -169,15 +171,15 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
       <div className="flex justify-center gap-6 mt-4 text-sm">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded" style={{ backgroundColor: "#ef4444" }} />
-          <span>Acidic (&lt;6.5)</span>
+          <span>{t('acidicLabel')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded" style={{ backgroundColor: "#22c55e" }} />
-          <span>Neutral (6.5-8)</span>
+          <span>{t('neutralLabel')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded" style={{ backgroundColor: "#3b82f6" }} />
-          <span>Alkaline (&gt;8)</span>
+          <span>{t('alkalineLabel')}</span>
         </div>
       </div>
     </Card>
@@ -187,7 +189,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
         <BarChart3 className="h-5 w-5 text-green-500" />
-        TDS Comparison (Total Dissolved Solids)
+        {t('tdsComparison')}
       </h3>
       <div className="space-y-6">
         {tdsData.map((item, index) => (
@@ -213,15 +215,15 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
       <div className="flex justify-center gap-6 mt-6 text-sm">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded" style={{ backgroundColor: "#22c55e" }} />
-          <span>Low (&lt;100)</span>
+          <span>{t('lowLabel')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded" style={{ backgroundColor: "#eab308" }} />
-          <span>Moderate (100-300)</span>
+          <span>{t('moderateLabel')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded" style={{ backgroundColor: "#ef4444" }} />
-          <span>High (&gt;300)</span>
+          <span>{t('highLabel')}</span>
         </div>
       </div>
     </Card>
@@ -231,9 +233,9 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
     if (mineralsData.length === 0) {
       return (
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Mineral Composition</h3>
+          <h3 className="text-lg font-semibold mb-4">{t('mineralComposition')}</h3>
           <p className="text-center text-gray-500 dark:text-gray-400 py-8">
-            No mineral data available for comparison
+            {t('noMineralData')}
           </p>
         </Card>
       )
@@ -246,7 +248,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
       <Card className="p-6">
         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <BarChart3 className="h-5 w-5 text-purple-500" />
-          Mineral Composition (mg/L)
+          {t('mineralCompositionMgL')}
         </h3>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={mineralsData}>
@@ -278,7 +280,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
         <table className="w-full border-collapse">
           <thead>
             <tr className="border-b">
-              <th className="text-left p-2 font-semibold">Property</th>
+              <th className="text-left p-2 font-semibold">{t('property')}</th>
               {products.map((product) => (
                 <th key={product.id} className="text-center p-2 font-semibold min-w-[150px]">
                   <div className="flex flex-col items-center gap-2">
@@ -292,7 +294,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full text-xs text-gray-400">
-                          No Image
+                          {t('noImage')}
                         </div>
                       )}
                     </div>
@@ -309,7 +311,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
           </thead>
           <tbody>
             <tr className="border-b">
-              <td className="p-2 font-medium">pH Level</td>
+              <td className="p-2 font-medium">{t('phLevel')}</td>
               {products.map((product) => (
                 <td key={product.id} className="p-2 text-center">
                   {product.ph_level ?? "N/A"}
@@ -317,7 +319,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
               ))}
             </tr>
             <tr className="border-b">
-              <td className="p-2 font-medium">TDS (mg/L)</td>
+              <td className="p-2 font-medium">{t('tdsMgL')}</td>
               {products.map((product) => (
                 <td key={product.id} className="p-2 text-center">
                   {product.tds ? `${product.tds} mg/L` : "N/A"}
@@ -325,7 +327,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
               ))}
             </tr>
             <tr className="border-b">
-              <td className="p-2 font-medium">Water Type</td>
+              <td className="p-2 font-medium">{t('waterType')}</td>
               {products.map((product) => (
                 <td key={product.id} className="p-2 text-center">
                   <Badge variant="outline">
@@ -335,7 +337,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
               ))}
             </tr>
             <tr className="border-b">
-              <td className="p-2 font-medium">Location</td>
+              <td className="p-2 font-medium">{t('location')}</td>
               {products.map((product) => (
                 <td key={product.id} className="p-2 text-center text-sm">
                   {product.expand?.source?.location_address || "N/A"}
@@ -343,7 +345,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
               ))}
             </tr>
             <tr className="border-b">
-              <td className="p-2 font-medium">Brand Website</td>
+              <td className="p-2 font-medium">{t('brandWebsite')}</td>
               {products.map((product) => (
                 <td key={product.id} className="p-2 text-center">
                   {product.expand?.brand?.website_url ? (
@@ -353,7 +355,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
                       rel="noopener noreferrer"
                       className="text-primary hover:underline text-sm"
                     >
-                      Visit
+                      {t('visit')}
                     </a>
                   ) : (
                     "N/A"
@@ -377,7 +379,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
           size="lg"
         >
           <Scale className="h-5 w-5 mr-2" />
-          Compare ({products.length}/3)
+          {t('compareButton', { count: products.length })}
         </Button>
       </div>
 
@@ -385,19 +387,19 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Product Comparison</DialogTitle>
+            <DialogTitle>{t('title')}</DialogTitle>
             <DialogDescription>
-              Compare up to 3 products side by side
+              {t('description')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <div className="text-sm text-muted-foreground">
-                {products.length} {products.length === 1 ? "product" : "products"} selected
+                {t('productsSelected', { count: products.length })}
               </div>
               <Button variant="outline" size="sm" onClick={onClear}>
-                Clear All
+                {t('clearAll')}
               </Button>
             </div>
 
@@ -409,11 +411,11 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="charts" className="flex items-center gap-2">
                     <BarChart3 className="h-4 w-4" />
-                    Chart View
+                    {t('chartView')}
                   </TabsTrigger>
                   <TabsTrigger value="table" className="flex items-center gap-2">
                     <Table2 className="h-4 w-4" />
-                    Table View
+                    {t('tableView')}
                   </TabsTrigger>
                 </TabsList>
 
@@ -442,7 +444,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full text-xs text-gray-400">
-                        No Image
+                        {t('noImage')}
                       </div>
                     )}
                   </div>

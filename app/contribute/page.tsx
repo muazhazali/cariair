@@ -14,17 +14,20 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Upload, Plus } from 'lucide-react';
 import { Brand, Manufacturer, Source } from '@/lib/types/pocketbase';
+import { useTranslations } from 'next-intl';
 
-const formSchema = z.object({
-  product_name: z.string().min(2, "Product name must be at least 2 characters"),
-  barcode: z.string().optional(),
-  brand: z.string().min(1, "Brand is required"),
-  manufacturer: z.string().min(1, "Manufacturer is required"),
-  source: z.string().min(1, "Source is required"),
-  ph_level: z.string().optional(),
-  tds: z.string().optional(),
-  image: z.any().optional(),
-});
+function createFormSchema(t: ReturnType<typeof useTranslations<'contribute'>>) {
+  return z.object({
+    product_name: z.string().min(2, t('productNameError')),
+    barcode: z.string().optional(),
+    brand: z.string().min(1, t('brandRequired')),
+    manufacturer: z.string().min(1, t('manufacturerRequired')),
+    source: z.string().min(1, t('waterSourceRequired')),
+    ph_level: z.string().optional(),
+    tds: z.string().optional(),
+    image: z.any().optional(),
+  });
+}
 
 // ── Inline-create dialog types ───────────────────────────────────────────────
 
@@ -36,6 +39,7 @@ type AddSourceValues = { source_name: string; location_address?: string; country
 
 export default function ContributePage() {
   const { toast } = useToast();
+  const t = useTranslations('contribute');
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,6 +62,8 @@ export default function ContributePage() {
   const [newBrand, setNewBrand] = useState<AddBrandValues>({ brand_name: '' });
   const [newManufacturer, setNewManufacturer] = useState<AddManufacturerValues>({ name: '' });
   const [newSource, setNewSource] = useState<AddSourceValues>({ source_name: '' });
+
+  const formSchema = createFormSchema(t);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -85,13 +91,13 @@ export default function ContributePage() {
         setSources(sourcesRes);
       } catch (error) {
         console.error('Error loading data:', error);
-        toast({ variant: 'destructive', title: 'Error loading data', description: 'Could not load options for the form.' });
+        toast({ variant: 'destructive', title: t('loadingError'), description: t('loadingErrorDesc') });
       } finally {
         setIsLoading(false);
       }
     };
     loadData();
-  }, [toast]);
+  }, [toast, t]);
 
   // ── Inline-create handlers ─────────────────────────────────────────────────
 
@@ -104,9 +110,9 @@ export default function ContributePage() {
       form.setValue('brand', created.id);
       setBrandDialogOpen(false);
       setNewBrand({ brand_name: '' });
-      toast({ title: 'Brand added', description: `"${created.brand_name}" has been added.` });
+      toast({ title: t('brandAdded'), description: t('brandAddedDesc', { name: created.brand_name }) });
     } catch (err: any) {
-      toast({ variant: 'destructive', title: 'Failed to add brand', description: err.message });
+      toast({ variant: 'destructive', title: t('brandAddFailed'), description: err.message });
     } finally {
       setAddingBrand(false);
     }
@@ -121,9 +127,9 @@ export default function ContributePage() {
       form.setValue('manufacturer', created.id);
       setManufacturerDialogOpen(false);
       setNewManufacturer({ name: '' });
-      toast({ title: 'Manufacturer added', description: `"${created.name}" has been added.` });
+      toast({ title: t('manufacturerAdded'), description: t('manufacturerAddedDesc', { name: created.name }) });
     } catch (err: any) {
-      toast({ variant: 'destructive', title: 'Failed to add manufacturer', description: err.message });
+      toast({ variant: 'destructive', title: t('manufacturerAddFailed'), description: err.message });
     } finally {
       setAddingManufacturer(false);
     }
@@ -138,9 +144,9 @@ export default function ContributePage() {
       form.setValue('source', created.id);
       setSourceDialogOpen(false);
       setNewSource({ source_name: '' });
-      toast({ title: 'Source added', description: `"${created.source_name}" has been added.` });
+      toast({ title: t('sourceAdded'), description: t('sourceAddedDesc', { name: created.source_name }) });
     } catch (err: any) {
-      toast({ variant: 'destructive', title: 'Failed to add source', description: err.message });
+      toast({ variant: 'destructive', title: t('sourceAddFailed'), description: err.message });
     } finally {
       setAddingSource(false);
     }
@@ -155,7 +161,7 @@ export default function ContributePage() {
       const rlRes = await fetch('/api/rate-limit', { method: 'POST' });
       if (!rlRes.ok) {
         const rlData = await rlRes.json();
-        toast({ variant: 'destructive', title: "You're going too fast", description: rlData.error });
+        toast({ variant: 'destructive', title: t('rateLimitTitle'), description: rlData.error });
         return;
       }
 
@@ -179,11 +185,11 @@ export default function ContributePage() {
 
       await pb.collection('products').create(formData);
 
-      toast({ title: 'Submission Successful', description: 'Your product has been submitted for review.' });
+      toast({ title: t('submitSuccess'), description: t('submitSuccessDesc') });
       form.reset();
     } catch (error: any) {
       console.error(error);
-      toast({ variant: 'destructive', title: 'Submission Failed', description: error.message || 'Something went wrong.' });
+      toast({ variant: 'destructive', title: t('submitFailed'), description: error.message || t('submitFailed') });
     } finally {
       setIsSubmitting(false);
     }
@@ -196,7 +202,7 @@ export default function ContributePage() {
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 flex items-center justify-center">
         <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400">
           <Loader2 className="h-8 w-8 animate-spin" />
-          <span className="text-lg">Loading form...</span>
+          <span className="text-lg">{t('loading')}</span>
         </div>
       </div>
     );
@@ -214,17 +220,17 @@ export default function ContributePage() {
               <Upload className="h-10 w-10 md:h-12 md:w-12 text-blue-600 dark:text-blue-400" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
-              Submit a Water Product
+              {t('title')}
             </h1>
             <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Add a new bottled water to our registry. All submissions are reviewed.
+              {t('description')}
             </p>
           </div>
 
           <Card className="border-2 border-gray-200 dark:border-gray-800 shadow-lg">
             <CardHeader>
-              <CardTitle className="text-xl">Product Details</CardTitle>
-              <CardDescription className="text-base">Enter the details as seen on the bottle.</CardDescription>
+              <CardTitle className="text-xl">{t('cardTitle')}</CardTitle>
+              <CardDescription className="text-base">{t('cardDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...form}>
@@ -235,9 +241,9 @@ export default function ContributePage() {
                     name="product_name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Product Name</FormLabel>
+                        <FormLabel>{t('productName')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g. Spritzer Natural Mineral Water" {...field} />
+                          <Input placeholder={t('productNamePlaceholder')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -249,9 +255,9 @@ export default function ContributePage() {
                     name="barcode"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Barcode (Optional)</FormLabel>
+                        <FormLabel>{t('barcode')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="Scan or type barcode" {...field} />
+                          <Input placeholder={t('barcodePlaceholder')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -265,11 +271,11 @@ export default function ContributePage() {
                       name="brand"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Brand</FormLabel>
+                          <FormLabel>{t('brand')}</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select a brand" />
+                                <SelectValue placeholder={t('brandPlaceholder')} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -281,13 +287,13 @@ export default function ContributePage() {
                             </SelectContent>
                           </Select>
                           <FormDescription>
-                            Not listed?{' '}
+                            {t('brandNotListed')}{' '}
                             <button
                               type="button"
                               onClick={() => setBrandDialogOpen(true)}
                               className="text-primary hover:underline inline-flex items-center gap-1"
                             >
-                              <Plus className="h-3 w-3" /> Add brand
+                              <Plus className="h-3 w-3" /> {t('addBrand')}
                             </button>
                           </FormDescription>
                           <FormMessage />
@@ -300,11 +306,11 @@ export default function ContributePage() {
                       name="manufacturer"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Manufacturer</FormLabel>
+                          <FormLabel>{t('manufacturer')}</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select a manufacturer" />
+                                <SelectValue placeholder={t('manufacturerPlaceholder')} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -316,13 +322,13 @@ export default function ContributePage() {
                             </SelectContent>
                           </Select>
                           <FormDescription>
-                            Not listed?{' '}
+                            {t('manufacturerNotListed')}{' '}
                             <button
                               type="button"
                               onClick={() => setManufacturerDialogOpen(true)}
                               className="text-primary hover:underline inline-flex items-center gap-1"
                             >
-                              <Plus className="h-3 w-3" /> Add manufacturer
+                              <Plus className="h-3 w-3" /> {t('addManufacturer')}
                             </button>
                           </FormDescription>
                           <FormMessage />
@@ -337,11 +343,11 @@ export default function ContributePage() {
                     name="source"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Water Source</FormLabel>
+                        <FormLabel>{t('waterSource')}</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select the source" />
+                              <SelectValue placeholder={t('waterSourcePlaceholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -353,13 +359,13 @@ export default function ContributePage() {
                           </SelectContent>
                         </Select>
                         <FormDescription>
-                          Not listed?{' '}
+                          {t('sourceNotListed')}{' '}
                           <button
                             type="button"
                             onClick={() => setSourceDialogOpen(true)}
                             className="text-primary hover:underline inline-flex items-center gap-1"
                           >
-                            <Plus className="h-3 w-3" /> Add source
+                            <Plus className="h-3 w-3" /> {t('addSource')}
                           </button>
                         </FormDescription>
                         <FormMessage />
@@ -374,9 +380,9 @@ export default function ContributePage() {
                       name="ph_level"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>pH Level (Optional)</FormLabel>
+                          <FormLabel>{t('phLevel')}</FormLabel>
                           <FormControl>
-                            <Input type="number" step="0.1" placeholder="e.g. 7.2" {...field} />
+                            <Input type="number" step="0.1" placeholder={t('phPlaceholder')} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -388,9 +394,9 @@ export default function ContributePage() {
                       name="tds"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>TDS (mg/L) (Optional)</FormLabel>
+                          <FormLabel>{t('tds')}</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="e.g. 150" {...field} />
+                            <Input type="number" placeholder={t('tdsPlaceholder')} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -400,16 +406,16 @@ export default function ContributePage() {
 
                   {/* Image */}
                   <FormItem>
-                    <FormLabel>Product Image</FormLabel>
+                    <FormLabel>{t('productImage')}</FormLabel>
                     <FormControl>
                       <Input id="image-upload" type="file" accept="image/*" />
                     </FormControl>
-                    <FormDescription>Upload a clear photo of the bottle/label.</FormDescription>
+                    <FormDescription>{t('productImageDesc')}</FormDescription>
                   </FormItem>
 
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Submit Product
+                    {t('submitProduct')}
                   </Button>
                 </form>
               </Form>
@@ -422,32 +428,32 @@ export default function ContributePage() {
       <Dialog open={brandDialogOpen} onOpenChange={setBrandDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Add New Brand</DialogTitle>
-            <DialogDescription>Enter the brand details. It will be added immediately.</DialogDescription>
+            <DialogTitle>{t('addBrandTitle')}</DialogTitle>
+            <DialogDescription>{t('addBrandDesc')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Brand Name <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium">{t('brandName')} <span className="text-red-500">{t('brandNameRequired')}</span></label>
               <Input
-                placeholder="e.g. Spritzer"
+                placeholder={t('brandNamePlaceholder')}
                 value={newBrand.brand_name}
                 onChange={(e) => setNewBrand((v) => ({ ...v, brand_name: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Website URL (Optional)</label>
+              <label className="text-sm font-medium">{t('websiteUrl')}</label>
               <Input
-                placeholder="https://spritzer.com.my"
+                placeholder={t('websiteUrlPlaceholder')}
                 value={newBrand.website_url || ''}
                 onChange={(e) => setNewBrand((v) => ({ ...v, website_url: e.target.value }))}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setBrandDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setBrandDialogOpen(false)}>{t('cancel')}</Button>
             <Button onClick={handleAddBrand} disabled={addingBrand || !newBrand.brand_name.trim()}>
               {addingBrand && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Add Brand
+              {t('addBrandButton')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -457,32 +463,32 @@ export default function ContributePage() {
       <Dialog open={manufacturerDialogOpen} onOpenChange={setManufacturerDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Add New Manufacturer</DialogTitle>
-            <DialogDescription>Enter the manufacturer details. It will be added immediately.</DialogDescription>
+            <DialogTitle>{t('addManufacturerTitle')}</DialogTitle>
+            <DialogDescription>{t('addManufacturerDesc')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Manufacturer Name <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium">{t('manufacturerName')} <span className="text-red-500">{t('manufacturerNameRequired')}</span></label>
               <Input
-                placeholder="e.g. OPM United (M) Sdn Bhd"
+                placeholder={t('manufacturerNamePlaceholder')}
                 value={newManufacturer.name}
                 onChange={(e) => setNewManufacturer((v) => ({ ...v, name: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Address (Optional)</label>
+              <label className="text-sm font-medium">{t('address')}</label>
               <Input
-                placeholder="e.g. Lot 1234, Jalan Industri, Perak"
+                placeholder={t('addressPlaceholder')}
                 value={newManufacturer.address || ''}
                 onChange={(e) => setNewManufacturer((v) => ({ ...v, address: e.target.value }))}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setManufacturerDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setManufacturerDialogOpen(false)}>{t('cancel')}</Button>
             <Button onClick={handleAddManufacturer} disabled={addingManufacturer || !newManufacturer.name.trim()}>
               {addingManufacturer && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Add Manufacturer
+              {t('addManufacturerButton')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -492,40 +498,40 @@ export default function ContributePage() {
       <Dialog open={sourceDialogOpen} onOpenChange={setSourceDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Add New Water Source</DialogTitle>
-            <DialogDescription>Enter the water source details. It will be added immediately.</DialogDescription>
+            <DialogTitle>{t('addSourceTitle')}</DialogTitle>
+            <DialogDescription>{t('addSourceDesc')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Source Name <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium">{t('sourceName')} <span className="text-red-500">{t('sourceNameRequired')}</span></label>
               <Input
-                placeholder="e.g. Gunung Hijau Spring"
+                placeholder={t('sourceNamePlaceholder')}
                 value={newSource.source_name}
                 onChange={(e) => setNewSource((v) => ({ ...v, source_name: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Location / Address (Optional)</label>
+              <label className="text-sm font-medium">{t('locationAddress')}</label>
               <Input
-                placeholder="e.g. Taiping, Perak"
+                placeholder={t('locationAddressPlaceholder')}
                 value={newSource.location_address || ''}
                 onChange={(e) => setNewSource((v) => ({ ...v, location_address: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Country (Optional)</label>
+              <label className="text-sm font-medium">{t('country')}</label>
               <Input
-                placeholder="e.g. Malaysia"
+                placeholder={t('countryPlaceholder')}
                 value={newSource.country || ''}
                 onChange={(e) => setNewSource((v) => ({ ...v, country: e.target.value }))}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSourceDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setSourceDialogOpen(false)}>{t('cancel')}</Button>
             <Button onClick={handleAddSource} disabled={addingSource || !newSource.source_name.trim()}>
               {addingSource && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Add Source
+              {t('addSourceButton')}
             </Button>
           </DialogFooter>
         </DialogContent>

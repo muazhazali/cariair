@@ -10,16 +10,24 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { pb } from "@/lib/pocketbase"
 import { Droplet, Map, ArrowRight } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 const WaterSourceMap = dynamic(() => import("@/components/water-source-map").then(mod => mod.WaterSourceMap), {
   ssr: false,
-  loading: () => <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950">
-    <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
-      <Droplet className="h-5 w-5 animate-pulse" />
-      <span>Loading map...</span>
-    </div>
-  </div>
+  loading: () => <MapLoadingFallback />,
 })
+
+function MapLoadingFallback() {
+  const t = useTranslations("home")
+  return (
+    <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950">
+      <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+        <Droplet className="h-5 w-5 animate-pulse" />
+        <span>{t("viewFullMap")}</span>
+      </div>
+    </div>
+  )
+}
 
 interface Stats {
   totalProducts: number
@@ -33,6 +41,7 @@ import { ProductCard } from "@/components/product-card"
 function FeaturedProducts() {
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const t = useTranslations("home")
 
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
@@ -75,7 +84,7 @@ function FeaturedProducts() {
   if (products.length === 0) {
     return (
       <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-        No products found. Add some water sources to get started.
+        {t("noProducts")}
       </div>
     )
   }
@@ -91,6 +100,7 @@ function FeaturedProducts() {
 
 export default function HomePage() {
   const router = useRouter()
+  const t = useTranslations("home")
   const [stats, setStats] = useState<Stats>({ totalProducts: 0, totalBrands: 0, totalSources: 0 })
   const [loading, setLoading] = useState(true)
 
@@ -119,12 +129,12 @@ export default function HomePage() {
   }, [])
 
   const quickFilters = [
-    { label: "Low pH (<7)", query: "ph_low" },
-    { label: "Alkaline (pH 7.5+)", query: "ph_alkaline" },
-    { label: "Low TDS (<50)", query: "tds_low" },
-    { label: "High Minerals", query: "tds_high" },
-    { label: "Spring Water", query: "type_spring" },
-    { label: "Mineral Water", query: "type_mineral" },
+    { label: t("filterLowPh"), query: "ph_low" },
+    { label: t("filterAlkaline"), query: "ph_alkaline" },
+    { label: t("filterLowTds"), query: "tds_low" },
+    { label: t("filterHighMinerals"), query: "tds_high" },
+    { label: t("filterSpring"), query: "type_spring" },
+    { label: t("filterMineral"), query: "type_mineral" },
   ]
 
   const handleQuickFilter = (filterQuery: string) => {
@@ -156,7 +166,7 @@ export default function HomePage() {
               </div>
 
               <p className="max-w-[800px] text-lg md:text-xl text-gray-600 dark:text-gray-300">
-                Malaysia's definitive mineral and spring water source registry. Search, compare, and discover the perfect water for your needs.
+                {t("tagline")}
               </p>
 
               {/* Prominent Search Bar */}
@@ -166,7 +176,7 @@ export default function HomePage() {
 
               {/* Quick Filter Chips */}
               <div className="flex flex-wrap items-center justify-center gap-2 max-w-3xl">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-300 mr-2">Quick filters:</span>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-300 mr-2">{t("quickFilters")}</span>
                 {quickFilters.map((filter) => (
                   <Badge
                     key={filter.query}
@@ -190,19 +200,19 @@ export default function HomePage() {
                       <div className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-blue-600 to-blue-400 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent">
                         {loading ? "..." : stats.totalProducts}
                       </div>
-                      <div className="text-xs md:text-sm text-gray-700 dark:text-gray-300 font-medium">Products</div>
+                      <div className="text-xs md:text-sm text-gray-700 dark:text-gray-300 font-medium">{t("statsProducts")}</div>
                     </div>
                     <div className="flex flex-col items-center gap-2">
                       <div className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-cyan-600 to-cyan-400 dark:from-cyan-400 dark:to-cyan-300 bg-clip-text text-transparent">
                         {loading ? "..." : stats.totalBrands}
                       </div>
-                      <div className="text-xs md:text-sm text-gray-700 dark:text-gray-300 font-medium">Brands</div>
+                      <div className="text-xs md:text-sm text-gray-700 dark:text-gray-300 font-medium">{t("statsBrands")}</div>
                     </div>
                     <div className="flex flex-col items-center gap-2">
                       <div className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-teal-600 to-teal-400 dark:from-teal-400 dark:to-teal-300 bg-clip-text text-transparent">
                         {loading ? "..." : stats.totalSources}
                       </div>
-                      <div className="text-xs md:text-sm text-gray-700 dark:text-gray-300 font-medium">Water Sources</div>
+                      <div className="text-xs md:text-sm text-gray-700 dark:text-gray-300 font-medium">{t("statsWaterSources")}</div>
                     </div>
                   </div>
                 </div>
@@ -215,7 +225,7 @@ export default function HomePage() {
                   onClick={() => router.push("/sources")}
                   className="gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 dark:from-blue-500 dark:to-cyan-500 dark:hover:from-blue-600 dark:hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
                 >
-                  Browse All Sources
+                  {t("browseAllSources")}
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </div>
@@ -231,10 +241,10 @@ export default function HomePage() {
                 <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md group-hover:scale-110 transition-transform">
                   <Map className="h-6 w-6 text-white" />
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">Explore Water Sources Across Malaysia</h2>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">{t("exploreMap")}</h2>
               </div>
               <Button variant="ghost" asChild className="hidden md:flex hover:bg-white/40 dark:hover:bg-black/40 backdrop-blur-sm transition-all hover:scale-105">
-                <Link href="/map">View Full Map</Link>
+                <Link href="/map">{t("viewFullMap")}</Link>
               </Button>
             </div>
 
@@ -244,7 +254,7 @@ export default function HomePage() {
 
             <div className="mt-4 text-center">
               <Button variant="outline" asChild className="md:hidden">
-                <Link href="/map">View Full Map</Link>
+                <Link href="/map">{t("viewFullMap")}</Link>
               </Button>
             </div>
           </div>
@@ -255,13 +265,13 @@ export default function HomePage() {
           <div className="container px-4 md:px-6">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">Featured Water Sources</h2>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">{t("featuredSources")}</h2>
                 <p className="text-gray-500 dark:text-gray-400">
-                  Explore detailed composition and quality data
+                  {t("featuredDesc")}
                 </p>
               </div>
               <Button variant="outline" asChild className="hidden md:flex">
-                <Link href="/sources">View All</Link>
+                <Link href="/sources">{t("browseAll")}</Link>
               </Button>
             </div>
 
@@ -269,7 +279,7 @@ export default function HomePage() {
 
             <div className="mt-8 text-center">
               <Button asChild>
-                <Link href="/sources">Browse All Water Sources</Link>
+                <Link href="/sources">{t("browseAll")}</Link>
               </Button>
             </div>
           </div>

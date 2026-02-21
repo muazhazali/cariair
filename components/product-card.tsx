@@ -9,6 +9,7 @@ import { MapPin } from "lucide-react"
 import { WaterTypeBadge } from "@/components/water-type-badge"
 import { getImageUrl } from "@/lib/pocketbase"
 import { Product } from "@/lib/types/pocketbase"
+import { useTranslations } from "next-intl"
 
 interface ProductCardProps {
     product: Product
@@ -25,6 +26,7 @@ export function ProductCard({
     canSelect = true,
     onToggleComparison,
 }: ProductCardProps) {
+    const t = useTranslations('productCard')
     const brand = product.expand?.brand
     const source = product.expand?.source
     const imageUrl = product.images && product.images.length > 0
@@ -95,7 +97,7 @@ export function ProductCard({
                     <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-3 border-t border-gray-200 dark:border-gray-700">
                         {product.ph_level !== undefined && product.ph_level !== null ? (
                             <div className="flex flex-col items-center justify-center py-3 px-2 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
-                                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">pH Level</div>
+                                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">{t('phLevel')}</div>
                                 <div className={`text-3xl font-bold ${product.ph_level < 7
                                     ? "text-orange-600 dark:text-orange-400"
                                     : product.ph_level > 7.5
@@ -107,14 +109,14 @@ export function ProductCard({
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-3 px-2 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
-                                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">pH Level</div>
+                                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">{t('phLevel')}</div>
                                 <div className="text-sm font-normal text-gray-400 mt-1">N/A</div>
                             </div>
                         )}
 
                         {product.tds !== undefined && product.tds !== null ? (
                             <div className="flex flex-col items-center justify-center py-3 px-2 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
-                                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">TDS</div>
+                                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">{t('tds')}</div>
                                 <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
                                     {product.tds.toFixed(0)}
                                 </div>
@@ -122,7 +124,7 @@ export function ProductCard({
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-3 px-2 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
-                                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">TDS</div>
+                                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">{t('tds')}</div>
                                 <div className="text-sm font-normal text-gray-400 mt-1">N/A</div>
                             </div>
                         )}
@@ -135,7 +137,7 @@ export function ProductCard({
                         variant="outline"
                         className="w-full border-2 text-sm group-hover:border-blue-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
                     >
-                        View Full Details
+                        {t('viewFullDetails')}
                     </Button>
                 </Link>
             </CardContent>

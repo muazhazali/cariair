@@ -2,8 +2,11 @@
 
 import Link from "next/link"
 import { Droplet } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 export function Footer() {
+    const t = useTranslations("footer")
+
     return (
         <footer className="relative mt-12 overflow-hidden">
             {/* Glassy footer background */}
@@ -18,20 +21,20 @@ export function Footer() {
                             <span className="font-bold text-lg bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-cyan-400">CariAir</span>
                         </div>
                         <p className="text-xs text-gray-600 dark:text-gray-300 font-medium text-center md:text-left">
-                            © {new Date().getFullYear()} CariAir. Open-source project for the community.
+                            {t("copyright", { year: new Date().getFullYear() })}
                         </p>
                         <nav className="flex gap-4">
                             <a href="https://umami.muaz.app/share/XvHNxGlhP9U6iXKY" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors font-medium">
-                                Analytics
+                                {t("analytics")}
                             </a>
                             <Link href="/about" className="text-xs text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors font-medium">
-                                About
+                                {t("about")}
                             </Link>
                             <Link href="/contribute" className="text-xs text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors font-medium">
-                                Contribute
+                                {t("contribute")}
                             </Link>
                             <Link href="/learn" className="text-xs text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors font-medium">
-                                Learn
+                                {t("learn")}
                             </Link>
                         </nav>
                     </div>

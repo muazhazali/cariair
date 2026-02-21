@@ -11,6 +11,7 @@ import { ProductSort, sortProducts, SortOption } from "@/components/product-sort
 import { searchWaterSources, SearchFilters } from "@/lib/products"
 import { Product } from "@/lib/types/pocketbase"
 import { ProductCard } from "@/components/product-card"
+import { useTranslations } from "next-intl"
 
 interface SourcesViewProps {
   initialProducts: Product[]
@@ -20,6 +21,7 @@ interface SourcesViewProps {
 const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated"]
 
 export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
+  const t = useTranslations('sourcesView')
   const [products, setProducts] = useState(initialProducts)
   const [loading, setLoading] = useState(false)
   const [selectedForComparison, setSelectedForComparison] = useState<string[]>([])
@@ -158,12 +160,12 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
               <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 {loading ? (
                   <span className="inline-flex items-center gap-2">
-                    <span className="animate-pulse">Updating...</span>
+                    <span className="animate-pulse">{t('updating')}</span>
                   </span>
                 ) : (
                   <>
                     <span className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">{products.length}</span>
-                    <span className="ml-2 text-sm md:text-base">{products.length === 1 ? "water source" : "water sources"} found</span>
+                    <span className="ml-2 text-sm md:text-base">{products.length === 1 ? t('waterSourceFound') : t('waterSourcesFoundPlural')}</span>
                   </>
                 )}
               </div>
@@ -191,13 +193,13 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
                 <Input
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Search by brand, product..."
+                  placeholder={t('searchPlaceholder')}
                   className="pl-9 pr-3 h-9 w-full"
                 />
               </div>
               <div className="flex gap-2">
                 <Button type="submit" variant="outline" className="h-9 px-4 flex-1 sm:flex-none whitespace-nowrap">
-                  Search
+                  {t('search')}
                 </Button>
                 <ProductSort value={sortOption} onValueChange={setSortOption} />
               </div>
@@ -205,7 +207,7 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
           </div>
           {searchQuery && (
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              Showing results for <span className="font-medium">"{searchQuery}"</span>
+              {t('showingResultsFor')} <span className="font-medium">"{searchQuery}"</span>
             </p>
           )}
         </div>
@@ -233,9 +235,9 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
             <div className="rounded-lg bg-blue-100 dark:bg-blue-950 p-4 mb-4">
               <SearchIcon className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 dark:text-blue-400" />
             </div>
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">No results found</h3>
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">{t('noResults')}</h3>
             <p className="mt-2 sm:mt-3 text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-md">
-              Try adjusting your search or filters to find what you're looking for
+              {t('noResultsDesc')}
             </p>
           </div>
         )}

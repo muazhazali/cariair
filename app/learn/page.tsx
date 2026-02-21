@@ -1,8 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BookOpen, Award, FlaskRoundIcon as Flask, Droplet } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 
-export default function LearnPage() {
+export default async function LearnPage() {
+  const t = await getTranslations("learn")
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
       <div className="container px-4 py-12 md:px-6 md:py-16">
@@ -13,27 +16,25 @@ export default function LearnPage() {
               <BookOpen className="h-10 w-10 md:h-12 md:w-12 text-blue-600 dark:text-blue-400" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
-              Learn About Mineral Water
+              {t("title")}
             </h1>
             <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Educational resources about water quality, standards, and terminology
+              {t("description")}
             </p>
           </div>
 
         <Tabs defaultValue="water-types" className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto gap-1">
-            <TabsTrigger value="water-types" className="text-xs md:text-sm py-2 md:py-2.5">Water Types</TabsTrigger>
-            <TabsTrigger value="quality-standards" className="text-xs md:text-sm py-2 md:py-2.5">Quality Standards</TabsTrigger>
-            <TabsTrigger value="mineral-benefits" className="text-xs md:text-sm py-2 md:py-2.5">Mineral Benefits</TabsTrigger>
-            <TabsTrigger value="testing-methods" className="text-xs md:text-sm py-2 md:py-2.5">Testing Methods</TabsTrigger>
+            <TabsTrigger value="water-types" className="text-xs md:text-sm py-2 md:py-2.5">{t("tabWaterTypes")}</TabsTrigger>
+            <TabsTrigger value="quality-standards" className="text-xs md:text-sm py-2 md:py-2.5">{t("tabQualityStandards")}</TabsTrigger>
+            <TabsTrigger value="mineral-benefits" className="text-xs md:text-sm py-2 md:py-2.5">{t("tabMineralBenefits")}</TabsTrigger>
+            <TabsTrigger value="testing-methods" className="text-xs md:text-sm py-2 md:py-2.5">{t("tabTestingMethods")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="water-types" className="space-y-6 pt-6">
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold">Types of Bottled Water</h2>
-              <p className="text-gray-500 dark:text-gray-400">
-                Understanding the different classifications of bottled water available in Malaysia
-              </p>
+              <h2 className="text-2xl font-bold">{t("waterTypesTitle")}</h2>
+              <p className="text-gray-500 dark:text-gray-400">{t("waterTypesDesc")}</p>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
@@ -43,16 +44,12 @@ export default function LearnPage() {
                     <Droplet className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle>Mineral Water</CardTitle>
-                    <CardDescription>Natural water containing minerals</CardDescription>
+                    <CardTitle>{t("mineralWaterTitle")}</CardTitle>
+                    <CardDescription>{t("mineralWaterDesc")}</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Mineral water comes from underground sources and contains naturally occurring minerals and trace
-                    elements. In Malaysia, it must contain at least 150mg/L of total dissolved solids (TDS) to be
-                    classified as mineral water. It cannot be treated except for filtration, ozonation, or carbonation.
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("mineralWaterContent")}</p>
                 </CardContent>
               </Card>
 
@@ -62,16 +59,12 @@ export default function LearnPage() {
                     <Droplet className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle>Spring Water</CardTitle>
-                    <CardDescription>Water from underground springs</CardDescription>
+                    <CardTitle>{t("springWaterTitle")}</CardTitle>
+                    <CardDescription>{t("springWaterDesc")}</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Spring water comes from underground formations and flows naturally to the surface. Unlike mineral
-                    water, there's no minimum TDS requirement for spring water. It must be collected at the spring or
-                    through a borehole tapping the underground formation.
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("springWaterContent")}</p>
                 </CardContent>
               </Card>
 
@@ -81,16 +74,12 @@ export default function LearnPage() {
                     <Droplet className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle>Purified Water</CardTitle>
-                    <CardDescription>Water treated to remove impurities</CardDescription>
+                    <CardTitle>{t("purifiedWaterTitle")}</CardTitle>
+                    <CardDescription>{t("purifiedWaterDesc")}</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Purified water can come from any source, including tap water, but undergoes processes like
-                    distillation, deionization, reverse osmosis, or other suitable processes to meet purity standards.
-                    Most minerals are removed during purification, resulting in very low TDS levels.
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("purifiedWaterContent")}</p>
                 </CardContent>
               </Card>
 
@@ -100,16 +89,12 @@ export default function LearnPage() {
                     <Droplet className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle>Drinking Water</CardTitle>
-                    <CardDescription>General category for potable water</CardDescription>
+                    <CardTitle>{t("drinkingWaterTitle")}</CardTitle>
+                    <CardDescription>{t("drinkingWaterDesc")}</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    This is a broad category that includes water suitable for human consumption. In Malaysia, it must
-                    meet the standards set by the Ministry of Health but doesn't have the specific source requirements
-                    of mineral or spring water. It may be treated with various processes to ensure safety.
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("drinkingWaterContent")}</p>
                 </CardContent>
               </Card>
             </div>
@@ -117,10 +102,8 @@ export default function LearnPage() {
 
           <TabsContent value="quality-standards" className="space-y-6 pt-6">
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold">Water Quality Standards in Malaysia</h2>
-              <p className="text-gray-500 dark:text-gray-400">
-                Regulatory standards and requirements for bottled water in Malaysia
-              </p>
+              <h2 className="text-2xl font-bold">{t("qualityStandardsTitle")}</h2>
+              <p className="text-gray-500 dark:text-gray-400">{t("qualityStandardsDesc")}</p>
             </div>
 
             <Card className="border-2 border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow duration-200">
@@ -129,31 +112,22 @@ export default function LearnPage() {
                   <div className="rounded-full bg-blue-100 dark:bg-blue-950 p-2 mr-3">
                     <Award className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
-                  Malaysian Regulatory Framework
+                  {t("regulatoryFrameworkTitle")}
                 </CardTitle>
-                <CardDescription>Key regulations governing bottled water in Malaysia</CardDescription>
+                <CardDescription>{t("regulatoryFrameworkDesc")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <h3 className="font-semibold">Food Act 1983 and Food Regulations 1985</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    The primary legislation governing all food products in Malaysia, including bottled water. It sets
-                    standards for safety, quality, labeling, and packaging requirements.
-                  </p>
+                  <h3 className="font-semibold">{t("foodActTitle")}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("foodActContent")}</p>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="font-semibold">Ministry of Health Guidelines</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    The Ministry of Health Malaysia (MOH) provides specific guidelines for natural mineral water and
-                    packaged drinking water, covering microbiological, chemical, and physical parameters.
-                  </p>
+                  <h3 className="font-semibold">{t("mohGuidelinesTitle")}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("mohGuidelinesContent")}</p>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="font-semibold">Malaysian Standard MS 2095:2014</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    This standard specifies requirements for natural mineral water, including source protection,
-                    exploitation techniques, treatments, and packaging operations.
-                  </p>
+                  <h3 className="font-semibold">{t("msStandardTitle")}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("msStandardContent")}</p>
                 </div>
               </CardContent>
             </Card>
@@ -161,8 +135,8 @@ export default function LearnPage() {
             <div className="grid gap-6 md:grid-cols-2">
               <Card className="border-2 border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow duration-200">
                 <CardHeader>
-                  <CardTitle className="text-lg">Key Quality Parameters</CardTitle>
-                  <CardDescription>Important measurements for water quality</CardDescription>
+                  <CardTitle className="text-lg">{t("keyParametersTitle")}</CardTitle>
+                  <CardDescription>{t("keyParametersDesc")}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
@@ -171,11 +145,8 @@ export default function LearnPage() {
                         <Droplet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
-                        <span className="font-medium">Total Dissolved Solids (TDS)</span>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Mineral water must contain at least 150mg/L of TDS. Higher TDS generally indicates more
-                          minerals in the water.
-                        </p>
+                        <span className="font-medium">{t("tdsTitle")}</span>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t("tdsContent")}</p>
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
@@ -183,10 +154,8 @@ export default function LearnPage() {
                         <Droplet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
-                        <span className="font-medium">pH Level</span>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          The acceptable pH range for bottled water is typically 6.5 to 8.5, with 7.0 being neutral.
-                        </p>
+                        <span className="font-medium">{t("phTitle")}</span>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t("phContent")}</p>
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
@@ -194,10 +163,8 @@ export default function LearnPage() {
                         <Droplet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
-                        <span className="font-medium">Microbiological Parameters</span>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Strict limits on bacteria, pathogens, and other microorganisms to ensure safety.
-                        </p>
+                        <span className="font-medium">{t("microbiologicalTitle")}</span>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t("microbiologicalContent")}</p>
                       </div>
                     </li>
                   </ul>
@@ -206,8 +173,8 @@ export default function LearnPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Labeling Requirements</CardTitle>
-                  <CardDescription>Mandatory information on bottled water labels</CardDescription>
+                  <CardTitle>{t("labelingTitle")}</CardTitle>
+                  <CardDescription>{t("labelingDesc")}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
@@ -216,10 +183,8 @@ export default function LearnPage() {
                         <Droplet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
-                        <span className="font-medium">Source Information</span>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Name and location of the water source must be clearly stated on the label.
-                        </p>
+                        <span className="font-medium">{t("sourceInfoTitle")}</span>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t("sourceInfoContent")}</p>
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
@@ -227,10 +192,8 @@ export default function LearnPage() {
                         <Droplet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
-                        <span className="font-medium">Mineral Composition</span>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Mineral water labels must list the analytical composition showing mineral content.
-                        </p>
+                        <span className="font-medium">{t("mineralCompTitle")}</span>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t("mineralCompContent")}</p>
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
@@ -238,10 +201,8 @@ export default function LearnPage() {
                         <Droplet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
-                        <span className="font-medium">Treatment Methods</span>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Any treatments applied to the water must be disclosed on the label.
-                        </p>
+                        <span className="font-medium">{t("treatmentTitle")}</span>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t("treatmentContent")}</p>
                       </div>
                     </li>
                   </ul>
@@ -252,10 +213,8 @@ export default function LearnPage() {
 
           <TabsContent value="mineral-benefits" className="space-y-6 pt-6">
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold">Health Benefits of Minerals in Water</h2>
-              <p className="text-gray-500 dark:text-gray-400">
-                Understanding the potential health benefits of different minerals found in water
-              </p>
+              <h2 className="text-2xl font-bold">{t("mineralBenefitsTitle")}</h2>
+              <p className="text-gray-500 dark:text-gray-400">{t("mineralBenefitsDesc")}</p>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -265,17 +224,14 @@ export default function LearnPage() {
                     <Flask className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle>Calcium</CardTitle>
+                    <CardTitle>{t("calciumTitle")}</CardTitle>
                     <CardDescription>Ca</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Essential for bone health, muscle function, and nerve transmission. Calcium-rich water may
-                    contribute to daily calcium intake, potentially supporting bone density and cardiovascular health.
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("calciumContent")}</p>
                   <div className="mt-4">
-                    <span className="text-xs font-medium">Typical range in mineral water:</span>
+                    <span className="text-xs font-medium">{t("typicalRange")}</span>
                     <p className="text-sm">10-150 mg/L</p>
                   </div>
                 </CardContent>
@@ -287,18 +243,14 @@ export default function LearnPage() {
                     <Flask className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle>Magnesium</CardTitle>
+                    <CardTitle>{t("magnesiumTitle")}</CardTitle>
                     <CardDescription>Mg</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Involved in over 300 enzymatic reactions in the body. Magnesium supports muscle and nerve function,
-                    blood glucose control, and blood pressure regulation. It may help prevent migraines and reduce
-                    stress.
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("magnesiumContent")}</p>
                   <div className="mt-4">
-                    <span className="text-xs font-medium">Typical range in mineral water:</span>
+                    <span className="text-xs font-medium">{t("typicalRange")}</span>
                     <p className="text-sm">1-70 mg/L</p>
                   </div>
                 </CardContent>
@@ -310,17 +262,14 @@ export default function LearnPage() {
                     <Flask className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle>Potassium</CardTitle>
+                    <CardTitle>{t("potassiumTitle")}</CardTitle>
                     <CardDescription>K</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Critical for heart function, muscle contractions, and nerve signaling. Potassium helps maintain
-                    fluid balance and may help lower blood pressure by counteracting the effects of sodium.
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("potassiumContent")}</p>
                   <div className="mt-4">
-                    <span className="text-xs font-medium">Typical range in mineral water:</span>
+                    <span className="text-xs font-medium">{t("typicalRange")}</span>
                     <p className="text-sm">1-5 mg/L</p>
                   </div>
                 </CardContent>
@@ -332,17 +281,14 @@ export default function LearnPage() {
                     <Flask className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle>Sodium</CardTitle>
+                    <CardTitle>{t("sodiumTitle")}</CardTitle>
                     <CardDescription>Na</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Regulates fluid balance, blood pressure, and nerve and muscle function. While necessary for health,
-                    those on sodium-restricted diets should check sodium content in mineral water.
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("sodiumContent")}</p>
                   <div className="mt-4">
-                    <span className="text-xs font-medium">Typical range in mineral water:</span>
+                    <span className="text-xs font-medium">{t("typicalRange")}</span>
                     <p className="text-sm">1-20 mg/L (low sodium) to &gt;200 mg/L (high sodium)</p>
                   </div>
                 </CardContent>
@@ -354,17 +300,14 @@ export default function LearnPage() {
                     <Flask className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle>Bicarbonate</CardTitle>
+                    <CardTitle>{t("bicarbonateTitle")}</CardTitle>
                     <CardDescription>HCO₃</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Helps neutralize acid in the body and may aid digestion. Bicarbonate-rich waters are often
-                    recommended for acid reflux and may help buffer lactic acid during exercise.
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("bicarbonateContent")}</p>
                   <div className="mt-4">
-                    <span className="text-xs font-medium">Typical range in mineral water:</span>
+                    <span className="text-xs font-medium">{t("typicalRange")}</span>
                     <p className="text-sm">50-300 mg/L</p>
                   </div>
                 </CardContent>
@@ -376,17 +319,14 @@ export default function LearnPage() {
                     <Flask className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle>Silica</CardTitle>
+                    <CardTitle>{t("silicaTitle")}</CardTitle>
                     <CardDescription>SiO₂</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    May support bone health, skin elasticity, and hair strength. Some research suggests silica may help
-                    protect against aluminum absorption and neurodegenerative diseases.
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("silicaContent")}</p>
                   <div className="mt-4">
-                    <span className="text-xs font-medium">Typical range in mineral water:</span>
+                    <span className="text-xs font-medium">{t("typicalRange")}</span>
                     <p className="text-sm">5-40 mg/L</p>
                   </div>
                 </CardContent>
@@ -396,40 +336,28 @@ export default function LearnPage() {
 
           <TabsContent value="testing-methods" className="space-y-6 pt-6">
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold">Water Testing Methods</h2>
-              <p className="text-gray-500 dark:text-gray-400">
-                Common techniques used to analyze and verify water quality
-              </p>
+              <h2 className="text-2xl font-bold">{t("testingMethodsTitle")}</h2>
+              <p className="text-gray-500 dark:text-gray-400">{t("testingMethodsDesc")}</p>
             </div>
 
             <Card className="border-2 border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow duration-200">
               <CardHeader>
-                <CardTitle className="text-xl">Laboratory Testing Procedures</CardTitle>
-                <CardDescription>Professional methods for comprehensive water analysis</CardDescription>
+                <CardTitle className="text-xl">{t("labTestingTitle")}</CardTitle>
+                <CardDescription>{t("labTestingDesc")}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
-                    <h3 className="font-semibold">Inductively Coupled Plasma (ICP) Analysis</h3>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                      A highly accurate method for measuring mineral content in water. ICP can detect multiple elements
-                      simultaneously at very low concentrations, making it ideal for detailed mineral analysis.
-                    </p>
+                    <h3 className="font-semibold">{t("icpTitle")}</h3>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t("icpContent")}</p>
                   </div>
                   <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
-                    <h3 className="font-semibold">Ion Chromatography</h3>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                      Used to measure anions like chloride, fluoride, and sulfate in water. This method separates ions
-                      based on their interaction with a resin and provides precise measurements of their concentrations.
-                    </p>
+                    <h3 className="font-semibold">{t("ionChromatTitle")}</h3>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t("ionChromatContent")}</p>
                   </div>
                   <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
-                    <h3 className="font-semibold">Microbiological Testing</h3>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                      Includes tests for total coliform bacteria, E. coli, and other microorganisms to ensure water
-                      safety. Methods include membrane filtration, most probable number (MPN), and plate count
-                      techniques.
-                    </p>
+                    <h3 className="font-semibold">{t("microbiologicalTestTitle")}</h3>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t("microbiologicalTestContent")}</p>
                   </div>
                 </div>
               </CardContent>
@@ -438,8 +366,8 @@ export default function LearnPage() {
             <div className="grid gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle>Field Testing Methods</CardTitle>
-                  <CardDescription>On-site testing techniques for quick analysis</CardDescription>
+                  <CardTitle>{t("fieldTestingTitle")}</CardTitle>
+                  <CardDescription>{t("fieldTestingDesc")}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-4">
@@ -448,11 +376,8 @@ export default function LearnPage() {
                         <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
-                        <span className="font-medium">Digital TDS Meters</span>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Handheld devices that measure the total dissolved solids in water by detecting electrical
-                          conductivity. Quick and easy to use but less accurate than laboratory methods.
-                        </p>
+                        <span className="font-medium">{t("digitalTdsTitle")}</span>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t("digitalTdsContent")}</p>
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
@@ -460,11 +385,8 @@ export default function LearnPage() {
                         <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
-                        <span className="font-medium">pH Test Strips and Meters</span>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Used to measure the acidity or alkalinity of water. Digital pH meters provide more precise
-                          readings than test strips but require calibration.
-                        </p>
+                        <span className="font-medium">{t("phTestTitle")}</span>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t("phTestContent")}</p>
                       </div>
                     </li>
                     <li className="flex items-start gap-2">
@@ -472,11 +394,8 @@ export default function LearnPage() {
                         <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
-                        <span className="font-medium">Hardness Test Kits</span>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Chemical tests that measure calcium and magnesium levels in water, indicating water hardness.
-                          Usually involve titration with a color-changing indicator.
-                        </p>
+                        <span className="font-medium">{t("hardnessTestTitle")}</span>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t("hardnessTestContent")}</p>
                       </div>
                     </li>
                   </ul>
@@ -485,8 +404,8 @@ export default function LearnPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Understanding Test Results</CardTitle>
-                  <CardDescription>How to interpret water quality measurements</CardDescription>
+                  <CardTitle>{t("interpretingTitle")}</CardTitle>
+                  <CardDescription>{t("interpretingDesc")}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-4">
@@ -495,7 +414,7 @@ export default function LearnPage() {
                         <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
-                        <span className="font-medium">TDS Interpretation</span>
+                        <span className="font-medium">{t("tdsInterpTitle")}</span>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           <strong>0-50 mg/L:</strong> Very low mineral content
                           <br />
@@ -512,7 +431,7 @@ export default function LearnPage() {
                         <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
-                        <span className="font-medium">pH Scale</span>
+                        <span className="font-medium">{t("phScaleTitle")}</span>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           <strong>Below 6.5:</strong> Acidic (may taste sour)
                           <br />
@@ -527,7 +446,7 @@ export default function LearnPage() {
                         <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </span>
                       <div>
-                        <span className="font-medium">Water Hardness</span>
+                        <span className="font-medium">{t("waterHardnessTitle")}</span>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           <strong>0-60 mg/L:</strong> Soft water
                           <br />

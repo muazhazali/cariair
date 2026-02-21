@@ -4,34 +4,37 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Github, Info, Menu, X, Droplet } from "lucide-react"
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 export function MainNav() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const t = useTranslations("nav")
 
   const routes = [
     {
       href: "/sources",
-      label: "All Sources",
+      label: t("allSources"),
     },
     {
       href: "/analytics",
-      label: "Analytics",
+      label: t("analytics"),
     },
     {
       href: "/map",
-      label: "Map",
+      label: t("map"),
     },
     {
       href: "/learn",
-      label: "Learn",
+      label: t("learn"),
     },
     {
       href: "/contribute",
-      label: "Contribute",
+      label: t("contribute"),
     },
   ]
 
@@ -79,6 +82,7 @@ export function MainNav() {
 
               {/* Desktop Right Icons */}
               <div className="hidden md:flex items-center gap-1">
+                <LanguageSwitcher />
                 <Button
                   variant="ghost"
                   size="icon"
@@ -87,7 +91,7 @@ export function MainNav() {
                 >
                   <Link href="https://github.com/muazhazali/cariair" target="_blank" rel="noreferrer">
                     <Github className="h-4 w-4" />
-                    <span className="sr-only">GitHub</span>
+                    <span className="sr-only">{t("github")}</span>
                   </Link>
                 </Button>
                 <Button
@@ -98,7 +102,7 @@ export function MainNav() {
                 >
                   <Link href="/about">
                     <Info className="h-4 w-4" />
-                    <span className="sr-only">About</span>
+                    <span className="sr-only">{t("about")}</span>
                   </Link>
                 </Button>
               </div>
@@ -192,9 +196,14 @@ export function MainNav() {
               >
                 <div className="flex items-center gap-2">
                   <Info className="h-4 w-4" />
-                  <span>About</span>
+                  <span>{t("about")}</span>
                 </div>
               </Link>
+
+              {/* Mobile Language Switcher */}
+              <div className="mt-2 px-4 py-2 border-t border-white/10 flex items-center gap-2">
+                <LanguageSwitcher />
+              </div>
             </nav>
           </div>
         </div>

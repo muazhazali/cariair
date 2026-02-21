@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { Home, Droplets, Map, BarChart3, Menu } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import {
   Sheet,
   SheetContent,
@@ -16,26 +17,27 @@ import {
 export function MobileBottomNav() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const t = useTranslations("nav")
 
   const mainRoutes = [
     {
       href: "/",
-      label: "Home",
+      label: t("home"),
       icon: Home,
     },
     {
       href: "/sources",
-      label: "Sources",
+      label: t("allSources"),
       icon: Droplets,
     },
     {
       href: "/map",
-      label: "Map",
+      label: t("map"),
       icon: Map,
     },
     {
       href: "/analytics",
-      label: "Analytics",
+      label: t("analytics"),
       icon: BarChart3,
     },
   ]
@@ -43,15 +45,15 @@ export function MobileBottomNav() {
   const moreRoutes = [
     {
       href: "/learn",
-      label: "Learn",
+      label: t("learn"),
     },
     {
       href: "/contribute",
-      label: "Contribute",
+      label: t("contribute"),
     },
     {
       href: "/about",
-      label: "About",
+      label: t("about"),
     },
   ]
 
@@ -107,7 +109,7 @@ export function MobileBottomNav() {
                 <button className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-200 min-w-[64px]">
                   <Menu className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                   <span className="text-[10px] font-medium text-gray-600 dark:text-gray-300">
-                    More
+                    {t("moreOptions")}
                   </span>
                 </button>
               </SheetTrigger>
@@ -116,7 +118,7 @@ export function MobileBottomNav() {
                 className="rounded-t-2xl border-t border-white/30 bg-white/20 backdrop-blur-xl dark:border-white/20 dark:bg-black/20"
               >
                 <SheetHeader>
-                  <SheetTitle>More Options</SheetTitle>
+                  <SheetTitle>{t("moreOptions")}</SheetTitle>
                 </SheetHeader>
                 <div className="mt-6 space-y-2">
                   {moreRoutes.map((route) => (

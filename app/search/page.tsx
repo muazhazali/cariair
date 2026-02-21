@@ -1,8 +1,8 @@
-import Link from "next/link"
 import { SearchIcon } from "lucide-react"
 import { ProductFilters } from "@/components/product-filters"
 import { getBrands, searchWaterSources } from "@/lib/products"
 import { ProductCard } from "@/components/product-card"
+import { getTranslations } from "next-intl/server"
 
 export const dynamic = 'force-dynamic'
 
@@ -11,6 +11,8 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 export default async function SearchPage(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams
   const query = (searchParams.q as string) || ""
+
+  const t = await getTranslations("search")
 
   // Parse filters
   const types = searchParams.type ? (Array.isArray(searchParams.type) ? searchParams.type : [searchParams.type]) : []
@@ -43,12 +45,12 @@ export default async function SearchPage(props: { searchParams: SearchParams }) 
               <SearchIcon className="h-6 w-6 md:h-8 md:w-8 text-blue-600 dark:text-blue-400" />
             </div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
-              {query ? `Search results for "${query}"` : "All Water Sources"}
+              {query ? t("resultsFor", { query }) : t("title")}
             </h1>
           </div>
           {query && (
             <p className="text-base md:text-lg text-gray-600 dark:text-gray-400">
-              Showing results matching your search criteria
+              {t("showingResults")}
             </p>
           )}
         </div>
@@ -61,7 +63,7 @@ export default async function SearchPage(props: { searchParams: SearchParams }) 
           <div className="flex-1">
             <div className="mb-6 flex items-center justify-between px-1">
               <p className="text-sm md:text-base font-medium text-gray-600 dark:text-gray-400">
-                {results.length} {results.length === 1 ? "result" : "results"} found
+                {t("resultsFound", { count: results.length })}
               </p>
             </div>
 
@@ -76,9 +78,9 @@ export default async function SearchPage(props: { searchParams: SearchParams }) 
                 <div className="rounded-lg bg-blue-100 dark:bg-blue-950 p-4 mb-4">
                   <SearchIcon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">No results found</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">{t("noResults")}</h3>
                 <p className="mt-3 text-base text-gray-600 dark:text-gray-400 max-w-md">
-                  Try adjusting your search or filter criteria to find what you're looking for
+                  {t("noResultsDesc")}
                 </p>
               </div>
             )}

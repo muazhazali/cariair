@@ -10,10 +10,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Droplet } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const t = useTranslations('auth');
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,16 +27,16 @@ export default function LoginPage() {
     try {
       await pb.collection('users').authWithPassword(email, password);
       toast({
-        title: "Success",
-        description: "Logged in successfully",
+        title: t('loginSuccess'),
+        description: t('loginSuccessDesc'),
       });
       router.push('/');
       router.refresh();
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: error.message || "Failed to login",
+        title: t('loginError'),
+        description: error.message || t('loginFailed'),
       });
     } finally {
       setIsLoading(false);
@@ -46,16 +48,16 @@ export default function LoginPage() {
     try {
       await pb.collection('users').authWithOAuth2({ provider: 'google' });
       toast({
-        title: "Success",
-        description: "Logged in with Google successfully",
+        title: t('loginSuccess'),
+        description: t('loginGoogleSuccess'),
       });
       router.push('/');
       router.refresh();
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: error.message || "Failed to login with Google",
+        title: t('loginError'),
+        description: error.message || t('loginGoogleFailed'),
       });
     } finally {
       setIsLoading(false);
@@ -71,24 +73,24 @@ export default function LoginPage() {
             <Droplet className="h-10 w-10 md:h-12 md:w-12 text-blue-600 dark:text-blue-400" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent mb-2">
-            Welcome Back
+            {t('welcomeBack')}
           </h1>
           <p className="text-base text-gray-600 dark:text-gray-400">
-            Sign in to your CariAir account
+            {t('signInSubtitle')}
           </p>
         </div>
 
         <Card className="w-full border-2 border-gray-200 dark:border-gray-800 shadow-lg">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-xl font-bold text-center">Sign in</CardTitle>
+            <CardTitle className="text-xl font-bold text-center">{t('signIn')}</CardTitle>
             <CardDescription className="text-center text-base">
-              Choose your preferred sign in method
+              {t('signInMethod')}
             </CardDescription>
           </CardHeader>
         <CardContent className="space-y-4">
-          <Button 
-            variant="outline" 
-            className="w-full" 
+          <Button
+            variant="outline"
+            className="w-full"
             onClick={handleGoogleLogin}
             disabled={isLoading}
           >
@@ -97,7 +99,7 @@ export default function LoginPage() {
                 <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
               </svg>
             )}
-            Sign in with Google
+            {t('signInWithGoogle')}
           </Button>
 
           <div className="relative">
@@ -106,30 +108,30 @@ export default function LoginPage() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
+                {t('orContinueWith')}
               </span>
             </div>
           </div>
 
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input 
-                id="email" 
-                type="email" 
-                placeholder="m@example.com" 
-                required 
+              <Label htmlFor="email">{t('email')}</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input 
-                id="password" 
-                type="password" 
-                required 
+              <Label htmlFor="password">{t('password')}</Label>
+              <Input
+                id="password"
+                type="password"
+                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
@@ -137,15 +139,15 @@ export default function LoginPage() {
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In
+              {t('signInButton')}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            {t('noAccount')}{" "}
             <Link href="/register" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
-              Register
+              {t('register')}
             </Link>
           </p>
         </CardFooter>
