@@ -18,6 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script defer src="https://umami.muaz.app/script.js" data-website-id="643f246f-444f-4693-802d-62770e729f89"></script>
+      </head>
       <body suppressHydrationWarning>
         <MainNav />
         {children}

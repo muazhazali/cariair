@@ -21,6 +21,9 @@ export function Footer() {
                             © {new Date().getFullYear()} CariAir. Open-source project for the community.
                         </p>
                         <nav className="flex gap-4">
+                            <a href="https://umami.muaz.app/share/XvHNxGlhP9U6iXKY" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors font-medium">
+                                Analytics
+                            </a>
                             <Link href="/about" className="text-xs text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors font-medium">
                                 About
                             </Link>
