@@ -12,9 +12,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Upload, Plus } from 'lucide-react';
+import { Loader2, Upload, Plus, Clock } from 'lucide-react';
 import { Brand, Manufacturer, Source } from '@/lib/types/pocketbase';
 import { useTranslations } from 'next-intl';
+
+const COMING_SOON = true;
 
 function createFormSchema(t: ReturnType<typeof useTranslations<'contribute'>>) {
   return z.object({
@@ -227,6 +229,20 @@ export default function ContributePage() {
             </p>
           </div>
 
+          {/* Coming Soon Banner */}
+          {COMING_SOON && (
+            <div className="mb-6 flex items-center gap-3 rounded-xl border-2 border-blue-200 bg-blue-50 px-5 py-4 dark:border-blue-800 dark:bg-blue-950/40">
+              <Clock className="h-5 w-5 shrink-0 text-blue-600 dark:text-blue-400" />
+              <div>
+                <p className="font-semibold text-blue-800 dark:text-blue-300">Coming Soon</p>
+                <p className="text-sm text-blue-600 dark:text-blue-400">
+                  Community contributions are not open yet. Stay tuned — this feature is on the way!
+                </p>
+              </div>
+            </div>
+          )}
+
+          <div className={COMING_SOON ? 'pointer-events-none select-none opacity-40' : undefined}>
           <Card className="border-2 border-gray-200 dark:border-gray-800 shadow-lg">
             <CardHeader>
               <CardTitle className="text-xl">{t('cardTitle')}</CardTitle>
@@ -421,6 +437,7 @@ export default function ContributePage() {
               </Form>
             </CardContent>
           </Card>
+          </div>{/* end coming-soon wrapper */}
         </div>
       </div>
 
