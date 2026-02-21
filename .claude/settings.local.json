@@ -1,21 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(jq:*)",
-      "Bash(node --version:*)",
-      "Bash(export PATH=\"$HOME/.local/bin:$PATH\")",
-      "Bash(\"$HOME/.local/bin/jq.exe\" --version)",
-      "Bash(npm install:*)",
-      "Bash(ralphy --version:*)",
-      "Bash(test:*)",
-      "Bash(netstat:*)",
+      "Bash(pnpm:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm start:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm seed:*)",
+      "Bash(node:*)",
       "Bash(curl:*)",
-      "Bash(npm run dev:*)",
-      "Bash(npm run build:*)",
-      "Bash(npm run lint:*)",
-      "Bash(npx eslint:*)",
-      "Skill(claude-developer-platform)",
-      "Bash(pnpm:*)"
+      "Bash(netstat:*)"
     ]
   }
 }
