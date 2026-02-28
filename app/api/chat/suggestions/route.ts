@@ -4,7 +4,8 @@ import { NextRequest } from "next/server";
 const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function POST(req: NextRequest) {
-  const { messages } = await req.json();
+  const { messages: rawMessages } = await req.json();
+  const messages = Array.isArray(rawMessages) ? rawMessages.slice(-6) : [];
 
   try {
     const completion = await client.chat.completions.create({
