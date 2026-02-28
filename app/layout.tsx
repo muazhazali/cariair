@@ -6,6 +6,7 @@ import { MainNav } from "@/components/main-nav"
 import { MobileBottomNav } from "@/components/mobile-bottom-nav"
 import { Footer } from "@/components/footer"
 import { WaterChatbot } from "@/components/water-chatbot"
+import { CHATBOT_ENABLED } from "@/lib/features"
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -34,7 +35,7 @@ export default async function RootLayout({
           <Footer />
           <MobileBottomNav />
           <Toaster />
-          <WaterChatbot />
+          {CHATBOT_ENABLED ? <WaterChatbot /> : null}
         </NextIntlClientProvider>
       </body>
     </html>
