@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       // Fetch all approved products with efficient field selection
       const products = await pb.collection("products").getFullList({
         expand: "brand,source",
-        filter: 'status = "approved"',
+        filter: "status = 'approved'",
         requestKey: null,
       });
 
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       cachedContext = waterContext;
       lastFetch = now;
     } catch (error) {
-      console.error("Chat API: Failed to fetch water products context:", error);
+      console.error("Chat API: Failed to fetch water products context:", JSON.stringify(error), error);
       // If we have an old cache, use it as fallback even if expired
       if (cachedContext) waterContext = cachedContext;
     }

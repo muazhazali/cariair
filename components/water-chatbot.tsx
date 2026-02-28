@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MessageCircle, X, Send } from "lucide-react";
@@ -18,6 +18,26 @@ export function WaterChatbot() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, suggestions]);
+
+  async function fetchSuggestions(msgs: Message[]) {
+    try {
+      const res = await fetch("/api/chat/suggestions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: msgs }),
+      });
+      const data = await res.json();
+      setSuggestions(data.suggestions ?? []);
+    } catch {
+      setSuggestions([]);
+    }
+  }
 
   async function sendMessage(text: string) {
     const userMsg: Message = { role: "user", content: text };
@@ -25,6 +45,7 @@ export function WaterChatbot() {
     setMessages(newMessages);
     setInput("");
     setStreaming(true);
+    setSuggestions([]);
 
     const assistantMsg: Message = { role: "assistant", content: "" };
     setMessages([...newMessages, assistantMsg]);
@@ -101,6 +122,12 @@ export function WaterChatbot() {
     }
 
     setStreaming(false);
+
+    // Fetch follow-up suggestions after the full reply
+    setMessages((prev) => {
+      fetchSuggestions(prev);
+      return prev;
+    });
   }
 
   return (
@@ -163,6 +190,21 @@ export function WaterChatbot() {
                 </div>
               </div>
             ))}
+            {!streaming && suggestions.length > 0 && (
+              <div className="space-y-1 pt-1">
+                <p className="text-xs text-muted-foreground px-1">You might also ask:</p>
+                {suggestions.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => sendMessage(s)}
+                    className="w-full text-left px-3 py-1.5 rounded-lg border border-border hover:bg-muted text-xs transition-colors"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div ref={bottomRef} />
           </div>
           <div className="p-3 border-t flex gap-2">
             <Input
