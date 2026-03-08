@@ -25,10 +25,14 @@ async function getProduct(id: string): Promise<Product | null> {
     return product;
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    // Re-throw env errors so Vercel shows 500 with message instead of silent 404
-    if (msg.includes("NEXT_PUBLIC_POCKETBASE_URL")) {
+    const status = (error as any)?.status;
+
+    // Re-throw env or permission errors so Vercel shows 500 with message instead of silent 404
+    if (msg.includes("NEXT_PUBLIC_POCKETBASE_URL") || status === 403 || msg.includes("403")) {
+      console.error("[sources/[id]] Fatal auth/network error (often WAF block):", id, error);
       throw error;
     }
+
     console.error("[sources/[id]] Error fetching product:", id, error);
     return null;
   }
