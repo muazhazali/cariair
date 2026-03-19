@@ -3,6 +3,8 @@ import PocketBase from "pocketbase";
 
 // Standalone test - does NOT use the shared pb singleton
 // so we can isolate exactly what fails on Vercel
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const url = process.env.NEXT_PUBLIC_POCKETBASE_URL;
 
@@ -12,12 +14,17 @@ export async function GET() {
 
   // Step 1: raw fetch to health endpoint
   try {
-    const health = await fetch(`${url}/api/health`, { cache: "no-store" });
+    const health = await fetch(`${url}/api/health`, {
+      cache: "no-store",
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    });
     if (!health.ok) {
-      return NextResponse.json({ ok: false, step: "health", status: health.status, url });
+      return NextResponse.json({ ok: false, step: "health_test_fetch", status: health.status, url });
     }
   } catch (e: any) {
-    return NextResponse.json({ ok: false, step: "health_fetch", error: e?.message ?? String(e), url });
+    return NextResponse.json({ ok: false, step: "health_test_fetch_error", error: e?.message ?? String(e), url });
   }
 
   // Step 2: PocketBase SDK init + list collections

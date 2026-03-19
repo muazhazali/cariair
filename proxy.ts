@@ -1,19 +1,21 @@
-import { NextResponse } from 'next/server'
+import createMiddleware from 'next-intl/middleware'
 import type { NextRequest } from 'next/server'
-import { defaultLocale, LOCALE_COOKIE } from './i18n/routing'
+import { defaultLocale, LOCALE_COOKIE, locales } from './i18n/routing'
+
+const intlMiddleware = createMiddleware({
+  locales,
+  defaultLocale,
+  localeDetection: false,
+  localePrefix: 'never',
+})
 
 export default function middleware(request: NextRequest) {
-  // Use the existing locale from cookie or default
+  // Determine locale from cookie (fallback to default)
   const locale = request.cookies.get(LOCALE_COOKIE)?.value || defaultLocale
-
-  const response = NextResponse.next()
-
-  // Ensure the locale cookie is set for next-intl to use in getRequestConfig
-  if (!request.cookies.has(LOCALE_COOKIE)) {
-    response.cookies.set(LOCALE_COOKIE, locale)
-  }
-
-  return response
+  // Inject a synthetic accept-language so next-intl picks the right locale
+  const headers = new Headers(request.headers)
+  headers.set('x-next-intl-locale', locale)
+  return intlMiddleware(new Request(request, { headers }))
 }
 
 export const config = {
