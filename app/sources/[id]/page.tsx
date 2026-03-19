@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, MapPin, Droplet, BarChart3, Calendar, Building2, Globe, CheckCircle2 } from "lucide-react"
-import { pb, getImageUrl } from "@/lib/pocketbase"
+import PocketBase from "pocketbase"
+import { getImageUrl } from "@/lib/pocketbase"
 import { Product } from "@/lib/types/pocketbase"
 import { SingleSourceMap } from "@/components/single-source-map"
 import { MineralCompositionPanel } from "@/components/mineral-composition-panel"
@@ -15,32 +16,48 @@ import { getTranslations } from "next-intl/server"
 
 export const dynamic = 'force-dynamic'
 
-// Fetch product from PocketBase
+// Fetch product from PocketBase using a fresh instance per request
+// to avoid singleton state issues in Vercel serverless
 async function getProduct(id: string): Promise<Product | null> {
   try {
-    const product = await pb.collection('products').getOne<Product>(id, {
+    const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL;
+    if (!pbUrl) {
+      console.error("[sources/[id]] Missing NEXT_PUBLIC_POCKETBASE_URL");
+      return null;
+    }
+    const client = new PocketBase(pbUrl);
+    client.autoCancellation(false);
+    client.beforeSend = function (url, reqConfig) {
+      reqConfig.headers = Object.assign({}, reqConfig.headers, {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      });
+      return reqConfig;
+    };
+
+    const product = await client.collection('products').getOne<Product>(id, {
       expand: 'brand,source,manufacturer',
-      requestKey: null, // Disable auto-cancellation
+      requestKey: null,
     });
     return product;
   } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    const status = (error as any)?.status;
-
-    // Re-throw env or permission errors so Vercel shows 500 with message instead of silent 404
-    if (msg.includes("NEXT_PUBLIC_POCKETBASE_URL") || status === 403 || msg.includes("403")) {
-      console.error("[sources/[id]] Fatal auth/network error (often WAF block):", id, error);
-      throw error;
-    }
-
     console.error("[sources/[id]] Error fetching product:", id, error);
     return null;
   }
 }
 
-export default async function SourcePage({ params }: { params: { id: string } }) {
+export default async function SourcePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [product, t] = await Promise.all([getProduct(id), getTranslations('product')]);
+
+  let product: Product | null = null;
+  let t: Awaited<ReturnType<typeof getTranslations<'product'>>>;
+  try {
+    [product, t] = await Promise.all([getProduct(id), getTranslations('product')]);
+  } catch (error) {
+    console.error("[sources/[id]] Error loading page:", error);
+    // If getTranslations fails, load without translations
+    product = await getProduct(id);
+    t = ((key: string) => key) as any;
+  }
 
   if (!product) {
     notFound();
