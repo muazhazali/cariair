@@ -110,9 +110,9 @@ async function migrateUsers(pb: PocketBase, pg: Pool) {
           user.email,
           user.name || null,
           user.avatarUrl || null,
-          user.verified ? new Date(user.created) : null,
-          new Date(user.created),
-          new Date(user.updated),
+          user.verified ? safeDate(user.created) : null,
+          safeDate(user.created),
+          safeDate(user.updated),
         ]
       );
 
@@ -125,6 +125,18 @@ async function migrateUsers(pb: PocketBase, pg: Pool) {
     console.log('  ⚠️  Skipping users (may require admin auth):', (error as Error).message);
     console.log('  Users can be migrated manually or registered fresh\n');
   }
+}
+
+// Helper to safely parse dates
+function safeDate(dateValue: any): Date {
+  if (!dateValue || dateValue === '') {
+    return new Date();
+  }
+  const date = new Date(dateValue);
+  if (isNaN(date.getTime())) {
+    return new Date();
+  }
+  return date;
 }
 
 // Migrate Brands
@@ -154,8 +166,8 @@ async function migrateBrands(pb: PocketBase, pg: Pool) {
         brand.brand_name,
         brand.parent_company || null,
         brand.website_url || null,
-        new Date(brand.created),
-        new Date(brand.updated),
+        safeDate(brand.created),
+        safeDate(brand.updated),
       ]
     );
 
@@ -192,8 +204,8 @@ async function migrateManufacturers(pb: PocketBase, pg: Pool) {
       [
         mfg.name,
         mfg.address || null,
-        new Date(mfg.created),
-        new Date(mfg.updated),
+        safeDate(mfg.created),
+        safeDate(mfg.updated),
       ]
     );
 
@@ -235,8 +247,8 @@ async function migrateSources(pb: PocketBase, pg: Pool) {
         source.lng || null,
         source.kkm_approval_number || null,
         source.country || 'Malaysia',
-        new Date(source.created),
-        new Date(source.updated),
+        safeDate(source.created),
+        safeDate(source.updated),
       ]
     );
 
@@ -361,8 +373,8 @@ async function migrateProducts(pb: PocketBase, pg: Pool) {
           product.tds || null,
           product.minerals_json ? JSON.stringify(product.minerals_json) : null,
           product.status || 'pending',
-          new Date(product.created),
-          new Date(product.updated),
+          safeDate(product.created),
+          safeDate(product.updated),
         ]
       );
 
