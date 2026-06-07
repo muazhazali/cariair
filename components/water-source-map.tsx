@@ -4,8 +4,7 @@ import { useEffect, useState } from "react"
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
-import { pb } from "@/lib/pocketbase"
-import { Product } from "@/lib/types/pocketbase"
+import { Product } from "@/lib/types/db"
 
 export function WaterSourceMap() {
   // Center of Malaysia
@@ -30,11 +29,9 @@ export function WaterSourceMap() {
     // Load products with related data for a richer popup description
     const loadProducts = async () => {
       try {
-        const result = await pb.collection("products").getList<Product>(1, 50, {
-          expand: "brand,manufacturer,source",
-          requestKey: null,
-        })
-        setProducts(result.items)
+        const response = await fetch('/api/products?limit=50');
+        const data = await response.json();
+        setProducts(data.items || []);
       } catch (error) {
         console.error("Error loading products for map:", error)
       }
@@ -59,9 +56,9 @@ export function WaterSourceMap() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {products.map((product) => {
-          const source = product.expand?.source
-          const brand = product.expand?.brand
-          const manufacturer = product.expand?.manufacturer
+          const source = product.source
+          const brand = product.brand
+          const manufacturer = product.manufacturer
 
           if (!source || !source.lat || !source.lng) return null
 

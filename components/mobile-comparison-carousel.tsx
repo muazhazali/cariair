@@ -6,8 +6,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, BarChart3, Table2 } from "lucide-react"
-import { getImageUrl } from "@/lib/pocketbase"
-import { Product } from "@/lib/types/pocketbase"
+import { getImageUrl } from "@/lib/db/images"
+import { Product } from "@/lib/types/db"
 import {
   BarChart,
   Bar,
@@ -33,10 +33,10 @@ export function MobileComparisonCarousel({ products }: MobileComparisonCarouselP
   }
 
   const currentProduct = products[currentIndex]
-  const brand = currentProduct.expand?.brand
-  const source = currentProduct.expand?.source
+  const brand = currentProduct.brand
+  const source = currentProduct.source
   const imageUrl = currentProduct.images && currentProduct.images.length > 0
-    ? getImageUrl(currentProduct, currentProduct.images[0])
+    ? getImageUrl(currentProduct.images[0].id)
     : '/placeholder.jpg'
 
   // Parse minerals

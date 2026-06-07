@@ -23,7 +23,7 @@ import {
   PolarRadiusAxis,
   Radar,
 } from "recharts"
-import { Product, Brand } from "@/lib/types/pocketbase"
+import { Product, Brand } from "@/lib/types/db"
 import { TrendingUp, Droplets, BarChart3, Map, Heart, Info } from "lucide-react"
 import { getMineralInfo } from "@/lib/mineral-data"
 import { getAllProducts, getBrands } from "@/lib/products"
@@ -53,9 +53,9 @@ export function AnalyticsDashboard({ products: initialProducts, brands: initialB
     const brandPh: Record<string, { total: number; count: number; name: string }> = {}
 
     products.forEach((product) => {
-      if (product.ph_level && product.expand?.brand) {
-        const brandId = product.expand.brand.id
-        const brandName = product.expand.brand.brand_name
+      if (product.ph_level && product.brand) {
+        const brandId = product.brand.id
+        const brandName = product.brand.brand_name
 
         if (!brandPh[brandId]) {
           brandPh[brandId] = { total: 0, count: 0, name: brandName }
@@ -79,9 +79,9 @@ export function AnalyticsDashboard({ products: initialProducts, brands: initialB
     const brandTds: Record<string, { total: number; count: number; name: string }> = {}
 
     products.forEach((product) => {
-      if (product.tds && product.expand?.brand) {
-        const brandId = product.expand.brand.id
-        const brandName = product.expand.brand.brand_name
+      if (product.tds && product.brand) {
+        const brandId = product.brand.id
+        const brandName = product.brand.brand_name
 
         if (!brandTds[brandId]) {
           brandTds[brandId] = { total: 0, count: 0, name: brandName }
@@ -105,7 +105,7 @@ export function AnalyticsDashboard({ products: initialProducts, brands: initialB
     const typeCount: Record<string, number> = {}
 
     products.forEach((product) => {
-      const type = product.expand?.source?.type || "Unknown"
+      const type = product.source?.type || "Unknown"
       typeCount[type] = (typeCount[type] || 0) + 1
     })
 
@@ -163,9 +163,9 @@ export function AnalyticsDashboard({ products: initialProducts, brands: initialB
     const brandMinerals: Record<string, Record<string, number>> = {}
 
     products.forEach((product) => {
-      if (!product.expand?.brand) return
+      if (!product.brand) return
 
-      const brandName = product.expand.brand.brand_name
+      const brandName = product.brand.brand_name
       if (!brandMinerals[brandName]) {
         brandMinerals[brandName] = {}
       }

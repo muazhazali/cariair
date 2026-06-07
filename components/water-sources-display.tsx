@@ -8,8 +8,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { LayoutGrid, List, MapPin, ExternalLink, Loader2 } from "lucide-react"
 import { WaterTypeBadge } from "@/components/water-type-badge"
-import { pb, getImageUrl } from "@/lib/pocketbase"
-import { Product } from "@/lib/types/pocketbase"
+import { Product } from "@/lib/types/db"
 import { ProductSort, sortProducts, SortOption } from "@/components/product-sort"
 
 const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated", "Mineral", "Drinking"]
@@ -24,11 +23,9 @@ export function WaterSourcesDisplay() {
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const result = await pb.collection('products').getList<Product>(1, 50, {
-          expand: 'brand,source',
-          requestKey: null,
-        });
-        setProducts(result.items);
+        const response = await fetch('/api/products');
+        const data = await response.json();
+        setProducts(data.items || []);
       } catch (error) {
         console.error("Error loading products:", error);
       } finally {

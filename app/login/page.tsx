@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { pb } from '@/lib/pocketbase';
+import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,7 +25,16 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await pb.collection('users').authWithPassword(email, password);
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
       toast({
         title: t('loginSuccess'),
         description: t('loginSuccessDesc'),
@@ -46,13 +55,7 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
-      await pb.collection('users').authWithOAuth2({ provider: 'google' });
-      toast({
-        title: t('loginSuccess'),
-        description: t('loginGoogleSuccess'),
-      });
-      router.push('/');
-      router.refresh();
+      await signIn('google', { callbackUrl: '/' });
     } catch (error: any) {
       toast({
         variant: "destructive",

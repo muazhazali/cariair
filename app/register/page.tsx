@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { pb } from '@/lib/pocketbase';
+import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -36,13 +36,29 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      await pb.collection('users').create({
-        email,
-        password,
-        passwordConfirm,
+      // Register user via API
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name: email.split('@')[0] }),
       });
 
-      await pb.collection('users').authWithPassword(email, password);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
+
+      // Auto-login after registration
+      const signInResult = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (signInResult?.error) {
+        throw new Error(signInResult.error);
+      }
 
       toast({
         title: t('registerSuccess'),
@@ -64,13 +80,7 @@ export default function RegisterPage() {
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
-      await pb.collection('users').authWithOAuth2({ provider: 'google' });
-      toast({
-        title: t('registerSuccess'),
-        description: t('registerGoogleSuccess'),
-      });
-      router.push('/');
-      router.refresh();
+      await signIn('google', { callbackUrl: '/' });
     } catch (error: any) {
       toast({
         variant: "destructive",

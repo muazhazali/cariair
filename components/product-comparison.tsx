@@ -12,8 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { X, Scale, BarChart3, Table2 } from "lucide-react"
-import { getImageUrl } from "@/lib/pocketbase"
-import { Product } from "@/lib/types/pocketbase"
+import { Product } from "@/lib/types/db"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MobileComparisonCarousel } from "@/components/mobile-comparison-carousel"

@@ -1,58 +1,52 @@
 import { NextResponse } from "next/server";
-import PocketBase from "pocketbase";
+import { testConnection, query } from "@/lib/db";
 
-// Standalone test - does NOT use the shared pb singleton
-// so we can isolate exactly what fails on Vercel
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const url = process.env.NEXT_PUBLIC_POCKETBASE_URL;
-
-  if (!url) {
-    return NextResponse.json({ ok: false, step: "env", error: "NEXT_PUBLIC_POCKETBASE_URL is not set" });
-  }
-
-  // Step 1: raw fetch to health endpoint
+  // Step 1: Test database connection
   try {
-    const health = await fetch(`${url}/api/health`, {
-      cache: "no-store",
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      }
-    });
-    if (!health.ok) {
-      return NextResponse.json({ ok: false, step: "health_test_fetch", status: health.status, url });
+    const connected = await testConnection();
+    if (!connected) {
+      return NextResponse.json({ 
+        ok: false, 
+        step: "db_connection", 
+        error: "Failed to connect to PostgreSQL database" 
+      });
     }
   } catch (e: any) {
-    return NextResponse.json({ ok: false, step: "health_test_fetch_error", error: e?.message ?? String(e), url });
+    return NextResponse.json({ 
+      ok: false, 
+      step: "db_connection_error", 
+      error: e?.message ?? String(e) 
+    });
   }
 
-  // Step 2: PocketBase SDK init + list collections
-  let pb: PocketBase;
+  // Step 2: Test query execution
   try {
-    pb = new PocketBase(url);
-    pb.autoCancellation(false);
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, step: "pb_init", error: e?.message ?? String(e) });
-  }
-
-  // Step 3: fetch products with no filter
-  try {
-    const result = await pb.collection("products").getList(1, 3, { requestKey: null });
+    const result = await query('SELECT COUNT(*) as count FROM products WHERE status = $1', ['approved']);
+    const totalProducts = parseInt(result.rows[0].count);
+    
+    // Get sample products
+    const sampleResult = await query(
+      'SELECT id, product_name, status FROM products WHERE status = $1 LIMIT 3',
+      ['approved']
+    );
+    
     return NextResponse.json({
       ok: true,
-      url,
-      totalProducts: result.totalItems,
-      sample: result.items.map((p: any) => ({ id: p.id, name: p.product_name, status: p.status })),
+      totalProducts,
+      sample: sampleResult.rows.map((p: any) => ({ 
+        id: p.id, 
+        name: p.product_name, 
+        status: p.status 
+      })),
     });
   } catch (e: any) {
     return NextResponse.json({
       ok: false,
-      step: "pb_fetch_no_filter",
+      step: "db_query",
       error: e?.message ?? String(e),
-      status: e?.status,
-      data: e?.data,
-      url,
     });
   }
 }

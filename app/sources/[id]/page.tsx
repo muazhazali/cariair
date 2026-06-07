@@ -5,40 +5,19 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, MapPin, Droplet, BarChart3, Calendar, Building2, Globe, CheckCircle2 } from "lucide-react"
-import PocketBase from "pocketbase"
-import { getImageUrl } from "@/lib/pocketbase"
-import { Product } from "@/lib/types/pocketbase"
 import { SingleSourceMap } from "@/components/single-source-map"
 import { MineralCompositionPanel } from "@/components/mineral-composition-panel"
 import { HealthBenefitsPanel } from "@/components/health-benefits-panel"
 import { WaterTypeBadge } from "@/components/water-type-badge"
 import { getTranslations } from "next-intl/server"
+import { getProductById } from "@/lib/db";
 
 export const dynamic = 'force-dynamic'
 
-// Fetch product from PocketBase using a fresh instance per request
-// to avoid singleton state issues in Vercel serverless
-async function getProduct(id: string): Promise<Product | null> {
+// Fetch product from PostgreSQL
+async function getProduct(id: string) {
   try {
-    const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL;
-    if (!pbUrl) {
-      console.error("[sources/[id]] Missing NEXT_PUBLIC_POCKETBASE_URL");
-      return null;
-    }
-    const client = new PocketBase(pbUrl);
-    client.autoCancellation(false);
-    client.beforeSend = function (url, reqConfig) {
-      reqConfig.headers = Object.assign({}, reqConfig.headers, {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      });
-      return reqConfig;
-    };
-
-    const product = await client.collection('products').getOne<Product>(id, {
-      expand: 'brand,source,manufacturer',
-      requestKey: null,
-    });
-    return product;
+    return await getProductById(id);
   } catch (error) {
     console.error("[sources/[id]] Error fetching product:", id, error);
     return null;
@@ -65,8 +44,8 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
 
   const brand = product.expand?.brand;
   const source = product.expand?.source;
-  const imageUrl = product.images && product.images.length > 0
-    ? getImageUrl(product, product.images[0])
+      const imageUrl = product.images && product.images.length > 0
+    ? `/api/images/${(product.images as any[])[0]?.id || (product.images as any[])[0]}`
     : '/placeholder.jpg';
 
   // Parse minerals if it's a string, or use as is if it's already an object/array

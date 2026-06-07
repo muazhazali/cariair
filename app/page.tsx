@@ -8,7 +8,6 @@ import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { pb } from "@/lib/pocketbase"
 import { Droplet, Map, ArrowRight } from "lucide-react"
 import { useTranslations } from "next-intl"
 
@@ -46,11 +45,9 @@ function FeaturedProducts() {
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
-        const result = await pb.collection("products").getList(1, 6, {
-          expand: "brand,source,manufacturer",
-          requestKey: null,
-        })
-        setProducts(result.items)
+        const response = await fetch('/api/products?limit=6');
+        const data = await response.json();
+        setProducts(data.items || []);
       } catch (error) {
         console.error("Error fetching featured products:", error)
       } finally {
@@ -107,17 +104,23 @@ export default function HomePage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [productsResult, brandsResult, sourcesResult] = await Promise.all([
-          pb.collection("products").getList(1, 1, { requestKey: null }),
-          pb.collection("brands").getList(1, 1, { requestKey: null }),
-          pb.collection("sources").getList(1, 1, { requestKey: null })
-        ])
+        const [productsRes, brandsRes, sourcesRes] = await Promise.all([
+          fetch('/api/products?limit=1'),
+          fetch('/api/brands'),
+          fetch('/api/sources')
+        ]);
+
+        const [productsData, brandsData, sourcesData] = await Promise.all([
+          productsRes.json(),
+          brandsRes.json(),
+          sourcesRes.json()
+        ]);
 
         setStats({
-          totalProducts: productsResult.totalItems,
-          totalBrands: brandsResult.totalItems,
-          totalSources: sourcesResult.totalItems
-        })
+          totalProducts: productsData.total || 0,
+          totalBrands: brandsData.brands?.length || 0,
+          totalSources: sourcesData.sources?.length || 0
+        });
       } catch (error) {
         console.error("Error fetching stats:", error)
       } finally {

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { pb } from '@/lib/pocketbase';
+import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -13,8 +13,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Upload, Plus, Clock } from 'lucide-react';
-import { Brand, Manufacturer, Source } from '@/lib/types/pocketbase';
+import { Brand, Manufacturer, Source } from '@/lib/types/db';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 const COMING_SOON = true;
 
@@ -42,6 +43,8 @@ type AddSourceValues = { source_name: string; location_address?: string; country
 export default function ContributePage() {
   const { toast } = useToast();
   const t = useTranslations('contribute');
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -80,17 +83,24 @@ export default function ContributePage() {
     },
   });
 
+  // Check authentication
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [status, router]);
+
   useEffect(() => {
     const loadData = async () => {
       try {
         const [brandsRes, manufacturersRes, sourcesRes] = await Promise.all([
-          pb.collection('brands').getFullList<Brand>({ requestKey: null }),
-          pb.collection('manufacturers').getFullList<Manufacturer>({ requestKey: null }),
-          pb.collection('sources').getFullList<Source>({ requestKey: null }),
+          fetch('/api/brands').then(r => r.json()),
+          fetch('/api/manufacturers').then(r => r.json()),
+          fetch('/api/sources').then(r => r.json()),
         ]);
-        setBrands(brandsRes);
-        setManufacturers(manufacturersRes);
-        setSources(sourcesRes);
+        setBrands(brandsRes.brands || []);
+        setManufacturers(manufacturersRes.manufacturers || []);
+        setSources(sourcesRes.sources || []);
       } catch (error) {
         console.error('Error loading data:', error);
         toast({ variant: 'destructive', title: t('loadingError'), description: t('loadingErrorDesc') });
@@ -107,7 +117,15 @@ export default function ContributePage() {
     if (!newBrand.brand_name.trim()) return;
     setAddingBrand(true);
     try {
-      const created = await pb.collection('brands').create<Brand>(newBrand);
+      const response = await fetch('/api/brands', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newBrand),
+      });
+      
+      if (!response.ok) throw new Error('Failed to create brand');
+      
+      const created = await response.json();
       setBrands((prev) => [...prev, created]);
       form.setValue('brand', created.id);
       setBrandDialogOpen(false);
@@ -124,7 +142,15 @@ export default function ContributePage() {
     if (!newManufacturer.name.trim()) return;
     setAddingManufacturer(true);
     try {
-      const created = await pb.collection('manufacturers').create<Manufacturer>(newManufacturer);
+      const response = await fetch('/api/manufacturers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newManufacturer),
+      });
+      
+      if (!response.ok) throw new Error('Failed to create manufacturer');
+      
+      const created = await response.json();
       setManufacturers((prev) => [...prev, created]);
       form.setValue('manufacturer', created.id);
       setManufacturerDialogOpen(false);
@@ -141,7 +167,15 @@ export default function ContributePage() {
     if (!newSource.source_name.trim()) return;
     setAddingSource(true);
     try {
-      const created = await pb.collection('sources').create<Source>(newSource);
+      const response = await fetch('/api/sources', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSource),
+      });
+      
+      if (!response.ok) throw new Error('Failed to create source');
+      
+      const created = await response.json();
       setSources((prev) => [...prev, created]);
       form.setValue('source', created.id);
       setSourceDialogOpen(false);
@@ -167,25 +201,43 @@ export default function ContributePage() {
         return;
       }
 
-      const formData = new FormData();
-      formData.append('product_name', values.product_name);
-      if (values.barcode) formData.append('barcode', values.barcode);
-      formData.append('brand', values.brand);
-      formData.append('manufacturer', values.manufacturer);
-      formData.append('source', values.source);
-      if (values.ph_level) formData.append('ph_level', values.ph_level);
-      if (values.tds) formData.append('tds', values.tds);
-      formData.append('status', 'pending');
-      if (pb.authStore.model?.id) {
-        formData.append('submitted_by', pb.authStore.model.id);
-      }
+      const productData: any = {
+        product_name: values.product_name,
+        barcode: values.barcode || undefined,
+        brand_id: values.brand,
+        manufacturer_id: values.manufacturer,
+        source_id: values.source,
+        ph_level: values.ph_level ? parseFloat(values.ph_level) : undefined,
+        tds: values.tds ? parseFloat(values.tds) : undefined,
+        status: 'pending',
+      };
 
       const fileInput = document.getElementById('image-upload') as HTMLInputElement;
-      if (fileInput?.files?.length) {
-        formData.append('images', fileInput.files[0]);
+      
+      // Create product first
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(productData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create product');
       }
 
-      await pb.collection('products').create(formData);
+      const createdProduct = await response.json();
+
+      // Upload image if present
+      if (fileInput?.files?.length && createdProduct.id) {
+        const imageFormData = new FormData();
+        imageFormData.append('image', fileInput.files[0]);
+        
+        await fetch(`/api/products/${createdProduct.id}/images`, {
+          method: 'POST',
+          body: imageFormData,
+        });
+      }
 
       toast({ title: t('submitSuccess'), description: t('submitSuccessDesc') });
       form.reset();

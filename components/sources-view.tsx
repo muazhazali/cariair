@@ -9,7 +9,7 @@ import { MobileFiltersSheet } from "@/components/mobile-filters-sheet"
 import { ProductComparison } from "@/components/product-comparison"
 import { ProductSort, sortProducts, SortOption } from "@/components/product-sort"
 import { searchWaterSources, SearchFilters } from "@/lib/products"
-import { Product } from "@/lib/types/pocketbase"
+import { Product } from "@/lib/types/db"
 import { ProductCard } from "@/components/product-card"
 import { useTranslations } from "next-intl"
 

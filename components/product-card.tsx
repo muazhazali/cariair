@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { MapPin } from "lucide-react"
 import { WaterTypeBadge } from "@/components/water-type-badge"
-import { getImageUrl } from "@/lib/pocketbase"
-import { Product } from "@/lib/types/pocketbase"
+import { Product } from "@/lib/types/db"
 import { useTranslations } from "next-intl"
 
 interface ProductCardProps {
@@ -27,10 +26,10 @@ export function ProductCard({
     onToggleComparison,
 }: ProductCardProps) {
     const t = useTranslations('productCard')
-    const brand = product.expand?.brand
-    const source = product.expand?.source
+    const brand = product.brand
+    const source = product.source
     const imageUrl = product.images && product.images.length > 0
-        ? getImageUrl(product, product.images[0])
+        ? `/api/images/${product.images[0].id || product.images[0]}`
         : '/placeholder.jpg'
 
     return (
