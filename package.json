@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "node --env-file=.env scripts/seed-from-sql.mjs"
+    "seed": "node --env-file=.env scripts/seed-from-sql.mjs",
+    "seed:postgres": "npx ts-node --env-file=.env scripts/seed-postgres.ts",
+    "migrate": "npx ts-node --env-file=.env scripts/migrate-to-postgres.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
