@@ -6,7 +6,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getProducts, createProduct, SearchFilters } from "@/lib/db";
+import { getProducts, createProduct } from "@/lib/db/products";
+import { SearchFilters } from "@/lib/types/db";
 import { getProductImages } from "@/lib/db/images";
 
 export async function GET(request: NextRequest) {

@@ -3,7 +3,7 @@
 // ==========================================
 
 import { NextRequest, NextResponse } from "next/server";
-import { createUserWithPassword, getUserByEmail } from "@/lib/db";
+import { createUserWithPassword, getUserByEmail } from "@/lib/db/users";
 
 export async function POST(request: NextRequest) {
   try {

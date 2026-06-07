@@ -4,7 +4,7 @@
 // ==========================================
 
 import { NextRequest, NextResponse } from "next/server";
-import { getImageData } from "@/lib/db";
+import { getImageData } from "@/lib/db/images";
 
 interface Params {
   params: Promise<{ id: string }>;

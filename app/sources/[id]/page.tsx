@@ -10,7 +10,7 @@ import { MineralCompositionPanel } from "@/components/mineral-composition-panel"
 import { HealthBenefitsPanel } from "@/components/health-benefits-panel"
 import { WaterTypeBadge } from "@/components/water-type-badge"
 import { getTranslations } from "next-intl/server"
-import { getProductById } from "@/lib/db";
+import { getProductById } from "@/lib/db/products";
 
 export const dynamic = 'force-dynamic'
 

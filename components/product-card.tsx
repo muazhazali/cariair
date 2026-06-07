@@ -97,13 +97,13 @@ export function ProductCard({
                         {product.ph_level !== undefined && product.ph_level !== null ? (
                             <div className="flex flex-col items-center justify-center py-3 px-2 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
                                 <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">{t('phLevel')}</div>
-                                <div className={`text-3xl font-bold ${product.ph_level < 7
+                                <div className={`text-3xl font-bold ${Number(product.ph_level) < 7
                                     ? "text-orange-600 dark:text-orange-400"
-                                    : product.ph_level > 7.5
+                                    : Number(product.ph_level) > 7.5
                                         ? "text-blue-600 dark:text-blue-400"
                                         : "text-green-600 dark:text-green-400"
                                     }`}>
-                                    {product.ph_level.toFixed(1)}
+                                    {Number(product.ph_level).toFixed(1)}
                                 </div>
                             </div>
                         ) : (
@@ -117,7 +117,7 @@ export function ProductCard({
                             <div className="flex flex-col items-center justify-center py-3 px-2 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
                                 <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">{t('tds')}</div>
                                 <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-                                    {product.tds.toFixed(0)}
+                                    {Number(product.tds).toFixed(0)}
                                 </div>
                                 <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">mg/L</div>
                             </div>

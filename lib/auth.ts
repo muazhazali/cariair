@@ -6,7 +6,7 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { Pool } from "pg";
-import { PostgresAdapter } from "@auth/pg-adapter";
+import PostgresAdapter from "@auth/pg-adapter";
 import { verifyPassword } from "./db/users";
 
 // PostgreSQL pool for NextAuth adapter

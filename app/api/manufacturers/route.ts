@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getManufacturers, createManufacturer } from "@/lib/db";
+import { getManufacturers, createManufacturer } from "@/lib/db/manufacturers";
 
 export async function GET(request: NextRequest) {
   try {

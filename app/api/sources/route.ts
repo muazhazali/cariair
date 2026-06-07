@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getSources, createSource, getSourcesWithCoordinates } from "@/lib/db";
+import { getSources, createSource, getSourcesWithCoordinates } from "@/lib/db/sources";
 
 export async function GET(request: NextRequest) {
   try {

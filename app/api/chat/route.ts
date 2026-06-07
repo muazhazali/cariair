@@ -1,6 +1,6 @@
 import Groq from "groq-sdk";
 import { NextRequest } from "next/server";
-import { getProducts } from "@/lib/db";
+import { getProducts } from "@/lib/db/products";
 import { CHATBOT_ENABLED } from "@/lib/features";
 
 const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
