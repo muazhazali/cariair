@@ -11,10 +11,17 @@ export default async function SourcesPage(props: { searchParams: SearchParams })
 
   const t = await getTranslations("sources")
 
-  const [initialProducts, availableBrands] = await Promise.all([
-    searchWaterSources({}),
-    getBrands()
-  ])
+  let initialProducts: any[] = []
+  let availableBrands: any[] = []
+
+  try {
+    [initialProducts, availableBrands] = await Promise.all([
+      searchWaterSources({}),
+      getBrands()
+    ])
+  } catch (error) {
+    console.error("Error loading sources page:", error)
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
