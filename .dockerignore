@@ -1,0 +1,44 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+.next
+out
+dist
+
+# Environment files
+.env.local
+.env.*.local
+.env.migration
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Documentation (not needed in build)
+*.md
+!README.md
+
+# Scripts (not needed in production image)
+scripts/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Misc
+*.log
+npm-debug.log*
+pnpm-debug.log*

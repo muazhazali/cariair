@@ -19,6 +19,8 @@ const nextConfig = {
   },
   // Allow cross-origin requests from local network
   allowedDevOrigins: ['192.168.1.116', '*.192.168.1.116', '*.local'],
+  // Output standalone build for Docker
+  output: 'standalone',
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
