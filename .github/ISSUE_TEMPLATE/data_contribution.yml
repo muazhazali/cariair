@@ -1,0 +1,124 @@
+name: Data Contribution
+description: Add or update water source data
+title: "[DATA] "
+labels: ["data", "contribution"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for contributing water data! Please provide accurate information with references.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Contribution Type
+      description: What are you contributing?
+      options:
+        - New Brand
+        - New Product
+        - Update Existing Data
+        - Add Missing Data
+        - Correction
+    validations:
+      required: true
+
+  - type: input
+    id: brand
+    attributes:
+      label: Brand Name
+      description: Name of the water brand
+      placeholder: "e.g., Spritzer"
+    validations:
+      required: true
+
+  - type: input
+    id: product
+    attributes:
+      label: Product Name
+      description: Specific product name
+      placeholder: "e.g., Natural Mineral Water 500ml"
+
+  - type: textarea
+    id: data
+    attributes:
+      label: Data to Add/Update
+      description: Please provide the data in a structured format
+      placeholder: |
+        ## Water Properties
+        - pH Level: 7.2
+        - TDS: 85 mg/L
+
+        ## Mineral Composition (mg/L)
+        - Calcium: 22.5
+        - Magnesium: 3.2
+        - Potassium: 1.1
+        - Sodium: 4.5
+        - Bicarbonate: 65.0
+        - Silica: 55.2
+
+        ## Source Information
+        - Source Name: Taiping Underground
+        - Location: Perak, Malaysia
+        - Type: Underground
+        - KKM Approval: KKM 163 (24/A/8)
+
+        ## Manufacturer
+        - Name: Spritzer Bhd
+        - Address: [if available]
+
+        ## Product Info
+        - Barcode: 9556145116058
+        - Size: 500ml
+        - Material: PET
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References / Sources
+      description: Provide links to official sources, lab reports, or documentation
+      placeholder: |
+        Required for verification:
+
+        - Official website: https://www.spritzer.com.my/nutritional-info
+        - Lab report: [attach PDF or link]
+        - KKM approval: [document link]
+        - Product label photo: [attach image]
+    validations:
+      required: true
+
+  - type: textarea
+    id: images
+    attributes:
+      label: Images
+      description: Upload product images (bottle front showing label)
+      placeholder: |
+        Please upload:
+        1. Front of bottle showing brand/name
+        2. Nutrition/ingredients panel (if available)
+        3. Any certification marks
+
+  - type: checkboxes
+    id: verification
+    attributes:
+      label: Data Verification
+      options:
+        - label: This data is from an official source (manufacturer website, lab report, or product label)
+          required: true
+        - label: I have verified the accuracy of this data
+          required: true
+        - label: I have permission to share this data (if from a private source)
+          required: false
+        - label: I am willing to be contacted for clarification
+          required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Contribution Terms
+      options:
+        - label: I understand this data will be publicly available under the MIT license
+          required: true
+        - label: I have searched and this data is not already in the database
+          required: true

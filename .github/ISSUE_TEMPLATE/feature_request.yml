@@ -1,0 +1,77 @@
+name: Feature Request
+description: Suggest an idea for this project
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! We appreciate your input.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: Brief description of the feature
+      placeholder: "Add water quality ratings"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Detailed Description
+      description: Describe the feature you'd like to see
+      placeholder: |
+        A clear and concise description of what you want to happen.
+
+        Example: Add a rating system (1-5 stars) based on:
+        - pH level quality
+        - Mineral content
+        - Source sustainability
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why is this feature needed?
+      placeholder: |
+        Explain why this feature would be useful.
+
+        - What problem does it solve?
+        - Who would benefit from it?
+        - How does it align with the project goals?
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions you've considered
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups / Screenshots
+      description: If applicable, add mockups or screenshots to illustrate your idea
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Nice to have
+        - Important
+        - Critical
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues and this is not a duplicate
+          required: true
+        - label: I am willing to contribute to the development of this feature
+          required: false

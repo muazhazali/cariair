@@ -1,0 +1,91 @@
+name: Bug Report
+description: Report incorrect data or application bugs
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: A clear and concise description of the bug
+      placeholder: "e.g., Spritzer pH level is incorrect"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What type of bug is this?
+      options:
+        - Data Error (incorrect water data)
+        - UI Bug
+        - Search/Filter Issue
+        - Map Issue
+        - Performance Problem
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Please provide specific details about the bug
+      placeholder: |
+        - Which brand/product is affected?
+        - What is the current incorrect value?
+        - What should the correct value be?
+        - Source/reference for correct data
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: Page URL
+      description: URL where you found the issue
+      placeholder: "https://cariair.com/products/spritzer"
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Links to official sources, lab reports, or documentation
+      placeholder: |
+        - Official website: https://...
+        - Lab report: https://...
+        - KKM approval document: https://...
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain the problem
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      options:
+        - label: I have verified this is not a duplicate issue
+          required: true
+        - label: I have provided references for the correct data (if applicable)
+          required: false
