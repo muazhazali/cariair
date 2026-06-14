@@ -150,9 +150,6 @@ importers:
       pg:
         specifier: ^8.12.0
         version: 8.21.0
-      pocketbase:
-        specifier: ^0.26.8
-        version: 0.26.8
       react:
         specifier: 19.2.3
         version: 19.2.3
@@ -217,6 +214,9 @@ importers:
       '@types/uuid':
         specifier: ^9.0.8
         version: 9.0.8
+      pocketbase:
+        specifier: ^0.27.0
+        version: 0.27.0
       postcss:
         specifier: ^8
         version: 8.5.6
@@ -2243,8 +2243,8 @@ packages:
   po-parser@2.1.1:
     resolution: {integrity: sha512-ECF4zHLbUItpUgE3OTtLKlPjeBN+fKEczj2zYjDfCGOzicNs0GK3Vg2IoAYwx7LH/XYw43fZQP6xnZ4TkNxSLQ==}
 
-  pocketbase@0.26.8:
-    resolution: {integrity: sha512-aQ/ewvS7ncvAE8wxoW10iAZu6ElgbeFpBhKPnCfvRovNzm2gW8u/sQNPGN6vNgVEagz44kK//C61oKjfa+7Low==}
+  pocketbase@0.27.0:
+    resolution: {integrity: sha512-K5N6d93UP/BNMbMnlZ6BUfy9VPCIvLyqhJFOsNI8OsZwzvKWEAfyD36boi5K4ECIOl5HMlo0TzuaeGdKpMwizQ==}
 
   postcss-import@15.1.0:
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
@@ -4682,7 +4682,7 @@ snapshots:
 
   po-parser@2.1.1: {}
 
-  pocketbase@0.26.8: {}
+  pocketbase@0.27.0: {}
 
   postcss-import@15.1.0(postcss@8.5.6):
     dependencies:

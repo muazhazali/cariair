@@ -17,6 +17,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Allow cross-origin requests from local network
+  allowedDevOrigins: ['192.168.1.116', '*.192.168.1.116', '*.local'],
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
