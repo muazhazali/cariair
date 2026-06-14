@@ -134,8 +134,24 @@ export async function getProducts(
   // Transform rows to products with expanded fields
   const products = result.rows.map(row => transformProductRow(row));
 
+  // Fetch images for each product
+  const { getProductImages } = await import('./images');
+  const productsWithImages = await Promise.all(
+    products.map(async (product) => {
+      const images = await getProductImages(product.id);
+      return {
+        ...product,
+        images: images.map((img: { id: string; filename: string }) => ({
+          id: img.id,
+          filename: img.filename,
+          url: `/api/images/${img.id}`,
+        })),
+      };
+    })
+  );
+
   return {
-    items: products,
+    items: productsWithImages,
     total,
     page: Math.floor(offset / limit) + 1,
     perPage: limit
@@ -176,12 +192,23 @@ export async function getProductById(id: string): Promise<Product | null> {
   `;
 
   const result = await query(sql, [id]);
-  
+
   if (result.rows.length === 0) {
     return null;
   }
 
-  return transformProductRow(result.rows[0]);
+  const product = transformProductRow(result.rows[0]);
+
+  // Fetch images for the product
+  const { getProductImages } = await import('./images');
+  const images = await getProductImages(product.id);
+  product.images = images.map((img: { id: string; filename: string }) => ({
+    id: img.id,
+    filename: img.filename,
+    url: `/api/images/${img.id}`,
+  }));
+
+  return product;
 }
 
 // Create new product
