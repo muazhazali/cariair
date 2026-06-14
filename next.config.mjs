@@ -26,6 +26,7 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
+  serverExternalPackages: ['pg', '@auth/pg-adapter'],
 }
 
 mergeConfig(nextConfig, userConfig)

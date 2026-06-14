@@ -127,7 +127,3 @@ export async function getPrimaryProductImage(productId: string): Promise<Image |
   return result.rows[0] || null;
 }
 
-// Helper to get image URL (for use in components)
-export function getImageUrl(imageId: string): string {
-  return `/api/images/${imageId}`;
-}

@@ -3,7 +3,7 @@
 // Replacement for PocketBase functions
 // ==========================================
 
-import { getProducts, getBrands, getSources } from './db';
+import { getProducts, getBrands, getSources } from './db/index';
 import { Product, Brand, Source, SearchFilters } from './types/db';
 
 // Re-export types for compatibility

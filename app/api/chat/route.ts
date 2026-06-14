@@ -3,7 +3,14 @@ import { NextRequest } from "next/server";
 import { getProducts } from "@/lib/db/products";
 import { CHATBOT_ENABLED } from "@/lib/features";
 
-const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// Lazy initialization of Groq client
+let client: Groq | null = null;
+function getGroqClient(): Groq {
+  if (!client) {
+    client = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  }
+  return client;
+}
 
 const SYSTEM_PROMPT = `You are CariAir's water expert assistant. You ONLY answer questions related to mineral water, drinking water, water quality, hydration, and water-related health topics.
 
@@ -64,7 +71,7 @@ export async function POST(req: NextRequest) {
         ? `Here is the current CariAir product database (use this for all product-specific questions):\n${JSON.stringify(waterContext)}`
         : `The product database is currently unavailable (reason: ${dbError ?? "unknown"}). Provide general information about water and hydration, but DO NOT mention specific brand names like Evian, San Pellegrino, Gerolsteiner, or any non-Malaysian brand. Only say the database is temporarily unavailable.`;
 
-    const stream = await client.chat.completions.create({
+    const stream = await getGroqClient().chat.completions.create({
       model: "llama-3.1-8b-instant",
       max_tokens: 1024,
       temperature: 0.2,

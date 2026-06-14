@@ -1,0 +1,26 @@
+[Unit]
+Description=CariAir Application (Docker Compose)
+Documentation=https://github.com/yourusername/cariair
+Requires=docker.service
+After=docker.service network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/cariair
+Environment=COMPOSE_HTTP_TIMEOUT=300
+
+# Pull latest images and start containers
+ExecStartPre=-/usr/bin/docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
+ExecStartPre=-/usr/bin/docker compose -f docker-compose.yml -f docker-compose.prod.yml down
+
+ExecStart=/usr/bin/docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+# Graceful shutdown
+ExecStop=/usr/bin/docker compose -f docker-compose.yml -f docker-compose.prod.yml down
+
+# Reload (recreate containers)
+ExecReload=/usr/bin/docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate
+
+[Install]
+WantedBy=multi-user.target

@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, BarChart3, Table2 } from "lucide-react"
-import { getImageUrl } from "@/lib/db/images"
+import { getImageUrl } from "@/lib/utils"
 import { Product } from "@/lib/types/db"
 import {
   BarChart,

@@ -2,7 +2,14 @@ import Groq from "groq-sdk";
 import { NextRequest } from "next/server";
 import { CHATBOT_ENABLED } from "@/lib/features";
 
-const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// Lazy initialization of Groq client
+let client: Groq | null = null;
+function getGroqClient(): Groq {
+  if (!client) {
+    client = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  }
+  return client;
+}
 
 export async function POST(req: NextRequest) {
   if (!CHATBOT_ENABLED) {
@@ -13,7 +20,7 @@ export async function POST(req: NextRequest) {
   const messages = Array.isArray(rawMessages) ? rawMessages.slice(-6) : [];
 
   try {
-    const completion = await client.chat.completions.create({
+    const completion = await getGroqClient().chat.completions.create({
       model: "llama-3.1-8b-instant",
       max_tokens: 100,
       temperature: 0.7,

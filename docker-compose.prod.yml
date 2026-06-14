@@ -1,0 +1,45 @@
+# Production Docker Compose Configuration
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  postgres:
+    restart: always
+    # Production: Disable external port exposure (only accessible via docker network)
+    ports: !reset []
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+    # Production logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  app:
+    restart: always
+    # Production: Remove build, use pre-built image or keep build for local
+    # image: ghcr.io/yourusername/cariair:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+    # Production logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+    # Health check for the app
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Ensure env file is loaded
+    env_file:
+      - .env.production.local

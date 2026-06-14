@@ -8,7 +8,7 @@ import { EnhancedProductFilters } from "@/components/enhanced-product-filters"
 import { MobileFiltersSheet } from "@/components/mobile-filters-sheet"
 import { ProductComparison } from "@/components/product-comparison"
 import { ProductSort, sortProducts, SortOption } from "@/components/product-sort"
-import { searchWaterSources, SearchFilters } from "@/lib/products"
+import { SearchFilters } from "@/lib/types/db"
 import { Product } from "@/lib/types/db"
 import { ProductCard } from "@/components/product-card"
 import { useTranslations } from "next-intl"
@@ -54,12 +54,20 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
       const filtersToUse = opts?.filters ?? activeFilters
       const queryToUse = opts?.query ?? searchQuery
 
-      const results = await searchWaterSources({
-        ...filtersToUse,
-        query: queryToUse.trim() || undefined,
-      })
+      // Build query params
+      const params = new URLSearchParams()
+      if (queryToUse.trim()) params.append('q', queryToUse.trim())
+      if (filtersToUse.types?.length) filtersToUse.types.forEach(t => params.append('type', t))
+      if (filtersToUse.brands?.length) filtersToUse.brands.forEach(b => params.append('brand', b))
+      if (filtersToUse.minPh !== undefined) params.append('minPh', filtersToUse.minPh.toString())
+      if (filtersToUse.maxPh !== undefined) params.append('maxPh', filtersToUse.maxPh.toString())
+      if (filtersToUse.minTds !== undefined) params.append('minTds', filtersToUse.minTds.toString())
+      if (filtersToUse.maxTds !== undefined) params.append('maxTds', filtersToUse.maxTds.toString())
 
-      setProducts(results)
+      const response = await fetch(`/api/products?${params.toString()}`)
+      const data = await response.json()
+
+      setProducts(data.items || [])
     } catch (error) {
       console.error("Error fetching products:", error)
     } finally {

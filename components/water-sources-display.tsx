@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { LayoutGrid, List, MapPin, ExternalLink, Loader2 } from "lucide-react"
 import { WaterTypeBadge } from "@/components/water-type-badge"
 import { Product } from "@/lib/types/db"
+import { getImageUrl } from "@/lib/utils"
 import { ProductSort, sortProducts, SortOption } from "@/components/product-sort"
 
 const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated", "Mineral", "Drinking"]

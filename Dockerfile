@@ -22,7 +22,8 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build the application
+# Build the application (provide dummy GROQ_API_KEY for build-time only)
+ENV GROQ_API_KEY=dummy-key-for-build
 RUN pnpm build
 
 # Stage 3: Runner

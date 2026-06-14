@@ -26,7 +26,6 @@ import {
 import { Product, Brand } from "@/lib/types/db"
 import { TrendingUp, Droplets, BarChart3, Map, Heart, Info } from "lucide-react"
 import { getMineralInfo } from "@/lib/mineral-data"
-import { getAllProducts, getBrands } from "@/lib/products"
 import { useState, useEffect } from "react"
 
 interface AnalyticsDashboardProps {
@@ -38,12 +37,15 @@ export function AnalyticsDashboard({ products: initialProducts, brands: initialB
   const [products, setProducts] = useState(initialProducts)
   const [brands, setBrands] = useState(initialBrands)
 
-  // If server-side fetch returned empty (e.g. cold start on Vercel), auto-retry on the client
+  // If server-side fetch returned empty, fetch from API on client
   useEffect(() => {
     if (initialProducts.length === 0) {
-      Promise.all([getAllProducts(), getBrands()]).then(([p, b]) => {
-        setProducts(p)
-        setBrands(b)
+      Promise.all([
+        fetch('/api/products').then(r => r.json()),
+        fetch('/api/brands').then(r => r.json())
+      ]).then(([productsData, brandsData]) => {
+        setProducts(productsData.items || [])
+        setBrands(brandsData || [])
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

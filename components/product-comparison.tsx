@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { X, Scale, BarChart3, Table2 } from "lucide-react"
 import { Product } from "@/lib/types/db"
+import { getImageUrl } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MobileComparisonCarousel } from "@/components/mobile-comparison-carousel"
