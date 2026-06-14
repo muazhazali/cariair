@@ -173,21 +173,21 @@ INSERT INTO brands (brand_name, parent_company) VALUES
 ('evian', 'Danone')
 ON CONFLICT DO NOTHING;
 
--- Insert default sources
+-- Insert default sources (coordinates from pb2.muaz.app)
 INSERT INTO sources (source_name, type, location_address, country, kkm_approval_number, lat, lng) VALUES
-('Taiping Underground Water', 'Underground', 'Lot 1466, Jalan Reservoir, Perak', 'Malaysia', 'KKM 163 (24/A/8)', 4.8500, 100.7333),
-('Rembau Underground Water', 'Underground', 'Lot 1390, Kg. Chenong, Negeri Sembilan', 'Malaysia', 'KKM 163 (24/N/5)', 2.5833, 102.1000),
-('Lenggeng Source', 'Underground', 'Lot 5043, Kg. Sompo, Negeri Sembilan', 'Malaysia', 'KKM 163 (24/N/1)', 2.8167, 101.9000),
-('Bukit Jintan', 'Underground', 'PTD 6386, Bukit Jintan, Johor', 'Malaysia', 'KKM 163 (24/J/6)', 2.0333, 103.3167),
-('Pasuruan Source', 'Underground', 'Jl. Raya Pasuruan-Malang Km 10, East Java', 'Indonesia', 'KKM 163 24/B/62', -7.6500, 112.9000),
-('Kanchong Aquifer', 'Oxygenated', 'Kompleks Al Ammar, Kg. Kanchong, Negeri Sembilan', 'Malaysia', 'KKM 163 (24/N/10)', 2.8000, 101.5000),
-('Karak Source', 'Underground', 'Lot 7399, Jalan Mempaga, Pahang', 'Malaysia', 'KKM 163 (24/C/3)', 3.4167, 102.0333),
-('Taiping Distillation Plant', 'Municipal', 'Lot 898, Jalan Reservoir, Perak', 'Malaysia', 'KKM 163 (52/A/1)', 4.8500, 100.7333),
-('Shah Alam Plant', 'Municipal', 'Jalan Sitar 33/6, Selangor', 'Malaysia', NULL, 3.0733, 101.5185),
-('Ulu Tiram Plant', 'Municipal', 'Jalan Makmur, Johor', 'Malaysia', 'KKM 163 (52/J/41)', 1.6000, 103.8167),
-('Sibu Plant', 'Municipal', 'Lot 96, Upper Lanang, Sarawak', 'Malaysia', 'KKM 163 (52/Q/28)', 2.3000, 111.8333),
-('Clairvic Spring', 'Spring', 'Volvic (Puy de Dôme), Auvergne', 'France', 'KKM 163 (24/B/42)', 45.8717, 2.9983),
-('Cachat Spring', 'Spring', 'Evian-les-Bains, Haute-Savoie', 'France', 'KKM 163 (24/B/3)', 46.4000, 6.5833)
+('Taiping Underground Water', 'Underground', 'Lot 1466, Jalan Reservoir, Perak', 'Malaysia', 'KKM 163 (24/A/8)', 4.820186081133536, 100.75184611171122),
+('Rembau Underground Water', 'Underground', 'Lot 1390, Kg. Chenong, Negeri Sembilan', 'Malaysia', 'KKM 163 (24/N/5)', 2.560198663760516, 102.13615162767921),
+('Lenggeng Source', 'Underground', 'Lot 5043, Kg. Sompo, Negeri Sembilan', 'Malaysia', 'KKM 163 (24/N/1)', 2.831554105964163, 101.93045307566388),
+('Bukit Jintan', 'Underground', 'PTD 6386, Bukit Jintan, Johor', 'Malaysia', 'KKM 163 (24/J/6)', 1.9862095301457197, 103.14957422986258),
+('Pasuruan Source', 'Underground', 'Jl. Raya Pasuruan-Malang Km 10, East Java', 'Indonesia', 'KKM 163 24/B/62', -7.722849449616971, 112.8474605446182),
+('Kanchong Aquifer', 'Oxygenated', 'Kompleks Al Ammar, Kg. Kanchong, Negeri Sembilan', 'Malaysia', 'KKM 163 (24/N/10)', 2.597368028746302, 101.97267517790938),
+('Karak Source', 'Underground', 'Lot 7399, Jalan Mempaga, Pahang', 'Malaysia', 'KKM 163 (24/C/3)', 3.489984642845837, 102.01819322568949),
+('Taiping Distillation Plant', 'Municipal', 'Lot 898, Jalan Reservoir, Perak', 'Malaysia', 'KKM 163 (52/A/1)', 4.820292995358648, 100.75225072847765),
+('Shah Alam Plant', 'Municipal', 'Jalan Sitar 33/6, Selangor', 'Malaysia', NULL, 3.0212199123693626, 101.55494004409107),
+('Ulu Tiram Plant', 'Municipal', 'Jalan Makmur, Johor', 'Malaysia', 'KKM 163 (52/J/41)', 1.5524826379613934, 103.83324293558218),
+('Sibu Plant', 'Municipal', 'Lot 96, Upper Lanang, Sarawak', 'Malaysia', 'KKM 163 (52/Q/28)', 2.2414906381201196, 111.86811503558188),
+('Clairvic Spring', 'Spring', 'Volvic (Puy de Dôme), Auvergne', 'France', 'KKM 163 (24/B/42)', 45.88881920216115, 3.061039408167735),
+('Cachat Spring', 'Spring', 'Evian-les-Bains, Haute-Savoie', 'France', 'KKM 163 (24/B/3)', 46.39969829682801, 6.591648950983553)
 ON CONFLICT DO NOTHING;
 
 -- Insert default manufacturers
