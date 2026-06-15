@@ -1,7 +1,10 @@
+# Development-only: PostgreSQL only, run Next.js locally with `pnpm dev`
+# This is 10x faster than building in Docker for development
+
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: cariair-db
+    container_name: cariair-db-dev
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -17,28 +20,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: cariair-app
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASS=postgres
-      - DB_NAME=cariair
-      - AUTH_SECRET=${AUTH_SECRET:-your-secret-key-change-in-production}
-      - AUTH_GOOGLE_ID=${AUTH_GOOGLE_ID:-}
-      - AUTH_GOOGLE_SECRET=${AUTH_GOOGLE_SECRET:-}
-      - GROQ_API_KEY=${GROQ_API_KEY:-}
-    depends_on:
-      postgres:
-        condition: service_healthy
 
 volumes:
   postgres_data:

@@ -37,7 +37,7 @@ CariAir is a Next.js 15 web platform serving as Malaysia's comprehensive mineral
 
 - Node.js 20+
 - pnpm 10+
-- PostgreSQL 15+
+- Docker (for PostgreSQL database)
 
 ### Installation
 
@@ -52,15 +52,34 @@ pnpm install
 # Set up environment variables
 cp .env.example .env.local
 # Edit .env.local with your database credentials
+```
 
-# Initialize database schema
-pnpm run db:schema
+### Development
 
-# Start development server
+**Recommended: Database in Docker, Next.js locally (fastest)**
+
+```bash
+# Terminal 1: Start PostgreSQL in Docker
+pnpm run dev:db
+
+# Terminal 2: Start Next.js dev server
 pnpm dev
 ```
 
 The app will be available at `http://localhost:3000`
+
+**Alternative: Manual PostgreSQL setup**
+
+If you prefer not to use Docker:
+
+```bash
+# Setup PostgreSQL manually
+createdb cariair
+psql -d cariair -f sql/schema.sql
+
+# Start dev server
+pnpm dev
+```
 
 ## Environment Variables
 
@@ -168,19 +187,23 @@ cariair/
 
 ## Docker Commands
 
-```bash
-# Build and start
-docker compose up -d --build
+The `docker-compose.yml` only includes PostgreSQL (not the full app). Next.js runs locally for faster development.
 
-# View logs
+```bash
+# Start PostgreSQL database
+pnpm run dev:db
+
+# View database logs
 docker compose logs -f
 
-# Stop
-docker compose down
+# Stop PostgreSQL
+pnpm run dev:db:stop
 
 # Stop and remove volumes (resets database)
 docker compose down -v
 ```
+
+See [PRODUCTION.md](PRODUCTION.md) for full-stack Docker deployment.
 
 ## Contributing
 

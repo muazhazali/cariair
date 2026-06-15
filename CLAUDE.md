@@ -14,18 +14,25 @@ This project uses **pnpm** as the package manager.
 # Install dependencies
 pnpm install
 
-# Start development server
-pnpm dev
+# Start development (requires database running)
+pnpm dev                    # Starts Next.js dev server (hot reload)
 
-# Build for production
-pnpm build
+# Database (PostgreSQL in Docker)
+pnpm run dev:db             # Start PostgreSQL container
+pnpm run dev:db:stop        # Stop PostgreSQL container
+pnpm run dev:db:logs        # View database logs
 
-# Run linting
-pnpm lint
+# Build and lint
+pnpm build                  # Build for production
+pnpm lint                   # Run ESLint
 
 # Database schema (requires PostgreSQL env vars)
-pnpm run db:schema
+pnpm run db:schema          # Load sql/schema.sql
 ```
+
+**Recommended workflow:**
+1. Run `pnpm run dev:db` in Terminal 1 to start PostgreSQL
+2. Run `pnpm dev` in Terminal 2 to start Next.js (fast hot reload)
 
 **Required Environment Variables:**
 

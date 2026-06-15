@@ -31,20 +31,10 @@ export function HomeMap({ products }: HomeMapProps) {
     })
   }, [products])
 
-  // Calculate center based on markers or default to Malaysia
+  // Always center on Malaysia
   const center = useMemo(() => {
-    if (productsWithCoords.length === 0) {
-      return [4.2105, 101.9758] // Center of Malaysia
-    }
-
-    const lats = productsWithCoords.map((p) => Number(p.source!.lat))
-    const lngs = productsWithCoords.map((p) => Number(p.source!.lng))
-
-    return [
-      (Math.min(...lats) + Math.max(...lats)) / 2,
-      (Math.min(...lngs) + Math.max(...lngs)) / 2,
-    ]
-  }, [productsWithCoords])
+    return [4.2105, 101.9758] // Center of Malaysia
+  }, [])
 
   return (
     <MapContainer

@@ -62,23 +62,41 @@ One of the main ways to contribute is by adding or updating water source data:
 
 ## Development Setup
 
-### With Docker (Recommended)
+### Prerequisites
+
+- Node.js 20+
+- pnpm 10+
+- Docker (for PostgreSQL database)
+
+### Recommended: PostgreSQL in Docker, Next.js Locally
+
+This is the fastest development setup with hot reload support:
 
 ```bash
 git clone https://github.com/muazhazali/cariair.git
 cd cariair
 cp .env.example .env.local
-docker-compose up
+pnpm install
+
+# Terminal 1: Start PostgreSQL in Docker
+pnpm run dev:db
+
+# Terminal 2: Start Next.js dev server (hot reload)
+pnpm dev
 ```
 
-### Local Development
+The app will be available at `http://localhost:3000`
+
+### Alternative: Manual PostgreSQL Setup
+
+If you prefer to run PostgreSQL without Docker:
 
 ```bash
 git clone https://github.com/muazhazali/cariair.git
 cd cariair
 pnpm install
 
-# Setup PostgreSQL
+# Setup PostgreSQL manually
 createdb cariair
 psql -d cariair -f sql/schema.sql
 

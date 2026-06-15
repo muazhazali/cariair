@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:schema": "psql -h $DB_HOST -U $DB_USER -d $DB_NAME -f sql/schema.sql"
+    "db:schema": "psql -h $DB_HOST -U $DB_USER -d $DB_NAME -f sql/schema.sql",
+    "dev:db": "docker compose up -d",
+    "dev:db:stop": "docker compose down",
+    "dev:db:logs": "docker compose logs -f postgres"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",

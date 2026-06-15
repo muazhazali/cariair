@@ -5,12 +5,13 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, MapPin, Droplet, BarChart3, Calendar, Building2, Globe, CheckCircle2 } from "lucide-react"
-import { SingleSourceMap } from "@/components/single-source-map"
 import { MineralCompositionPanel } from "@/components/mineral-composition-panel"
 import { HealthBenefitsPanel } from "@/components/health-benefits-panel"
 import { WaterTypeBadge } from "@/components/water-type-badge"
+import { ClientMapWrapper } from "@/components/client-map-wrapper"
 import { getTranslations } from "next-intl/server"
 import { getProductById } from "@/lib/db/products";
+import { Product } from "@/lib/types/db";
 
 export const dynamic = 'force-dynamic'
 
@@ -103,11 +104,6 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
                 alt={product.product_name || "Product Image"}
                 fill
                 className="object-contain p-6"
-                onError={(e) => {
-                  // Fallback to placeholder if image fails to load
-                  const img = e.currentTarget as HTMLImageElement
-                  img.src = '/placeholder.jpg'
-                }}
               />
             </div>
           </div>
@@ -264,7 +260,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <SingleSourceMap
+                  <ClientMapWrapper
                     lat={source.lat}
                     lng={source.lng}
                     sourceName={source.source_name || product.product_name}
