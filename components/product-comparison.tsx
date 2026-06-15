@@ -82,7 +82,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
 
   // Prepare pH comparison data
   const phData = products.map((product) => ({
-    name: product.expand?.brand?.brand_name || "Unknown",
+    name: product.brand?.brand_name || "Unknown",
     pH: product.ph_level || 0,
     color: getPhColor(product.ph_level),
     label: getPhLabel(product.ph_level),
@@ -90,7 +90,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
 
   // Prepare TDS comparison data
   const tdsData = products.map((product) => ({
-    name: product.expand?.brand?.brand_name || "Unknown",
+    name: product.brand?.brand_name || "Unknown",
     tds: product.tds || 0,
     color: getTdsColor(product.tds),
     level: getTdsLevel(product.tds),
@@ -122,7 +122,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
           })
         }
         // Add this product's mineral amount
-        const brandName = product.expand?.brand?.brand_name || "Unknown"
+        const brandName = product.brand?.brand_name || "Unknown"
         mineralsMap.get(key)![brandName] = mineral.amount || 0
       })
     })
@@ -258,7 +258,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
             <Tooltip />
             <Legend />
             {products.map((product, index) => {
-              const brandName = product.expand?.brand?.brand_name || "Unknown"
+              const brandName = product.brand?.brand_name || "Unknown"
               return (
                 <Bar
                   key={product.id}
@@ -287,7 +287,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
                     <div className="relative h-24 w-24 bg-gray-100 dark:bg-gray-800 rounded">
                       {product.images && product.images.length > 0 ? (
                         <Image
-                          src={getImageUrl(product, product.images[0])}
+                          src={getImageUrl(product.images[0])}
                           alt={product.product_name || "Product"}
                           fill
                           className="object-contain p-2"
@@ -299,7 +299,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
                       )}
                     </div>
                     <div className="text-sm font-medium">
-                      {product.expand?.brand?.brand_name || "Unknown Brand"}
+                      {product.brand?.brand_name || "Unknown Brand"}
                     </div>
                     <div className="text-xs text-gray-500">
                       {product.product_name || "Unknown Product"}
@@ -331,7 +331,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
               {products.map((product) => (
                 <td key={product.id} className="p-2 text-center">
                   <Badge variant="outline">
-                    {product.expand?.source?.type || "Unknown"}
+                    {product.source?.type || "Unknown"}
                   </Badge>
                 </td>
               ))}
@@ -340,7 +340,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
               <td className="p-2 font-medium">{t('location')}</td>
               {products.map((product) => (
                 <td key={product.id} className="p-2 text-center text-sm">
-                  {product.expand?.source?.location_address || "N/A"}
+                  {product.source?.location_address || "N/A"}
                 </td>
               ))}
             </tr>
@@ -348,9 +348,9 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
               <td className="p-2 font-medium">{t('brandWebsite')}</td>
               {products.map((product) => (
                 <td key={product.id} className="p-2 text-center">
-                  {product.expand?.brand?.website_url ? (
+                  {product.brand?.website_url ? (
                     <a
-                      href={product.expand.brand.website_url}
+                      href={product.brand.website_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline text-sm"
@@ -437,7 +437,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
                   <div className="relative h-12 w-12 bg-gray-100 dark:bg-gray-800 rounded">
                     {product.images && product.images.length > 0 ? (
                       <Image
-                        src={getImageUrl(product, product.images[0])}
+                        src={getImageUrl(product.images[0])}
                         alt={product.product_name || "Product"}
                         fill
                         className="object-contain p-1"
@@ -450,7 +450,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium truncate">
-                      {product.expand?.brand?.brand_name || "Unknown"}
+                      {product.brand?.brand_name || "Unknown"}
                     </div>
                     <div className="text-xs text-gray-500 truncate">
                       {product.product_name || "Unknown"}

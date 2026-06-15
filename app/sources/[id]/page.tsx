@@ -42,11 +42,21 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
     notFound();
   }
 
-  const brand = product.expand?.brand;
-  const source = product.expand?.source;
-      const imageUrl = product.images && product.images.length > 0
-    ? `/api/images/${(product.images as any[])[0]?.id || (product.images as any[])[0]}`
-    : '/placeholder.jpg';
+  const brand = product.brand;
+  const source = product.source;
+
+  // Get image URL - handles both object format {id, filename, url} and string format
+  const getImageUrl = (): string => {
+    if (!product.images || product.images.length === 0) {
+      return '/placeholder.jpg'
+    }
+    const firstImage = product.images[0]
+    // If it's an object with id property, use it; if it's a string, use directly
+    const imageId = typeof firstImage === 'string' ? firstImage : firstImage?.id
+    return imageId ? `/api/images/${imageId}` : '/placeholder.jpg'
+  }
+
+  const imageUrl = getImageUrl()
 
   // Parse minerals if it's a string, or use as is if it's already an object/array
   let minerals: any[] = [];
@@ -93,6 +103,11 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
                 alt={product.product_name || "Product Image"}
                 fill
                 className="object-contain p-6"
+                onError={(e) => {
+                  // Fallback to placeholder if image fails to load
+                  const img = e.currentTarget as HTMLImageElement
+                  img.src = '/placeholder.jpg'
+                }}
               />
             </div>
           </div>
@@ -160,7 +175,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
                   <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('created')}</span>
                   <p className="text-base font-medium mt-1 flex items-center">
                     <Calendar className="mr-2 h-4 w-4" />
-                    {new Date(product.created).toLocaleDateString('en-US', {
+                    {new Date(product.created_at).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric'

@@ -36,7 +36,7 @@ export function MobileComparisonCarousel({ products }: MobileComparisonCarouselP
   const brand = currentProduct.brand
   const source = currentProduct.source
   const imageUrl = currentProduct.images && currentProduct.images.length > 0
-    ? getImageUrl(currentProduct.images[0].id)
+    ? getImageUrl(currentProduct.images[0])
     : '/placeholder.jpg'
 
   // Parse minerals

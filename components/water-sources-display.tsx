@@ -41,7 +41,7 @@ export function WaterSourcesDisplay() {
   const filteredProducts = useMemo(() => {
     if (activeType === "all") return products
     return products.filter((product) => {
-      const source = product.expand?.source as { type?: string } | undefined
+      const source = product.source
       return source?.type === activeType
     })
   }, [products, activeType])
@@ -125,10 +125,10 @@ export function WaterSourcesDisplay() {
 
       <div className={viewMode === "grid" ? "grid gap-6 sm:grid-cols-2 lg:grid-cols-3" : "space-y-4"}>
         {sortedProducts.map((product) => {
-          const brand = product.expand?.brand;
-          const source = product.expand?.source;
+          const brand = product.brand;
+          const source = product.source;
           const imageUrl = product.images && product.images.length > 0
-            ? getImageUrl(product, product.images[0])
+            ? getImageUrl(product.images[0])
             : '/placeholder.jpg';
 
           return (

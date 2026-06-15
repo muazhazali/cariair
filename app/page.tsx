@@ -1,290 +1,87 @@
-"use client"
+import { Suspense } from "react"
+import { getBrands, searchWaterSources } from "@/lib/products"
+import { getTranslations } from "next-intl/server"
+import { HomeContent } from "@/components/home-content"
+import { HomeMap } from "@/components/home-map"
+import { HomeFilters } from "@/components/home-filters"
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Search } from "@/components/search"
-import dynamic from "next/dynamic"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Droplet, Map, ArrowRight } from "lucide-react"
-import { useTranslations } from "next-intl"
+export const dynamic = 'force-dynamic'
 
-const WaterSourceMap = dynamic(() => import("@/components/water-source-map").then(mod => mod.WaterSourceMap), {
-  ssr: false,
-  loading: () => <MapLoadingFallback />,
-})
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
-function MapLoadingFallback() {
-  const t = useTranslations("home")
+export default async function HomePage(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams
+  const t = await getTranslations("home")
+
+  // Parse filters from URL
+  const query = (searchParams.q as string) || ""
+  const types = searchParams.type
+    ? Array.isArray(searchParams.type)
+      ? searchParams.type
+      : [searchParams.type]
+    : []
+  const brandIds = searchParams.brand
+    ? Array.isArray(searchParams.brand)
+      ? searchParams.brand
+      : [searchParams.brand]
+    : []
+  const minPh = searchParams.min_ph ? Number(searchParams.min_ph) : undefined
+  const maxPh = searchParams.max_ph ? Number(searchParams.max_ph) : undefined
+  const minTds = searchParams.min_tds ? Number(searchParams.min_tds) : undefined
+  const maxTds = searchParams.max_tds ? Number(searchParams.max_tds) : undefined
+
+  // Fetch data
+  const [products, brands] = await Promise.all([
+    searchWaterSources({
+      query,
+      types,
+      brands: brandIds,
+      minPh,
+      maxPh,
+      minTds,
+      maxTds,
+    }),
+    getBrands(),
+  ])
+
   return (
-    <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950">
-      <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
-        <Droplet className="h-5 w-5 animate-pulse" />
-        <span>{t("viewFullMap")}</span>
+    <div className="min-h-screen">
+      {/* Map Section - 50vh height */}
+      <section className="h-[50vh] w-full border-b">
+        <Suspense fallback={<MapSkeleton />}>
+          <HomeMap products={products} />
+        </Suspense>
+      </section>
+
+      {/* Filter Bar - Sticky */}
+      <div className="sticky top-14 z-40 bg-background border-b">
+        <div className="container px-4 py-3">
+          <HomeFilters
+            brands={brands}
+            currentQuery={query}
+            currentTypes={types}
+            currentBrands={brandIds}
+            currentMinPh={minPh}
+            currentMaxPh={maxPh}
+            currentMinTds={minTds}
+            currentMaxTds={maxTds}
+            resultCount={products.length}
+          />
+        </div>
       </div>
+
+      {/* Product Grid */}
+      <section className="container px-4 py-6">
+        <HomeContent products={products} />
+      </section>
     </div>
   )
 }
 
-interface Stats {
-  totalProducts: number
-  totalBrands: number
-  totalSources: number
-}
-
-import { ProductCard } from "@/components/product-card"
-
-// Featured Products Component
-function FeaturedProducts() {
-  const [products, setProducts] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const t = useTranslations("home")
-
-  useEffect(() => {
-    const fetchFeaturedProducts = async () => {
-      try {
-        const response = await fetch('/api/products?limit=6');
-        const data = await response.json();
-        setProducts(data.items || []);
-      } catch (error) {
-        console.error("Error fetching featured products:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchFeaturedProducts()
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <Card key={i} className="overflow-hidden animate-pulse">
-            <div className="relative h-48 sm:h-56 w-full bg-gray-200 dark:bg-gray-800" />
-            <CardContent className="p-4 sm:p-5 space-y-3">
-              <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded" />
-              <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-2/3" />
-              <div className="grid grid-cols-2 gap-3 pt-3">
-                <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded-lg" />
-                <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded-lg" />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    )
-  }
-
-  if (products.length === 0) {
-    return (
-      <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-        {t("noProducts")}
-      </div>
-    )
-  }
-
+function MapSkeleton() {
   return (
-    <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
+    <div className="h-full w-full bg-muted flex items-center justify-center">
+      <span className="text-muted-foreground">Loading map...</span>
     </div>
   )
 }
-
-export default function HomePage() {
-  const router = useRouter()
-  const t = useTranslations("home")
-  const [stats, setStats] = useState<Stats>({ totalProducts: 0, totalBrands: 0, totalSources: 0 })
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [productsRes, brandsRes, sourcesRes] = await Promise.all([
-          fetch('/api/products?limit=1'),
-          fetch('/api/brands'),
-          fetch('/api/sources')
-        ]);
-
-        const [productsData, brandsData, sourcesData] = await Promise.all([
-          productsRes.json(),
-          brandsRes.json(),
-          sourcesRes.json()
-        ]);
-
-        setStats({
-          totalProducts: productsData.total || 0,
-          totalBrands: brandsData.brands?.length || 0,
-          totalSources: sourcesData.sources?.length || 0
-        });
-      } catch (error) {
-        console.error("Error fetching stats:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchStats()
-  }, [])
-
-  const quickFilters = [
-    { label: t("filterLowPh"), query: "ph_low" },
-    { label: t("filterAlkaline"), query: "ph_alkaline" },
-    { label: t("filterLowTds"), query: "tds_low" },
-    { label: t("filterHighMinerals"), query: "tds_high" },
-    { label: t("filterSpring"), query: "type_spring" },
-    { label: t("filterMineral"), query: "type_mineral" },
-  ]
-
-  const handleQuickFilter = (filterQuery: string) => {
-    router.push(`/sources?filter=${filterQuery}`)
-  }
-
-  return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-1">
-        {/* Hero Section - Prominent Search */}
-        <section className="relative w-full py-16 md:py-24 lg:py-32 overflow-hidden">
-          {/* Animated mesh gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-gray-950 dark:via-gray-900 dark:to-blue-950" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100/20 via-transparent to-transparent dark:from-blue-900/20 animate-gradient-xy" />
-
-          {/* Floating mesh orbs */}
-          <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-purple-400/20 to-pink-400/20 dark:from-purple-600/20 dark:to-pink-600/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-cyan-400/10 to-blue-400/10 dark:from-cyan-600/10 dark:to-blue-600/10 rounded-full blur-3xl animate-pulse-glow" />
-
-          <div className="container relative px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-8 text-center">
-              {/* Tagline as Main Title */}
-              <div className="flex flex-col items-center gap-4 mb-2">
-                <Droplet className="h-12 w-12 text-blue-600 dark:text-blue-400 animate-pulse-glow" />
-                <h1 className="max-w-[900px] text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl bg-gradient-to-br from-gray-900 via-gray-700 to-gray-600 dark:from-gray-100 dark:via-gray-300 dark:to-gray-500 bg-clip-text text-transparent px-4">
-                  {t("tagline")}
-                </h1>
-              </div>
-
-              {/* Prominent Search Bar */}
-              <div className="w-full max-w-2xl">
-                <Search />
-              </div>
-
-              {/* Quick Filter Chips */}
-              <div className="flex flex-wrap items-center justify-center gap-2 max-w-3xl">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-300 mr-2">{t("quickFilters")}</span>
-                {quickFilters.map((filter) => (
-                  <Badge
-                    key={filter.query}
-                    variant="secondary"
-                    className="cursor-pointer bg-white/40 dark:bg-black/40 backdrop-blur-sm border border-white/30 dark:border-white/20 hover:bg-blue-500 hover:text-white hover:border-blue-500 dark:hover:bg-blue-600 dark:hover:border-blue-600 transition-all duration-300 px-3 py-1.5 hover:scale-110 hover:shadow-lg"
-                    onClick={() => handleQuickFilter(filter.query)}
-                  >
-                    {filter.label}
-                  </Badge>
-                ))}
-              </div>
-
-              {/* Live Statistics - Glassy */}
-              <div className="w-full max-w-2xl mt-8">
-                <div className="relative overflow-hidden rounded-lg border border-white/30 bg-white/20 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-black/20">
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-cyan-500/10" />
-
-                  <div className="relative grid grid-cols-3 gap-6 md:gap-8 p-6 md:p-8">
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-blue-600 to-blue-400 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent">
-                        {loading ? "..." : stats.totalProducts}
-                      </div>
-                      <div className="text-xs md:text-sm text-gray-700 dark:text-gray-300 font-medium">{t("statsProducts")}</div>
-                    </div>
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-cyan-600 to-cyan-400 dark:from-cyan-400 dark:to-cyan-300 bg-clip-text text-transparent">
-                        {loading ? "..." : stats.totalBrands}
-                      </div>
-                      <div className="text-xs md:text-sm text-gray-700 dark:text-gray-300 font-medium">{t("statsBrands")}</div>
-                    </div>
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-teal-600 to-teal-400 dark:from-teal-400 dark:to-teal-300 bg-clip-text text-transparent">
-                        {loading ? "..." : stats.totalSources}
-                      </div>
-                      <div className="text-xs md:text-sm text-gray-700 dark:text-gray-300 font-medium">{t("statsWaterSources")}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mt-4">
-                <Button
-                  size="lg"
-                  onClick={() => router.push("/sources")}
-                  className="gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 dark:from-blue-500 dark:to-cyan-500 dark:hover:from-blue-600 dark:hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
-                >
-                  {t("browseAllSources")}
-                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Full-Width Map Section */}
-        <section className="w-full py-12 md:py-16 bg-gray-50 dark:bg-gray-900">
-          <div className="container px-4 md:px-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3 group">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md group-hover:scale-110 transition-transform">
-                  <Map className="h-6 w-6 text-white" />
-                </div>
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">{t("exploreMap")}</h2>
-              </div>
-              <Button variant="ghost" asChild className="hidden md:flex hover:bg-white/40 dark:hover:bg-black/40 backdrop-blur-sm transition-all hover:scale-105">
-                <Link href="/map">{t("viewFullMap")}</Link>
-              </Button>
-            </div>
-
-            <div className="h-[500px] md:h-[600px] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 shadow-lg">
-              <WaterSourceMap />
-            </div>
-
-            <div className="mt-4 text-center">
-              <Button variant="outline" asChild className="md:hidden">
-                <Link href="/map">{t("viewFullMap")}</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* Data Preview Section */}
-        <section className="w-full py-12 md:py-16">
-          <div className="container px-4 md:px-6">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">{t("featuredSources")}</h2>
-                <p className="text-gray-500 dark:text-gray-400">
-                  {t("featuredDesc")}
-                </p>
-              </div>
-              <Button variant="outline" asChild className="hidden md:flex">
-                <Link href="/sources">{t("browseAll")}</Link>
-              </Button>
-            </div>
-
-            <FeaturedProducts />
-
-            <div className="mt-8 text-center">
-              <Button asChild>
-                <Link href="/sources">{t("browseAll")}</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
-  )
-}
-
