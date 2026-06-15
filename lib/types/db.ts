@@ -72,12 +72,19 @@ export interface Source extends BaseModel {
   country: string;
 }
 
-// Image model
+// Image model (full database record)
 export interface Image extends BaseModel {
   filename: string;
   mime_type: string;
   data: Buffer;
   size_bytes: number | null;
+}
+
+// Image view (for API responses - excludes binary data)
+export interface ImageView {
+  id: string;
+  filename: string;
+  url: string;
 }
 
 // Product model
@@ -99,7 +106,7 @@ export interface Product extends BaseModel {
   brand?: Brand;
   manufacturer?: Manufacturer;
   source?: Source;
-  images?: Image[];
+  images?: ImageView[];
 }
 
 // Product images junction

@@ -7,7 +7,7 @@ import { Source, SourceType } from '@/lib/types/db';
 
 // Get all sources
 export async function getSources(): Promise<Source[]> {
-  const result = await query(
+  const result = await query<Source>(
     'SELECT * FROM sources ORDER BY source_name'
   );
   return result.rows;
@@ -15,7 +15,7 @@ export async function getSources(): Promise<Source[]> {
 
 // Get source by ID
 export async function getSourceById(id: string): Promise<Source | null> {
-  const result = await query(
+  const result = await query<Source>(
     'SELECT * FROM sources WHERE id = $1',
     [id]
   );
@@ -49,7 +49,7 @@ export async function createSource(data: Partial<Source>): Promise<Source> {
     RETURNING *
   `;
 
-  const result = await query(sql, values);
+  const result = await query<Source>(sql, values);
   return result.rows[0];
 }
 
@@ -87,13 +87,13 @@ export async function updateSource(
     RETURNING *
   `;
 
-  const result = await query(sql, values);
+  const result = await query<Source>(sql, values);
   return result.rows[0] || null;
 }
 
 // Delete source
 export async function deleteSource(id: string): Promise<boolean> {
-  const result = await query(
+  const result = await query<Source>(
     'DELETE FROM sources WHERE id = $1 RETURNING id',
     [id]
   );
@@ -102,7 +102,7 @@ export async function deleteSource(id: string): Promise<boolean> {
 
 // Get sources by type
 export async function getSourcesByType(type: SourceType): Promise<Source[]> {
-  const result = await query(
+  const result = await query<Source>(
     'SELECT * FROM sources WHERE type = $1 ORDER BY source_name',
     [type]
   );
@@ -111,7 +111,7 @@ export async function getSourcesByType(type: SourceType): Promise<Source[]> {
 
 // Get sources with coordinates (for map)
 export async function getSourcesWithCoordinates(): Promise<Source[]> {
-  const result = await query(
+  const result = await query<Source>(
     'SELECT * FROM sources WHERE lat IS NOT NULL AND lng IS NOT NULL ORDER BY source_name'
   );
   return result.rows;
@@ -119,7 +119,7 @@ export async function getSourcesWithCoordinates(): Promise<Source[]> {
 
 // Get unique source types
 export async function getSourceTypes(): Promise<string[]> {
-  const result = await query(
+  const result = await query<{ type: string }>(
     'SELECT DISTINCT type FROM sources WHERE type IS NOT NULL ORDER BY type'
   );
   return result.rows.map(row => row.type);

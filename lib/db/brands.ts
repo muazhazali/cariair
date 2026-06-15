@@ -7,7 +7,7 @@ import { Brand } from '@/lib/types/db';
 
 // Get all brands
 export async function getBrands(): Promise<Brand[]> {
-  const result = await query(
+  const result = await query<Brand>(
     'SELECT * FROM brands ORDER BY brand_name'
   );
   return result.rows;
@@ -15,7 +15,7 @@ export async function getBrands(): Promise<Brand[]> {
 
 // Get brand by ID
 export async function getBrandById(id: string): Promise<Brand | null> {
-  const result = await query(
+  const result = await query<Brand>(
     'SELECT * FROM brands WHERE id = $1',
     [id]
   );
@@ -46,7 +46,7 @@ export async function createBrand(data: Partial<Brand>): Promise<Brand> {
     RETURNING *
   `;
 
-  const result = await query(sql, values);
+  const result = await query<Brand>(sql, values);
   return result.rows[0];
 }
 
@@ -81,13 +81,13 @@ export async function updateBrand(
     RETURNING *
   `;
 
-  const result = await query(sql, values);
+  const result = await query<Brand>(sql, values);
   return result.rows[0] || null;
 }
 
 // Delete brand
 export async function deleteBrand(id: string): Promise<boolean> {
-  const result = await query(
+  const result = await query<Brand>(
     'DELETE FROM brands WHERE id = $1 RETURNING id',
     [id]
   );
@@ -95,17 +95,17 @@ export async function deleteBrand(id: string): Promise<boolean> {
 }
 
 // Search brands by name
-export async function searchBrands(query: string): Promise<Brand[]> {
-  const result = await query(
+export async function searchBrands(searchQuery: string): Promise<Brand[]> {
+  const result = await query<Brand>(
     'SELECT * FROM brands WHERE brand_name ILIKE $1 ORDER BY brand_name',
-    [`%${query}%`]
+    [`%${searchQuery}%`]
   );
   return result.rows;
 }
 
 // Get brand by exact name
 export async function getBrandByName(name: string): Promise<Brand | null> {
-  const result = await query(
+  const result = await query<Brand>(
     'SELECT * FROM brands WHERE brand_name = $1',
     [name]
   );

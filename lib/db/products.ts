@@ -122,14 +122,14 @@ export async function getProducts(
 
   // Get total count
   const countSql = sql.replace(/SELECT[\s\S]*?FROM/i, 'SELECT COUNT(*) FROM');
-  const countResult = await query(countSql, params);
+  const countResult = await query<{ count: string }>(countSql, params);
   const total = parseInt(countResult.rows[0].count);
 
   // Add pagination
   sql += ` ORDER BY p.product_name LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
   params.push(limit, offset);
 
-  const result = await query(sql, params);
+  const result = await query<Product>(sql, params);
 
   // Transform rows to products with expanded fields
   const products = result.rows.map(row => transformProductRow(row));
@@ -191,7 +191,7 @@ export async function getProductById(id: string): Promise<Product | null> {
     WHERE p.id = $1
   `;
 
-  const result = await query(sql, [id]);
+  const result = await query<Product>(sql, [id]);
 
   if (result.rows.length === 0) {
     return null;
@@ -238,7 +238,7 @@ export async function createProduct(data: Partial<Product>): Promise<Product> {
     RETURNING *
   `;
 
-  const result = await query(sql, values);
+  const result = await query<Product>(sql, values);
   return result.rows[0];
 }
 
@@ -276,7 +276,7 @@ export async function updateProduct(
     RETURNING *
   `;
 
-  const result = await query(sql, values);
+  const result = await query<Product>(sql, values);
   return result.rows[0] || null;
 }
 
@@ -298,7 +298,7 @@ export async function deleteProduct(id: string): Promise<boolean> {
 
 // Get products by brand
 export async function getProductsByBrand(brandId: string): Promise<Product[]> {
-  const result = await query(
+  const result = await query<Product>(
     'SELECT * FROM products WHERE brand_id = $1 AND status = $2 ORDER BY product_name',
     [brandId, 'approved']
   );
@@ -307,7 +307,7 @@ export async function getProductsByBrand(brandId: string): Promise<Product[]> {
 
 // Get products by source
 export async function getProductsBySource(sourceId: string): Promise<Product[]> {
-  const result = await query(
+  const result = await query<Product>(
     'SELECT * FROM products WHERE source_id = $1 AND status = $2 ORDER BY product_name',
     [sourceId, 'approved']
   );

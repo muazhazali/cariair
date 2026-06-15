@@ -19,8 +19,8 @@ const SingleSourceMap = dynamic(
 interface ClientMapWrapperProps {
   lat: number;
   lng: number;
-  sourceName?: string;
-  locationAddress?: string;
+  sourceName?: string | null;
+  locationAddress?: string | null;
   height?: string;
 }
 

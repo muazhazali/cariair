@@ -30,8 +30,8 @@ interface Mineral {
 
 interface HealthBenefitsPanelProps {
   minerals: Mineral[]
-  phLevel?: number
-  tds?: number
+  phLevel?: number | null
+  tds?: number | null
   productName: string
 }
 

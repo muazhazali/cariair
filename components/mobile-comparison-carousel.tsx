@@ -72,28 +72,28 @@ export function MobileComparisonCarousel({ products }: MobileComparisonCarouselP
   }))
 
   // Helper functions for pH and TDS
-  const getPhColor = (ph: number | undefined) => {
+  const getPhColor = (ph: number | null | undefined) => {
     if (!ph) return "#94a3b8"
     if (ph < 6.5) return "#ef4444"
     if (ph > 8) return "#3b82f6"
     return "#22c55e"
   }
 
-  const getPhLabel = (ph: number | undefined) => {
+  const getPhLabel = (ph: number | null | undefined) => {
     if (!ph) return "Unknown"
     if (ph < 6.5) return "Acidic"
     if (ph > 8) return "Alkaline"
     return "Neutral"
   }
 
-  const getTdsColor = (tds: number | undefined) => {
+  const getTdsColor = (tds: number | null | undefined) => {
     if (!tds) return "#94a3b8"
     if (tds < 100) return "#22c55e"
     if (tds < 300) return "#eab308"
     return "#ef4444"
   }
 
-  const getTdsLevel = (tds: number | undefined) => {
+  const getTdsLevel = (tds: number | null | undefined) => {
     if (!tds) return "Unknown"
     if (tds < 100) return "Low"
     if (tds < 300) return "Moderate"

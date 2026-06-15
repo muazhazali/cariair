@@ -49,7 +49,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
   }
 
   // Helper function to get pH color
-  const getPhColor = (ph: number | undefined) => {
+  const getPhColor = (ph: number | null | undefined) => {
     if (!ph) return "#94a3b8" // gray
     if (ph < 6.5) return "#ef4444" // red - acidic
     if (ph > 8) return "#3b82f6" // blue - alkaline
@@ -57,7 +57,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
   }
 
   // Helper function to get pH label
-  const getPhLabel = (ph: number | undefined) => {
+  const getPhLabel = (ph: number | null | undefined) => {
     if (!ph) return "Unknown"
     if (ph < 6.5) return "Acidic"
     if (ph > 8) return "Alkaline"
@@ -65,7 +65,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
   }
 
   // Helper function to get TDS color
-  const getTdsColor = (tds: number | undefined) => {
+  const getTdsColor = (tds: number | null | undefined) => {
     if (!tds) return "#94a3b8" // gray
     if (tds < 100) return "#22c55e" // green - low
     if (tds < 300) return "#eab308" // yellow - moderate
@@ -73,7 +73,7 @@ export function ProductComparison({ products, onRemove, onClear }: ProductCompar
   }
 
   // Helper function to get TDS level
-  const getTdsLevel = (tds: number | undefined) => {
+  const getTdsLevel = (tds: number | null | undefined) => {
     if (!tds) return "Unknown"
     if (tds < 100) return "Low"
     if (tds < 300) return "Moderate"

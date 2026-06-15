@@ -2,7 +2,7 @@
 // PostgreSQL Database Connection
 // ==========================================
 
-import { Pool, PoolClient, QueryResult } from 'pg';
+import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
 
 // Database configuration from environment variables
 const dbConfig = {
@@ -36,12 +36,13 @@ export function getPool(): Pool {
 }
 
 // Query helper with automatic connection handling
-export async function query<T = any>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function query<T extends QueryResultRow = any>(
   text: string,
   params?: any[]
 ): Promise<QueryResult<T>> {
   const pool = getPool();
-  return pool.query(text, params);
+  return pool.query<T>(text, params);
 }
 
 // Transaction helper

@@ -8,7 +8,7 @@ import bcrypt from 'bcryptjs';
 
 // Get user by ID
 export async function getUserById(id: string): Promise<User | null> {
-  const result = await query(
+  const result = await query<User>(
     'SELECT * FROM users WHERE id = $1',
     [id]
   );
@@ -17,7 +17,7 @@ export async function getUserById(id: string): Promise<User | null> {
 
 // Get user by email
 export async function getUserByEmail(email: string): Promise<User | null> {
-  const result = await query(
+  const result = await query<User>(
     'SELECT * FROM users WHERE email = $1',
     [email]
   );
@@ -32,7 +32,7 @@ export async function createUserWithPassword(
 ): Promise<User> {
   const passwordHash = await bcrypt.hash(password, 12);
   
-  const result = await query(
+  const result = await query<User>(
     `INSERT INTO users (email, password_hash, name)
      VALUES ($1, $2, $3)
      RETURNING *`,
@@ -48,7 +48,7 @@ export async function createOAuthUser(
   name: string | null,
   image: string | null
 ): Promise<User> {
-  const result = await query(
+  const result = await query<User>(
     `INSERT INTO users (email, name, image, email_verified)
      VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
      ON CONFLICT (email) DO UPDATE
@@ -119,7 +119,7 @@ export async function updateUser(
     RETURNING *
   `;
 
-  const result = await query(sql, values);
+  const result = await query<User>(sql, values);
   return result.rows[0] || null;
 }
 
@@ -130,7 +130,7 @@ export async function updatePassword(
 ): Promise<boolean> {
   const passwordHash = await bcrypt.hash(newPassword, 12);
   
-  const result = await query(
+  const result = await query<User>(
     `UPDATE users 
      SET password_hash = $1, updated_at = CURRENT_TIMESTAMP
      WHERE id = $2
@@ -143,7 +143,7 @@ export async function updatePassword(
 
 // Delete user
 export async function deleteUser(id: string): Promise<boolean> {
-  const result = await query(
+  const result = await query<User>(
     'DELETE FROM users WHERE id = $1 RETURNING id',
     [id]
   );

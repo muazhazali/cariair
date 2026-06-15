@@ -26,7 +26,9 @@ export async function GET(
     }
     
     // Return image with appropriate headers
-    return new NextResponse(imageData.data, {
+    // Create a proper Buffer from the data
+    const imageBuffer = Buffer.from(imageData.data);
+    return new Response(imageBuffer, {
       headers: {
         "Content-Type": imageData.mimeType,
         "Content-Disposition": `inline; filename="${imageData.filename}"`,

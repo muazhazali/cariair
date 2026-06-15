@@ -7,7 +7,7 @@ import { Manufacturer } from '@/lib/types/db';
 
 // Get all manufacturers
 export async function getManufacturers(): Promise<Manufacturer[]> {
-  const result = await query(
+  const result = await query<Manufacturer>(
     'SELECT * FROM manufacturers ORDER BY name'
   );
   return result.rows;
@@ -15,7 +15,7 @@ export async function getManufacturers(): Promise<Manufacturer[]> {
 
 // Get manufacturer by ID
 export async function getManufacturerById(id: string): Promise<Manufacturer | null> {
-  const result = await query(
+  const result = await query<Manufacturer>(
     'SELECT * FROM manufacturers WHERE id = $1',
     [id]
   );
@@ -46,7 +46,7 @@ export async function createManufacturer(data: Partial<Manufacturer>): Promise<M
     RETURNING *
   `;
 
-  const result = await query(sql, values);
+  const result = await query<Manufacturer>(sql, values);
   return result.rows[0];
 }
 
@@ -81,13 +81,13 @@ export async function updateManufacturer(
     RETURNING *
   `;
 
-  const result = await query(sql, values);
+  const result = await query<Manufacturer>(sql, values);
   return result.rows[0] || null;
 }
 
 // Delete manufacturer
 export async function deleteManufacturer(id: string): Promise<boolean> {
-  const result = await query(
+  const result = await query<Manufacturer>(
     'DELETE FROM manufacturers WHERE id = $1 RETURNING id',
     [id]
   );
@@ -96,7 +96,7 @@ export async function deleteManufacturer(id: string): Promise<boolean> {
 
 // Search manufacturers by name
 export async function searchManufacturers(searchQuery: string): Promise<Manufacturer[]> {
-  const result = await query(
+  const result = await query<Manufacturer>(
     'SELECT * FROM manufacturers WHERE name ILIKE $1 ORDER BY name',
     [`%${searchQuery}%`]
   );

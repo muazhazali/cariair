@@ -7,7 +7,7 @@ import { getProducts, getBrands, getSources } from './db/index';
 import { Product, Brand, Source, SearchFilters } from './types/db';
 
 // Re-export types for compatibility
-export { SearchFilters } from './types/db';
+export type { SearchFilters } from './types/db';
 export type { Product, Brand, Source } from './types/db';
 
 // Get all brands (using PostgreSQL)

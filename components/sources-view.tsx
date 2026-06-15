@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { SearchIcon } from "lucide-react"
 import { EnhancedProductFilters } from "@/components/enhanced-product-filters"
 import { MobileFiltersSheet } from "@/components/mobile-filters-sheet"
-import { ProductComparison } from "@/components/product-comparison"
+
 import { ProductSort, sortProducts, SortOption } from "@/components/product-sort"
 import { SearchFilters } from "@/lib/types/db"
 import { Product } from "@/lib/types/db"
@@ -24,7 +24,6 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
   const t = useTranslations('sourcesView')
   const [products, setProducts] = useState(initialProducts)
   const [loading, setLoading] = useState(false)
-  const [selectedForComparison, setSelectedForComparison] = useState<string[]>([])
   const [sortOption, setSortOption] = useState<SortOption>("name_asc")
   const [searchInput, setSearchInput] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
@@ -119,29 +118,7 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
     return sortProducts(products, sortOption)
   }, [products, sortOption])
 
-  const comparisonProducts = useMemo(() => {
-    return sortedProducts.filter(p => selectedForComparison.includes(p.id))
-  }, [sortedProducts, selectedForComparison])
 
-  const handleToggleComparison = (productId: string) => {
-    setSelectedForComparison(prev => {
-      if (prev.includes(productId)) {
-        return prev.filter(id => id !== productId)
-      } else if (prev.length < 3) {
-        return [...prev, productId]
-      } else {
-        return [prev[1], prev[2], productId]
-      }
-    })
-  }
-
-  const handleRemoveFromComparison = (productId: string) => {
-    setSelectedForComparison(prev => prev.filter(id => id !== productId))
-  }
-
-  const handleClearComparison = () => {
-    setSelectedForComparison([])
-  }
 
   return (
     <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
@@ -221,21 +198,12 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
         </div>
 
         <div className={`grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 ${loading ? "opacity-50 pointer-events-none" : ""}`}>
-          {sortedProducts.map((product) => {
-            const isSelected = selectedForComparison.includes(product.id);
-            const canSelect = selectedForComparison.length < 3 || isSelected;
-
-            return (
-              <ProductCard
-                key={product.id}
-                product={product}
-                showComparison={true}
-                isSelected={isSelected}
-                canSelect={canSelect}
-                onToggleComparison={handleToggleComparison}
-              />
-            )
-          })}
+          {sortedProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+            />
+          ))}
         </div>
 
         {products.length === 0 && !loading && (
@@ -251,11 +219,6 @@ export function SourcesView({ initialProducts, brands }: SourcesViewProps) {
         )}
       </div>
 
-      <ProductComparison
-        products={comparisonProducts}
-        onRemove={handleRemoveFromComparison}
-        onClear={handleClearComparison}
-      />
     </div>
   )
 }

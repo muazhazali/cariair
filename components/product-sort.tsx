@@ -54,7 +54,7 @@ export function ProductSort({ value, onValueChange }: ProductSortProps) {
   )
 }
 
-export function sortProducts<T extends { product_name?: string; ph_level?: number; tds?: number }>(
+export function sortProducts<T extends { product_name?: string | null; ph_level?: number | null; tds?: number | null }>(
   products: T[],
   sortOption: SortOption
 ): T[] {

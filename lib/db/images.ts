@@ -17,13 +17,13 @@ export async function storeImage(
     RETURNING id, filename, mime_type, size_bytes, created_at
   `;
 
-  const result = await query(sql, [filename, mimeType, data, data.length]);
+  const result = await query<Image>(sql, [filename, mimeType, data, data.length]);
   return result.rows[0];
 }
 
 // Get image by ID
 export async function getImageById(id: string): Promise<Image | null> {
-  const result = await query(
+  const result = await query<Image>(
     'SELECT * FROM images WHERE id = $1',
     [id]
   );
@@ -32,7 +32,7 @@ export async function getImageById(id: string): Promise<Image | null> {
 
 // Get image data only (for serving)
 export async function getImageData(id: string): Promise<{ data: Buffer; mimeType: string; filename: string } | null> {
-  const result = await query(
+  const result = await query<Image>(
     'SELECT data, mime_type, filename FROM images WHERE id = $1',
     [id]
   );
@@ -48,10 +48,10 @@ export async function getImageData(id: string): Promise<{ data: Buffer; mimeType
   };
 }
 
-// Get images for a product
+// Get images for a product (returns partial image data without the binary blob)
 export async function getProductImages(productId: string): Promise<Image[]> {
-  const result = await query(
-    `SELECT i.* 
+  const result = await query<Image>(
+    `SELECT i.id, i.filename, i.mime_type, i.size_bytes, i.created_at, i.updated_at 
      FROM images i
      JOIN product_images pi ON i.id = pi.image_id
      WHERE pi.product_id = $1
@@ -67,7 +67,7 @@ export async function linkImageToProduct(
   imageId: string,
   sortOrder: number = 0
 ): Promise<void> {
-  await query(
+  await query<Image>(
     `INSERT INTO product_images (product_id, image_id, sort_order)
      VALUES ($1, $2, $3)
      ON CONFLICT (product_id, sort_order) DO NOTHING`,
@@ -77,7 +77,7 @@ export async function linkImageToProduct(
 
 // Unlink image from product
 export async function unlinkImageFromProduct(productId: string, imageId: string): Promise<void> {
-  await query(
+  await query<Image>(
     'DELETE FROM product_images WHERE product_id = $1 AND image_id = $2',
     [productId, imageId]
   );
@@ -105,7 +105,7 @@ export async function updateImageSortOrder(
   imageId: string,
   sortOrder: number
 ): Promise<void> {
-  await query(
+  await query<Image>(
     `UPDATE product_images 
      SET sort_order = $1 
      WHERE product_id = $2 AND image_id = $3`,
@@ -115,7 +115,7 @@ export async function updateImageSortOrder(
 
 // Get primary image for product
 export async function getPrimaryProductImage(productId: string): Promise<Image | null> {
-  const result = await query(
+  const result = await query<Image>(
     `SELECT i.* 
      FROM images i
      JOIN product_images pi ON i.id = pi.image_id

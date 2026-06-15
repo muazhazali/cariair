@@ -8,8 +8,8 @@ import "leaflet/dist/leaflet.css"
 interface SingleSourceMapProps {
   lat: number
   lng: number
-  sourceName?: string
-  locationAddress?: string
+  sourceName?: string | null
+  locationAddress?: string | null
   height?: string
 }
 
