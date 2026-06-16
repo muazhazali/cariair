@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
@@ -8,10 +7,11 @@ import { ArrowLeft, MapPin, Droplet, BarChart3, Calendar, Building2, Globe, Chec
 import { MineralCompositionPanel } from "@/components/mineral-composition-panel"
 import { HealthBenefitsPanel } from "@/components/health-benefits-panel"
 import { WaterTypeBadge } from "@/components/water-type-badge"
-import { ClientMapWrapper } from "@/components/client-map-wrapper"
 import { getTranslations } from "next-intl/server"
 import { getProductById } from "@/lib/db/products";
 import { Product } from "@/lib/types/db";
+
+import { ClientMapWrapper } from "@/components/client-map-wrapper";
 
 export const dynamic = 'force-dynamic'
 
@@ -71,6 +71,10 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
     minerals = product.minerals_json;
   }
 
+  // lat/lng are already numbers from the database transformation
+  const lat = source?.lat ?? null;
+  const lng = source?.lng ?? null;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
       <div className="container px-4 py-6 md:px-6 md:py-8">
@@ -99,11 +103,14 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
               </div>
             </div>
             <div className="relative w-full md:w-64 h-64 md:h-64 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg">
-              <Image
+              <img
                 src={imageUrl}
                 alt={product.product_name || "Product Image"}
-                fill
-                className="object-contain p-6"
+                className="object-contain p-6 w-full h-full"
+                onError={(e) => {
+                  const img = e.currentTarget as HTMLImageElement;
+                  img.src = '/placeholder.jpg';
+                }}
               />
             </div>
           </div>
@@ -171,11 +178,11 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
                   <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('created')}</span>
                   <p className="text-base font-medium mt-1 flex items-center">
                     <Calendar className="mr-2 h-4 w-4" />
-                    {new Date(product.created_at).toLocaleDateString('en-US', {
+                    {product.created_at ? new Date(product.created_at).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric'
-                    })}
+                    }) : 'Unknown'}
                   </p>
                 </div>
                 {source?.kkm_approval_number && (
@@ -248,7 +255,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
             />
 
             {/* Map Section */}
-            {source?.lat && source?.lng ? (
+            {lat && lng ? (
               <Card className="border-2">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center text-xl">
@@ -261,10 +268,10 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
                 </CardHeader>
                 <CardContent>
                   <ClientMapWrapper
-                    lat={source.lat}
-                    lng={source.lng}
-                    sourceName={source.source_name || product.product_name}
-                    locationAddress={source.location_address}
+                    lat={lat}
+                    lng={lng}
+                    sourceName={source?.source_name || product.product_name}
+                    locationAddress={source?.location_address}
                     height="500px"
                   />
                 </CardContent>
