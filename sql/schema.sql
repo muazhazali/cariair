@@ -142,14 +142,47 @@ CREATE INDEX IF NOT EXISTS idx_products_source ON products(source_id);
 CREATE INDEX IF NOT EXISTS idx_products_manufacturer ON products(manufacturer_id);
 CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
 CREATE INDEX IF NOT EXISTS idx_products_submitted_by ON products(submitted_by);
+CREATE INDEX IF NOT EXISTS idx_products_name ON products(product_name);
+CREATE INDEX IF NOT EXISTS idx_products_barcode ON products(barcode);
+CREATE INDEX IF NOT EXISTS idx_products_ph ON products(ph_level);
+CREATE INDEX IF NOT EXISTS idx_products_tds ON products(tds);
+CREATE INDEX IF NOT EXISTS idx_products_created ON products(created_at DESC);
+
+-- Composite indexes for common query patterns
+CREATE INDEX IF NOT EXISTS idx_products_status_brand ON products(status, brand_id);
+CREATE INDEX IF NOT EXISTS idx_products_status_source ON products(status, source_id);
+
+-- Brand indexes
+CREATE INDEX IF NOT EXISTS idx_brands_name ON brands(brand_name);
+CREATE INDEX IF NOT EXISTS idx_brands_parent ON brands(parent_company);
+
+-- Source indexes
+CREATE INDEX IF NOT EXISTS idx_sources_type ON sources(type);
+CREATE INDEX IF NOT EXISTS idx_sources_country ON sources(country);
+CREATE INDEX IF NOT EXISTS idx_sources_coordinates ON sources(lat, lng) WHERE lat IS NOT NULL AND lng IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_sources_kkm ON sources(kkm_approval_number);
 
 -- Auth indexes
 CREATE INDEX IF NOT EXISTS idx_accounts_user ON accounts(user_id);
+CREATE INDEX IF NOT EXISTS idx_accounts_provider ON accounts(provider, provider_account_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(session_token);
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires);
 
--- Product images index
+-- User indexes
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_created ON users(created_at DESC);
+
+-- Product images indexes
 CREATE INDEX IF NOT EXISTS idx_product_images_product ON product_images(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_images_image ON product_images(image_id);
+
+-- Image indexes
+CREATE INDEX IF NOT EXISTS idx_images_filename ON images(filename);
+CREATE INDEX IF NOT EXISTS idx_images_created ON images(created_at DESC);
+
+-- Manufacturer indexes
+CREATE INDEX IF NOT EXISTS idx_manufacturers_name ON manufacturers(name);
 
 -- ==========================================
 -- SEED DATA

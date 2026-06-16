@@ -3,6 +3,7 @@
 // ==========================================
 
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
+import { logger } from './logger';
 
 // Database configuration from environment variables
 const dbConfig = {
@@ -24,11 +25,13 @@ export function getPool(): Pool {
       max: 20, // Maximum number of connections
       idleTimeoutMillis: 30000, // Close idle connections after 30s
       connectionTimeoutMillis: 5000, // Connection timeout
+      query_timeout: 30000, // Query timeout (30 seconds)
+      statement_timeout: 30000, // Statement timeout (30 seconds)
     });
 
     // Handle pool errors
     pool.on('error', (err) => {
-      console.error('Unexpected PostgreSQL pool error:', err);
+      logger.error('Unexpected PostgreSQL pool error:', err);
     });
   }
 
@@ -69,10 +72,10 @@ export async function withTransaction<T>(
 export async function testConnection(): Promise<boolean> {
   try {
     const result = await query('SELECT NOW() as now');
-    console.log('PostgreSQL connected:', result.rows[0].now);
+    logger.info('PostgreSQL connected:', result.rows[0].now);
     return true;
   } catch (error) {
-    console.error('PostgreSQL connection failed:', error);
+    logger.error('PostgreSQL connection failed:', error);
     return false;
   }
 }
@@ -82,7 +85,7 @@ export async function closePool(): Promise<void> {
   if (pool) {
     await pool.end();
     pool = null;
-    console.log('PostgreSQL pool closed');
+    logger.info('PostgreSQL pool closed');
   }
 }
 

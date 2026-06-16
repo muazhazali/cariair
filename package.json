@@ -13,7 +13,13 @@
     "db:studio": "drizzle-kit studio",
     "dev:db": "docker compose up -d",
     "dev:db:stop": "docker compose down",
-    "dev:db:logs": "docker compose logs -f postgres"
+    "dev:db:logs": "docker compose logs -f postgres",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",
@@ -92,11 +98,14 @@
     "@types/react": "19.2.8",
     "@types/react-dom": "19.2.3",
     "@types/uuid": "^9.0.8",
+    "@playwright/test": "^1.45.0",
+    "@vitest/coverage-v8": "^1.6.0",
     "pocketbase": "^0.27.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.17",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^1.6.0"
   },
   "pnpm": {
     "overrides": {

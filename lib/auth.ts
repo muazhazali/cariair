@@ -5,18 +5,12 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { Pool } from "pg";
 import PostgresAdapter from "@auth/pg-adapter";
+import { getPool } from "./db";
 import { verifyPassword } from "./db/users";
 
-// PostgreSQL pool for NextAuth adapter
-const pool = new Pool({
-  host: process.env.DB_HOST || "localhost",
-  port: parseInt(process.env.DB_PORT || "5432"),
-  user: process.env.DB_USER || "postgres",
-  password: process.env.DB_PASS || "",
-  database: process.env.DB_NAME || "postgres",
-});
+// Use shared pool from lib/db instead of creating a new one
+const pool = getPool();
 
 // NextAuth configuration
 export const {
@@ -27,11 +21,15 @@ export const {
 } = NextAuth({
   adapter: PostgresAdapter(pool),
   providers: [
-    // Google OAuth
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID!,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
-    }),
+    // Google OAuth (only if configured)
+    ...(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET
+      ? [
+          Google({
+            clientId: process.env.AUTH_GOOGLE_ID,
+            clientSecret: process.env.AUTH_GOOGLE_SECRET,
+          }),
+        ]
+      : []),
     // Email/Password credentials
     Credentials({
       name: "credentials",
