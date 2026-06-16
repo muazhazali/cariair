@@ -7,6 +7,7 @@ import { ArrowLeft, MapPin, Droplet, BarChart3, Calendar, Building2, Globe, Chec
 import { MineralCompositionPanel } from "@/components/mineral-composition-panel"
 import { HealthBenefitsPanel } from "@/components/health-benefits-panel"
 import { WaterTypeBadge } from "@/components/water-type-badge"
+import { ClientDate } from "@/components/client-date"
 import { getTranslations } from "next-intl/server"
 import { getProductById } from "@/lib/db/products";
 import { Product } from "@/lib/types/db";
@@ -178,11 +179,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
                   <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('created')}</span>
                   <p className="text-base font-medium mt-1 flex items-center">
                     <Calendar className="mr-2 h-4 w-4" />
-                    {product.created_at ? new Date(product.created_at).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    }) : 'Unknown'}
+                    <ClientDate date={product.created_at} />
                   </p>
                 </div>
                 {source?.kkm_approval_number && (
