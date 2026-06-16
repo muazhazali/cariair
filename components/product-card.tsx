@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
 import { MapPin } from "lucide-react"
 import { Product } from "@/lib/types/db"
 
@@ -40,16 +39,16 @@ export function ProductCard({ product }: ProductCardProps) {
     >
       {/* Image */}
       <div className="relative h-40 bg-muted">
-        <Image
+        <img
           src={imageUrl}
           alt={product.product_name || "Product"}
-          fill
-          className="object-contain p-4"
+          className="object-contain p-4 w-full h-full"
           onError={(e) => {
             // Fallback to placeholder if image fails to load
             const img = e.currentTarget as HTMLImageElement
             img.src = '/placeholder.jpg'
           }}
+          loading="lazy"
         />
       </div>
 

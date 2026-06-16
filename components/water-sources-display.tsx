@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -136,11 +135,15 @@ export function WaterSourcesDisplay() {
               <Link href={`/sources/${product.id}`} className={`flex-1 block cursor-pointer`}>
                 <div className={viewMode === "list" ? "flex" : ""}>
                   <div className={`relative ${viewMode === "list" ? "w-48" : "aspect-video"}`}>
-                    <Image
+                    <img
                       src={imageUrl}
                       alt={product.product_name || "Product Image"}
-                      fill
-                      className="object-contain p-4"
+                      className="object-contain p-4 w-full h-full"
+                      loading="lazy"
+                      onError={(e) => {
+                        const img = e.currentTarget as HTMLImageElement;
+                        img.src = '/placeholder.jpg';
+                      }}
                     />
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-between">
