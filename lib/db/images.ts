@@ -51,7 +51,7 @@ export async function getImageData(id: string): Promise<{ data: Buffer; mimeType
 // Get images for a product (returns partial image data without the binary blob)
 export async function getProductImages(productId: string): Promise<Image[]> {
   const result = await query<Image>(
-    `SELECT i.id, i.filename, i.mime_type, i.size_bytes, i.created_at, i.updated_at 
+    `SELECT i.id, i.filename, i.mime_type, i.size_bytes, i.created_at
      FROM images i
      JOIN product_images pi ON i.id = pi.image_id
      WHERE pi.product_id = $1
