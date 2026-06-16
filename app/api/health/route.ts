@@ -118,12 +118,12 @@ export async function GET() {
           users: parseInt(userCount.rows[0].count),
         };
       } catch (statsError) {
-        logger.warn("Failed to fetch database stats:", statsError);
+        logger.warn("Failed to fetch database stats:", statsError instanceof Error ? statsError : undefined);
       }
       
       // Check pool status
       const pool = getPool();
-      healthStatus.checks.database.message = `Pool: ${pool.totalCount}/${pool.max} connections`;
+      healthStatus.checks.database.message = `Pool: ${pool.totalCount} active connections`;
     }
     
     // Cache the result
@@ -138,7 +138,7 @@ export async function GET() {
     });
     
   } catch (error) {
-    logger.error("Health check failed:", error);
+    logger.error("Health check failed:", error instanceof Error ? error : undefined);
     
     healthStatus.status = "unhealthy";
     healthStatus.checks.database = {

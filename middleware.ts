@@ -1,9 +1,11 @@
 // ==========================================
-// NextAuth Middleware Configuration
+// Combined Middleware: Locale + Auth Protection
 // ==========================================
 
-import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { auth } from '@/lib/auth';
+import { defaultLocale, LOCALE_COOKIE } from './i18n/routing';
 
 /**
  * Protected routes configuration
@@ -12,26 +14,6 @@ import { NextResponse } from 'next/server';
 const PROTECTED_ROUTES = [
   '/contribute',
   '/analytics',
-  '/api/products', // POST only - GET is public
-  '/api/sources',  // POST only - GET is public
-  '/api/brands',   // POST only - GET is public
-  '/api/manufacturers', // POST only - GET is public
-];
-
-/**
- * Public API routes (no auth required)
- */
-const PUBLIC_API_ROUTES = [
-  '/api/products',
-  '/api/sources',
-  '/api/brands',
-  '/api/manufacturers',
-  '/api/health',
-  '/api/images',
-  '/api/export',
-  '/api/rate-limit',
-  '/api/db-test',
-  '/api/openapi',
 ];
 
 /**
@@ -39,22 +21,25 @@ const PUBLIC_API_ROUTES = [
  */
 const AUTH_PAGES = ['/login', '/register'];
 
-export default auth((req) => {
-  const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
+export async function middleware(request: NextRequest) {
+  const { nextUrl } = request;
   const pathname = nextUrl.pathname;
+  
+  // Handle locale first
+  const locale = request.cookies.get(LOCALE_COOKIE)?.value || defaultLocale;
+  const response = NextResponse.next();
+  
+  // Ensure the locale cookie is set for next-intl
+  if (!request.cookies.has(LOCALE_COOKIE)) {
+    response.cookies.set(LOCALE_COOKIE, locale);
+  }
   
   // Check if this is an API route
   const isApiRoute = pathname.startsWith('/api');
   
-  // Check if this is a public API route (GET only)
-  const isPublicApiRoute = PUBLIC_API_ROUTES.some(route => 
-    pathname.startsWith(route) && req.method === 'GET'
-  );
-  
-  // Allow public API routes
-  if (isApiRoute && isPublicApiRoute) {
-    return NextResponse.next();
+  // Skip auth checks for API routes (handled separately)
+  if (isApiRoute) {
+    return response;
   }
   
   // Check if this is a protected route
@@ -65,20 +50,33 @@ export default auth((req) => {
   // Check if this is an auth page
   const isAuthPage = AUTH_PAGES.some(route => pathname.startsWith(route));
   
-  // Redirect to login if accessing protected route without auth
-  if (isProtectedRoute && !isLoggedIn) {
-    const loginUrl = new URL('/login', nextUrl);
-    loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
+  // Only check auth for protected routes or auth pages
+  if (isProtectedRoute || isAuthPage) {
+    try {
+      // Get auth session
+      const session = await auth();
+      const isLoggedIn = !!session?.user;
+      
+      // Redirect to login if accessing protected route without auth
+      if (isProtectedRoute && !isLoggedIn) {
+        const loginUrl = new URL('/login', nextUrl);
+        loginUrl.searchParams.set('callbackUrl', pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+      
+      // Redirect to home if accessing auth pages while logged in
+      if (isAuthPage && isLoggedIn) {
+        return NextResponse.redirect(new URL('/', nextUrl));
+      }
+    } catch (error) {
+      // If auth check fails, continue to protected route
+      // The page will handle auth state
+      console.error('Auth middleware error:', error);
+    }
   }
   
-  // Redirect to home if accessing auth pages while logged in
-  if (isAuthPage && isLoggedIn) {
-    return NextResponse.redirect(new URL('/', nextUrl));
-  }
-  
-  return NextResponse.next();
-});
+  return response;
+}
 
 /**
  * Matcher configuration
@@ -92,6 +90,7 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
+     * - api routes
      */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
