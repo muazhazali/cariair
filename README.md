@@ -7,7 +7,6 @@ Malaysia's Mineral and Spring Water Source Registry
   <img src="https://img.shields.io/badge/PostgreSQL-16-blue?style=flat&logo=postgresql" alt="PostgreSQL">
   <img src="https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript" alt="TypeScript">
   <img src="https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat&logo=tailwind-css" alt="Tailwind CSS">
-  <img src="https://img.shields.io/badge/Docker-ready-2496ED?style=flat&logo=docker" alt="Docker">
   <img src="https://img.shields.io/badge/Drizzle-ORM-000000?style=flat" alt="Drizzle ORM">
 </p>
 
@@ -31,7 +30,7 @@ CariAir is a Next.js 16 web platform serving as Malaysia's comprehensive mineral
 - **Authentication**: NextAuth.js v5 (Auth.js) with Google OAuth + credentials
 - **Internationalization**: next-intl (Malay `ms` as default, English `en`)
 - **API Documentation**: Swagger/OpenAPI at `/docs`
-- **Deployment**: Docker + Docker Compose
+- **Deployment**: Native Node.js with systemd
 
 ## Quick Start
 
@@ -39,7 +38,7 @@ CariAir is a Next.js 16 web platform serving as Malaysia's comprehensive mineral
 
 - Node.js 20+
 - pnpm 10+
-- Docker (for PostgreSQL database)
+- PostgreSQL 16+
 
 ### Installation
 
@@ -58,26 +57,26 @@ cp .env.example .env.local
 
 ### Development
 
-**Recommended: Database in Docker, Next.js locally (fastest)**
+**Recommended: Local PostgreSQL, Next.js locally (fastest)**
 
 ```bash
-# Terminal 1: Start PostgreSQL in Docker
-pnpm run dev:db
+# Set up PostgreSQL database
+createdb cariair
+psql -d cariair -f sql/schema.sql
 
-# Terminal 2: Start Next.js dev server
+# Start Next.js dev server
 pnpm dev
 ```
 
 The app will be available at `http://localhost:3000`
 
-**Alternative: Manual PostgreSQL setup**
+**Alternative: PostgreSQL in Docker**
 
-If you prefer not to use Docker:
+If you prefer to run PostgreSQL in Docker (optional, not required):
 
 ```bash
-# Setup PostgreSQL manually
-createdb cariair
-psql -d cariair -f sql/schema.sql
+# Start PostgreSQL in Docker (requires Docker installed)
+docker run --name cariair-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cariair -p 5432:5432 -d postgres:16-alpine
 
 # Start dev server
 pnpm dev
@@ -105,23 +104,32 @@ AUTH_GOOGLE_SECRET=your-google-client-secret
 
 ## Production Deployment
 
-### Docker Deployment (Recommended)
+### Native Node.js Deployment (Recommended)
+
+Build the standalone Next.js app and run it directly with Node.js:
 
 ```bash
-# Start with Docker Compose
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# Build for production
+pnpm build
+
+# Start the production server
+node server.js
+# or
+./start-prod.sh
 ```
 
 ### Auto-start on Boot
 
-For LXC containers or servers requiring auto-start:
+For LXC containers or servers requiring auto-start, install the systemd service:
 
 ```bash
-# Install systemd service (Docker)
-sudo ./scripts/install-systemd.sh
-
-# Or native systemd (if Docker has issues)
+# Install native systemd service
 sudo ./scripts/install-native.sh
+
+# Or manually:
+sudo cp cariair-native.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now cariair-native
 ```
 
 See [PRODUCTION.md](PRODUCTION.md) for detailed deployment instructions.
@@ -218,25 +226,26 @@ Export all product data for analysis:
 | `pnpm run db:migrate` | Run database migrations |
 | `pnpm run db:studio` | Open Drizzle Studio GUI |
 
-## Docker Commands
+## Database Commands
 
-The `docker-compose.yml` only includes PostgreSQL (not the full app). Next.js runs locally for faster development.
+PostgreSQL runs natively. Use these commands to manage it:
 
 ```bash
-# Start PostgreSQL database
-pnpm run dev:db
+# Start PostgreSQL (if not running as a system service)
+sudo systemctl start postgresql
 
 # View database logs
-docker compose logs -f
+sudo journalctl -u postgresql -f
 
-# Stop PostgreSQL
-pnpm run dev:db:stop
+# Connect to the database
+psql -d cariair
 
-# Stop and remove volumes (resets database)
-docker compose down -v
+# Reset the database (drop and recreate)
+dropdb cariair && createdb cariair
+psql -d cariair -f sql/schema.sql
 ```
 
-See [PRODUCTION.md](PRODUCTION.md) for full-stack Docker deployment.
+See [PRODUCTION.md](PRODUCTION.md) for detailed deployment instructions.
 
 ## Database Migrations
 
@@ -262,7 +271,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 - Change default database passwords in production
 - Generate secure `AUTH_SECRET` with `openssl rand -base64 32`
 - Keep `.env` files secure (chmod 600)
-- PostgreSQL port not exposed in production Docker setup
+- PostgreSQL port not exposed externally in production
 - TypeScript strict mode enabled for compile-time safety
 
 See [SECURITY.md](SECURITY.md) for security policies.
