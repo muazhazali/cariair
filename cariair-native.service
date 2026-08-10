@@ -11,11 +11,11 @@ Environment=NODE_ENV=production
 Environment=PORT=3000
 Environment=HOSTNAME=0.0.0.0
 
-# Load environment variables from file
-EnvironmentFile=/opt/cariair/.env.production.local
+# Load environment variables from file (optional)
+EnvironmentFile=-/opt/cariair/.env.production.local
 
 # Run Next.js standalone server
-ExecStart=/usr/bin/node server.js
+ExecStart=/usr/bin/node /opt/cariair/.next/standalone/server.js
 
 # Restart policy
 Restart=always
