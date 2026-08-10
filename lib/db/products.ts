@@ -111,7 +111,13 @@ async function expandProduct(
   }
   if (product.source_id) {
     const source = sources.find((s) => s.id === product.source_id);
-    if (source) product.source = source;
+    if (source) {
+      product.source = {
+        ...source,
+        lat: toNum(source.lat),
+        lng: toNum(source.lng),
+      };
+    }
   }
 
   return product;

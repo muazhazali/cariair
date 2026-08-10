@@ -62,8 +62,12 @@ export function WaterSourceMap() {
 
           if (!source || !source.lat || !source.lng) return null
 
+          const lat = Number(source.lat)
+          const lng = Number(source.lng)
+          if (Number.isNaN(lat) || Number.isNaN(lng)) return null
+
           return (
-            <Marker key={product.id} position={[source.lat, source.lng]}>
+            <Marker key={product.id} position={[lat, lng]}>
               <Popup>
                 <div className="space-y-1">
                   <h3 className="font-semibold text-base">

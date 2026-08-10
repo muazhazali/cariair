@@ -5,17 +5,31 @@
 import { getAll, findOne, insert, update, remove } from "@/lib/json-store";
 import { Source, SourceType } from "@/lib/types/db";
 
+function toNum(v: any): number | null {
+  if (v === null || v === undefined || v === "") return null;
+  const n = Number(v);
+  return Number.isNaN(n) ? null : n;
+}
+
+// Normalize lat/lng to numbers (stored as strings from Postgres decimal).
+function normalizeSource(s: any): Source {
+  return { ...s, lat: toNum(s.lat), lng: toNum(s.lng) };
+}
+
 // Get all sources
 export async function getSources(): Promise<Source[]> {
   const items = await getAll("sources");
-  return items.sort((a: Source, b: Source) =>
-    (a.source_name || "").localeCompare(b.source_name || "")
-  );
+  return items
+    .map(normalizeSource)
+    .sort((a: Source, b: Source) =>
+      (a.source_name || "").localeCompare(b.source_name || "")
+    );
 }
 
 // Get source by ID
 export async function getSourceById(id: string): Promise<Source | null> {
-  return findOne("sources", (s) => s.id === id);
+  const s = await findOne("sources", (s) => s.id === id);
+  return s ? normalizeSource(s) : null;
 }
 
 // Create new source
@@ -63,6 +77,7 @@ export async function deleteSource(id: string): Promise<boolean> {
 export async function getSourcesByType(type: SourceType): Promise<Source[]> {
   const items = await getAll("sources");
   return items
+    .map(normalizeSource)
     .filter((s: Source) => s.type === type)
     .sort((a: Source, b: Source) =>
       (a.source_name || "").localeCompare(b.source_name || "")
@@ -73,6 +88,7 @@ export async function getSourcesByType(type: SourceType): Promise<Source[]> {
 export async function getSourcesWithCoordinates(): Promise<Source[]> {
   const items = await getAll("sources");
   return items
+    .map(normalizeSource)
     .filter((s: Source) => s.lat != null && s.lng != null)
     .sort((a: Source, b: Source) =>
       (a.source_name || "").localeCompare(b.source_name || "")

@@ -22,6 +22,9 @@ export function SingleSourceMap({
 }: SingleSourceMapProps) {
   const [mounted, setMounted] = useState(false)
 
+  const numLat = Number(lat)
+  const numLng = Number(lng)
+
   useEffect(() => {
     setMounted(true)
 
@@ -53,7 +56,7 @@ export function SingleSourceMap({
       style={{ height }}
     >
       <MapContainer 
-        center={[lat, lng]} 
+        center={[numLat, numLng]} 
         zoom={13} 
         style={{ height: "100%", width: "100%" }}
         scrollWheelZoom={true}
@@ -62,7 +65,7 @@ export function SingleSourceMap({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={[lat, lng]}>
+        <Marker position={[numLat, numLng]}>
           <Popup>
             <div className="space-y-1">
               {sourceName && (
@@ -72,7 +75,7 @@ export function SingleSourceMap({
                 <p className="text-sm text-gray-600">{locationAddress}</p>
               )}
               <p className="text-xs text-gray-500 mt-1">
-                Coordinates: {lat.toFixed(6)}, {lng.toFixed(6)}
+                Coordinates: {numLat.toFixed(6)}, {numLng.toFixed(6)}
               </p>
             </div>
           </Popup>
