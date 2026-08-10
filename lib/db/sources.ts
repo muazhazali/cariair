@@ -1,56 +1,38 @@
 // ==========================================
-// Source Database Operations
+// Source Operations (JSON storage)
 // ==========================================
 
-import { query } from '@/lib/db';
-import { Source, SourceType } from '@/lib/types/db';
+import { getAll, findOne, insert, update, remove } from "@/lib/json-store";
+import { Source, SourceType } from "@/lib/types/db";
 
 // Get all sources
 export async function getSources(): Promise<Source[]> {
-  const result = await query<Source>(
-    'SELECT * FROM sources ORDER BY source_name'
+  const items = await getAll("sources");
+  return items.sort((a: Source, b: Source) =>
+    (a.source_name || "").localeCompare(b.source_name || "")
   );
-  return result.rows;
 }
 
 // Get source by ID
 export async function getSourceById(id: string): Promise<Source | null> {
-  const result = await query<Source>(
-    'SELECT * FROM sources WHERE id = $1',
-    [id]
-  );
-  return result.rows[0] || null;
+  return findOne("sources", (s) => s.id === id);
 }
 
 // Create new source
 export async function createSource(data: Partial<Source>): Promise<Source> {
-  const columns: string[] = [];
-  const values: any[] = [];
-  const placeholders: string[] = [];
-  let index = 1;
-
-  const fields: (keyof Source)[] = [
-    'source_name', 'type', 'location_address', 'lat', 'lng', 
-    'kkm_approval_number', 'country'
-  ];
-
-  for (const field of fields) {
-    if (data[field] !== undefined && data[field] !== null) {
-      columns.push(field);
-      values.push(data[field]);
-      placeholders.push(`$${index}`);
-      index++;
-    }
-  }
-
-  const sql = `
-    INSERT INTO sources (${columns.join(', ')})
-    VALUES (${placeholders.join(', ')})
-    RETURNING *
-  `;
-
-  const result = await query<Source>(sql, values);
-  return result.rows[0];
+  const record: Record<string, any> = {
+    country: data.country ?? "Malaysia",
+  };
+  if (data.source_name !== undefined) record.source_name = data.source_name;
+  if (data.type !== undefined) record.type = data.type;
+  if (data.location_address !== undefined)
+    record.location_address = data.location_address;
+  if (data.lat !== undefined) record.lat = data.lat;
+  if (data.lng !== undefined) record.lng = data.lng;
+  if (data.kkm_approval_number !== undefined)
+    record.kkm_approval_number = data.kkm_approval_number;
+  if (data.country !== undefined) record.country = data.country;
+  return insert("sources", record);
 }
 
 // Update source
@@ -58,69 +40,51 @@ export async function updateSource(
   id: string,
   data: Partial<Source>
 ): Promise<Source | null> {
-  const updates: string[] = [];
-  const values: any[] = [];
-  let index = 1;
-
-  const fields: (keyof Source)[] = [
-    'source_name', 'type', 'location_address', 'lat', 'lng', 
-    'kkm_approval_number', 'country'
-  ];
-
-  for (const field of fields) {
-    if (data[field] !== undefined) {
-      updates.push(`${field} = $${index}`);
-      values.push(data[field]);
-      index++;
-    }
-  }
-
-  if (updates.length === 0) {
-    return getSourceById(id);
-  }
-
-  values.push(id);
-  const sql = `
-    UPDATE sources
-    SET ${updates.join(', ')}, updated_at = CURRENT_TIMESTAMP
-    WHERE id = $${index}
-    RETURNING *
-  `;
-
-  const result = await query<Source>(sql, values);
-  return result.rows[0] || null;
+  const patch: Record<string, any> = {};
+  if (data.source_name !== undefined) patch.source_name = data.source_name;
+  if (data.type !== undefined) patch.type = data.type;
+  if (data.location_address !== undefined)
+    patch.location_address = data.location_address;
+  if (data.lat !== undefined) patch.lat = data.lat;
+  if (data.lng !== undefined) patch.lng = data.lng;
+  if (data.kkm_approval_number !== undefined)
+    patch.kkm_approval_number = data.kkm_approval_number;
+  if (data.country !== undefined) patch.country = data.country;
+  return update("sources", (s) => s.id === id, patch);
 }
 
 // Delete source
 export async function deleteSource(id: string): Promise<boolean> {
-  const result = await query<Source>(
-    'DELETE FROM sources WHERE id = $1 RETURNING id',
-    [id]
-  );
-  return result.rows.length > 0;
+  const n = await remove("sources", (s) => s.id === id);
+  return n > 0;
 }
 
 // Get sources by type
 export async function getSourcesByType(type: SourceType): Promise<Source[]> {
-  const result = await query<Source>(
-    'SELECT * FROM sources WHERE type = $1 ORDER BY source_name',
-    [type]
-  );
-  return result.rows;
+  const items = await getAll("sources");
+  return items
+    .filter((s: Source) => s.type === type)
+    .sort((a: Source, b: Source) =>
+      (a.source_name || "").localeCompare(b.source_name || "")
+    );
 }
 
 // Get sources with coordinates (for map)
 export async function getSourcesWithCoordinates(): Promise<Source[]> {
-  const result = await query<Source>(
-    'SELECT * FROM sources WHERE lat IS NOT NULL AND lng IS NOT NULL ORDER BY source_name'
-  );
-  return result.rows;
+  const items = await getAll("sources");
+  return items
+    .filter((s: Source) => s.lat != null && s.lng != null)
+    .sort((a: Source, b: Source) =>
+      (a.source_name || "").localeCompare(b.source_name || "")
+    );
 }
 
 // Get unique source types
 export async function getSourceTypes(): Promise<string[]> {
-  const result = await query<{ type: string }>(
-    'SELECT DISTINCT type FROM sources WHERE type IS NOT NULL ORDER BY type'
-  );
-  return result.rows.map(row => row.type);
+  const items = await getAll("sources");
+  const types = new Set<string>();
+  for (const s of items as Source[]) {
+    if (s.type) types.add(s.type);
+  }
+  return Array.from(types).sort();
 }

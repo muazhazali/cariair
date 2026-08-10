@@ -1,8 +1,7 @@
 [Unit]
 Description=CariAir Next.js Application (Native)
 Documentation=https://github.com/yourusername/cariair
-After=network.target postgresql.service
-Wants=postgresql.service
+After=network.target
 
 [Service]
 Type=simple

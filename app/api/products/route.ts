@@ -5,7 +5,6 @@
 // ==========================================
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { getProducts, createProduct } from "@/lib/db/products";
 import { SearchFilters } from "@/lib/types/db";
 import { getProductImages } from "@/lib/db/images";
@@ -89,15 +88,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-    
     const body = await request.json();
     
     // Validate required fields
@@ -111,7 +101,7 @@ export async function POST(request: NextRequest) {
     // Create product
     const product = await createProduct({
       ...body,
-      submitted_by: session.user.id,
+      submitted_by: null,
       status: "pending",
     });
     

@@ -1,49 +1,12 @@
 // ==========================================
-// PostgreSQL Database Types
-// Migration from PocketBase
+// Data Types (JSON storage) — snake_case, matching original Postgres schema
 // ==========================================
 
-// Base model interface (similar to PocketBase)
+// Base model interface
 export interface BaseModel {
   id: string;
   created_at: string;
   updated_at: string;
-}
-
-// User model (NextAuth.js compatible)
-export interface User extends BaseModel {
-  email: string;
-  email_verified: string | null;
-  name: string | null;
-  image: string | null;
-  password_hash: string | null;
-}
-
-// Account model (OAuth linking)
-export interface Account {
-  id: string;
-  user_id: string;
-  type: string;
-  provider: string;
-  provider_account_id: string;
-  refresh_token: string | null;
-  access_token: string | null;
-  expires_at: number | null;
-  token_type: string | null;
-  scope: string | null;
-  id_token: string | null;
-  session_state: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-// Session model
-export interface Session {
-  id: string;
-  user_id: string | null;
-  session_token: string;
-  expires: string;
-  created_at: string;
 }
 
 // Brand model
@@ -60,7 +23,7 @@ export interface Manufacturer extends BaseModel {
 }
 
 // Source model
-export type SourceType = 'Underground' | 'Spring' | 'Municipal' | 'Oxygenated';
+export type SourceType = "Underground" | "Spring" | "Municipal" | "Oxygenated";
 
 export interface Source extends BaseModel {
   source_name: string | null;
@@ -72,15 +35,17 @@ export interface Source extends BaseModel {
   country: string;
 }
 
-// Image model (full database record)
-export interface Image extends BaseModel {
+// Image metadata (file-backed; binary lives in public/images/db/<id>.<ext>)
+export interface Image {
+  id: string;
   filename: string;
   mime_type: string;
-  data: Buffer;
+  ext: string;
   size_bytes: number | null;
+  created_at: string;
 }
 
-// Image view (for API responses - excludes binary data)
+// Image view (for API responses)
 export interface ImageView {
   id: string;
   filename: string;
@@ -88,7 +53,7 @@ export interface ImageView {
 }
 
 // Product model
-export type ProductStatus = 'pending' | 'approved' | 'rejected';
+export type ProductStatus = "pending" | "approved" | "rejected";
 
 export interface Product extends BaseModel {
   brand_id: string | null;
@@ -101,7 +66,7 @@ export interface Product extends BaseModel {
   tds: number | null;
   minerals_json: Record<string, any> | null;
   status: ProductStatus;
-  
+
   // Expanded fields (joined data)
   brand?: Brand;
   manufacturer?: Manufacturer;
@@ -111,7 +76,6 @@ export interface Product extends BaseModel {
 
 // Product images junction
 export interface ProductImage {
-  id: string;
   product_id: string;
   image_id: string;
   sort_order: number;
@@ -123,7 +87,7 @@ export interface MineralComposition {
   [mineralName: string]: number;
 }
 
-// Search filters (from existing products.ts)
+// Search filters
 export interface SearchFilters {
   query?: string;
   types?: string[];
@@ -144,10 +108,10 @@ export interface PaginatedResponse<T> {
   perPage: number;
 }
 
-// Database query options
+// Query options
 export interface QueryOptions {
   limit?: number;
   offset?: number;
   orderBy?: string;
-  order?: 'asc' | 'desc';
+  order?: "asc" | "desc";
 }

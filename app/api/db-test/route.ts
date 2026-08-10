@@ -1,51 +1,28 @@
+// Data store test endpoint
 import { NextResponse } from "next/server";
-import { testConnection, query } from "@/lib/db";
+import { getProducts } from "@/lib/db/products";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  // Step 1: Test database connection
+  // Step 1: Load products from the JSON store
   try {
-    const connected = await testConnection();
-    if (!connected) {
-      return NextResponse.json({ 
-        ok: false, 
-        step: "db_connection", 
-        error: "Failed to connect to PostgreSQL database" 
-      });
-    }
-  } catch (e: any) {
-    return NextResponse.json({ 
-      ok: false, 
-      step: "db_connection_error", 
-      error: e?.message ?? String(e) 
-    });
-  }
+    const result = await getProducts(undefined, { limit: 3, offset: 0 });
+    const totalProducts = result.total;
 
-  // Step 2: Test query execution
-  try {
-    const result = await query('SELECT COUNT(*) as count FROM products WHERE status = $1', ['approved']);
-    const totalProducts = parseInt(result.rows[0].count);
-    
-    // Get sample products
-    const sampleResult = await query(
-      'SELECT id, product_name, status FROM products WHERE status = $1 LIMIT 3',
-      ['approved']
-    );
-    
     return NextResponse.json({
       ok: true,
       totalProducts,
-      sample: sampleResult.rows.map((p: any) => ({ 
-        id: p.id, 
-        name: p.product_name, 
-        status: p.status 
+      sample: result.items.map((p) => ({
+        id: p.id,
+        name: p.product_name,
+        status: p.status,
       })),
     });
   } catch (e: any) {
     return NextResponse.json({
       ok: false,
-      step: "db_query",
+      step: "data_load",
       error: e?.message ?? String(e),
     });
   }

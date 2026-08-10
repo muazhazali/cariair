@@ -46,11 +46,6 @@ if ! command -v pnpm &> /dev/null; then
     exit 1
 fi
 
-if ! systemctl is-active --quiet postgresql; then
-    echo -e "${YELLOW}Warning: PostgreSQL is not running${NC}"
-    echo "Start with: sudo systemctl start postgresql"
-fi
-
 echo -e "${GREEN}  ✓ Prerequisites met${NC}"
 
 # Create installation directory
@@ -77,8 +72,6 @@ rm -rf "${INSTALL_DIR}/node_modules" "${INSTALL_DIR}/.next"
 # Copy environment file
 if [ -f "$PROJECT_DIR/.env.local" ]; then
     cp "$PROJECT_DIR/.env.local" "${INSTALL_DIR}/.env.production.local"
-    # Update DB_HOST to localhost if it's set to postgres (for Docker)
-    sed -i 's/DB_HOST="postgres"/DB_HOST="localhost"/g' "${INSTALL_DIR}/.env.production.local"
     echo -e "${GREEN}  ✓ Environment file configured${NC}"
 else
     echo -e "${YELLOW}  ⚠ No .env.local found. Please create ${INSTALL_DIR}/.env.production.local${NC}"
@@ -107,6 +100,7 @@ echo -e "${GREEN}  ✓ Build successful${NC}"
 echo -e "${YELLOW}Step 5: Setting up standalone server...${NC}"
 cp -r "${INSTALL_DIR}/public" "${INSTALL_DIR}/.next/standalone/" 2>/dev/null || true
 cp -r "${INSTALL_DIR}/.next/static" "${INSTALL_DIR}/.next/standalone/.next/" 2>/dev/null || true
+cp -r "${INSTALL_DIR}/data" "${INSTALL_DIR}/.next/standalone/" 2>/dev/null || true
 
 # Remove conflicting directories before moving standalone files
 rm -rf "${INSTALL_DIR}/node_modules"

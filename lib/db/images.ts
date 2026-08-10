@@ -1,64 +1,81 @@
 // ==========================================
-// Image Database Operations (BYTEA Storage)
+// Image Operations (file-backed; metadata in JSON store)
+// Binary files live in public/images/db/<id>.<ext>
 // ==========================================
 
-import { query, withTransaction } from '@/lib/db';
-import { Image } from '@/lib/types/db';
+import { promises as fs } from "fs";
+import path from "path";
+import { getAll, findOne, insert, remove, write } from "@/lib/json-store";
+import { Image } from "@/lib/types/db";
 
-// Store image in database
+const IMG_DIR = path.join(process.cwd(), "public", "images", "db");
+
+const MIME_TO_EXT: Record<string, string> = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/jpg": "jpg",
+  "image/gif": "gif",
+  "image/webp": "webp",
+  "image/svg+xml": "svg",
+  "image/bmp": "bmp",
+  "image/tiff": "tiff",
+};
+
+function filePathFor(img: Image): string {
+  return path.join(IMG_DIR, `${img.id}.${img.ext}`);
+}
+
+// Store image: writes file to disk + metadata row to JSON store.
 export async function storeImage(
   filename: string,
   mimeType: string,
   data: Buffer
 ): Promise<Image> {
-  const sql = `
-    INSERT INTO images (filename, mime_type, data, size_bytes)
-    VALUES ($1, $2, $3, $4)
-    RETURNING id, filename, mime_type, size_bytes, created_at
-  `;
+  const ext = MIME_TO_EXT[mimeType] || "bin";
+  const record: Record<string, any> = {
+    filename,
+    mime_type: mimeType,
+    ext,
+    size_bytes: data.length,
+  };
+  const img = (await insert("images", record)) as Image;
 
-  const result = await query<Image>(sql, [filename, mimeType, data, data.length]);
-  return result.rows[0];
+  await fs.mkdir(IMG_DIR, { recursive: true });
+  await fs.writeFile(filePathFor(img), data);
+  return img;
 }
 
-// Get image by ID
+// Get image metadata by ID
 export async function getImageById(id: string): Promise<Image | null> {
-  const result = await query<Image>(
-    'SELECT * FROM images WHERE id = $1',
-    [id]
-  );
-  return result.rows[0] || null;
+  return findOne("images", (i) => i.id === id);
 }
 
-// Get image data only (for serving)
-export async function getImageData(id: string): Promise<{ data: Buffer; mimeType: string; filename: string } | null> {
-  const result = await query<Image>(
-    'SELECT data, mime_type, filename FROM images WHERE id = $1',
-    [id]
-  );
-  
-  if (result.rows.length === 0) {
+// Get image data (reads binary file from disk).
+export async function getImageData(
+  id: string
+): Promise<{ data: Buffer; mimeType: string; filename: string } | null> {
+  const img = (await findOne("images", (i) => i.id === id)) as Image | null;
+  if (!img) return null;
+  try {
+    const data = await fs.readFile(filePathFor(img));
+    return { data, mimeType: img.mime_type, filename: img.filename };
+  } catch {
     return null;
   }
-
-  return {
-    data: result.rows[0].data,
-    mimeType: result.rows[0].mime_type,
-    filename: result.rows[0].filename
-  };
 }
 
-// Get images for a product (returns partial image data without the binary blob)
+// Get images for a product (metadata only, ordered by sort_order).
 export async function getProductImages(productId: string): Promise<Image[]> {
-  const result = await query<Image>(
-    `SELECT i.id, i.filename, i.mime_type, i.size_bytes, i.created_at
-     FROM images i
-     JOIN product_images pi ON i.id = pi.image_id
-     WHERE pi.product_id = $1
-     ORDER BY pi.sort_order`,
-    [productId]
-  );
-  return result.rows;
+  const [allImages, links] = await Promise.all([
+    getAll("images"),
+    getAll("productImages"),
+  ]);
+  const linksForProduct = (links as any[])
+    .filter((l) => l.product_id === productId)
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  return linksForProduct
+    .map((l) => (allImages as any[]).find((i) => i.id === l.image_id))
+    .filter(Boolean) as Image[];
 }
 
 // Link image to product
@@ -67,36 +84,44 @@ export async function linkImageToProduct(
   imageId: string,
   sortOrder: number = 0
 ): Promise<void> {
-  await query<Image>(
-    `INSERT INTO product_images (product_id, image_id, sort_order)
-     VALUES ($1, $2, $3)
-     ON CONFLICT (product_id, sort_order) DO NOTHING`,
-    [productId, imageId, sortOrder]
-  );
+  await write((db) => {
+    const exists = (db.productImages as any[]).some(
+      (l) => l.product_id === productId && l.image_id === imageId
+    );
+    if (!exists) {
+      db.productImages.push({
+        product_id: productId,
+        image_id: imageId,
+        sort_order: sortOrder,
+        created_at: new Date().toISOString(),
+      });
+    }
+  });
 }
 
 // Unlink image from product
-export async function unlinkImageFromProduct(productId: string, imageId: string): Promise<void> {
-  await query<Image>(
-    'DELETE FROM product_images WHERE product_id = $1 AND image_id = $2',
-    [productId, imageId]
+export async function unlinkImageFromProduct(
+  productId: string,
+  imageId: string
+): Promise<void> {
+  await remove(
+    "productImages",
+    (l) => l.product_id === productId && l.image_id === imageId
   );
 }
 
-// Delete image (and unlink from all products)
+// Delete image (unlink from products, rm file, remove metadata row).
 export async function deleteImage(id: string): Promise<boolean> {
-  return await withTransaction(async (client) => {
-    // Unlink from products first
-    await client.query('DELETE FROM product_images WHERE image_id = $1', [id]);
-    
-    // Delete image
-    const result = await client.query(
-      'DELETE FROM images WHERE id = $1 RETURNING id',
-      [id]
-    );
-    
-    return result.rows.length > 0;
-  });
+  const img = (await findOne("images", (i) => i.id === id)) as Image | null;
+  if (!img) return false;
+  await remove("productImages", (l) => l.image_id === id);
+  await remove("images", (i) => i.id === id);
+  try {
+    await fs.unlink(filePathFor(img));
+  } catch {
+    // file may not exist; ignore
+  }
+  return true;
 }
 
 // Update image sort order
@@ -105,25 +130,18 @@ export async function updateImageSortOrder(
   imageId: string,
   sortOrder: number
 ): Promise<void> {
-  await query<Image>(
-    `UPDATE product_images 
-     SET sort_order = $1 
-     WHERE product_id = $2 AND image_id = $3`,
-    [sortOrder, productId, imageId]
-  );
+  await write((db) => {
+    const link = (db.productImages as any[]).find(
+      (l) => l.product_id === productId && l.image_id === imageId
+    );
+    if (link) link.sort_order = sortOrder;
+  });
 }
 
 // Get primary image for product
-export async function getPrimaryProductImage(productId: string): Promise<Image | null> {
-  const result = await query<Image>(
-    `SELECT i.* 
-     FROM images i
-     JOIN product_images pi ON i.id = pi.image_id
-     WHERE pi.product_id = $1
-     ORDER BY pi.sort_order
-     LIMIT 1`,
-    [productId]
-  );
-  return result.rows[0] || null;
+export async function getPrimaryProductImage(
+  productId: string
+): Promise<Image | null> {
+  const imgs = await getProductImages(productId);
+  return imgs[0] || null;
 }
-

@@ -1,6 +1,6 @@
 // ==========================================
 // Image Serving API Route
-// GET /api/images/[id] - Serve image from BYTEA
+// GET /api/images/[id] - Serve image from public/images/db/<id>.<ext>
 // ==========================================
 
 import { NextRequest, NextResponse } from "next/server";
@@ -26,13 +26,14 @@ export async function GET(
     }
     
     // Return image with appropriate headers
-    // Create a proper Buffer from the data
     const imageBuffer = Buffer.from(imageData.data);
     return new Response(imageBuffer, {
       headers: {
         "Content-Type": imageData.mimeType,
+        "Content-Length": String(imageBuffer.length),
         "Content-Disposition": `inline; filename="${imageData.filename}"`,
-        "Cache-Control": "public, max-age=86400", // Cache for 24 hours
+        "Cache-Control": "public, max-age=86400, immutable",
+        "Accept-Ranges": "bytes",
       },
     });
   } catch (error) {

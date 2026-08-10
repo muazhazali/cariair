@@ -1,14 +1,10 @@
 // ==========================================
-// Database Operations - Re-exports
+// Database Operations - Re-exports (JSON storage)
 // ==========================================
 
-// Core database
-export { getPool, query, withTransaction, testConnection, closePool } from '@/lib/db';
-
 // Entity operations
-export * from './products';
-export * from './brands';
-export * from './sources';
-export * from './manufacturers';
-export * from './images';
-export * from './users';
+export * from "./products";
+export * from "./brands";
+export * from "./sources";
+export * from "./manufacturers";
+export * from "./images";

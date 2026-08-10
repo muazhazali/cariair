@@ -6,7 +6,6 @@
 // ==========================================
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { getProductById, updateProduct, deleteProduct } from "@/lib/db/products";
 import { getProductImages } from "@/lib/db/images";
 
@@ -54,15 +53,6 @@ export async function PATCH(
   { params }: Params
 ) {
   try {
-    // Check authentication
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-    
     const { id } = await params;
     const body = await request.json();
     
@@ -90,15 +80,6 @@ export async function DELETE(
   { params }: Params
 ) {
   try {
-    // Check authentication
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-    
     const { id } = await params;
     const success = await deleteProduct(id);
     

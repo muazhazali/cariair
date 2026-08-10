@@ -1,53 +1,31 @@
 // ==========================================
-// Brand Database Operations
+// Brand Operations (JSON storage)
 // ==========================================
 
-import { query } from '@/lib/db';
-import { Brand } from '@/lib/types/db';
+import { getAll, findOne, insert, update, remove } from "@/lib/json-store";
+import { Brand } from "@/lib/types/db";
 
 // Get all brands
 export async function getBrands(): Promise<Brand[]> {
-  const result = await query<Brand>(
-    'SELECT * FROM brands ORDER BY brand_name'
+  const brands = await getAll("brands");
+  return brands.sort((a: Brand, b: Brand) =>
+    (a.brand_name || "").localeCompare(b.brand_name || "")
   );
-  return result.rows;
 }
 
 // Get brand by ID
 export async function getBrandById(id: string): Promise<Brand | null> {
-  const result = await query<Brand>(
-    'SELECT * FROM brands WHERE id = $1',
-    [id]
-  );
-  return result.rows[0] || null;
+  return findOne("brands", (b) => b.id === id);
 }
 
 // Create new brand
 export async function createBrand(data: Partial<Brand>): Promise<Brand> {
-  const columns: string[] = [];
-  const values: any[] = [];
-  const placeholders: string[] = [];
-  let index = 1;
-
-  const fields: (keyof Brand)[] = ['brand_name', 'parent_company', 'website_url'];
-
-  for (const field of fields) {
-    if (data[field] !== undefined && data[field] !== null) {
-      columns.push(field);
-      values.push(data[field]);
-      placeholders.push(`$${index}`);
-      index++;
-    }
-  }
-
-  const sql = `
-    INSERT INTO brands (${columns.join(', ')})
-    VALUES (${placeholders.join(', ')})
-    RETURNING *
-  `;
-
-  const result = await query<Brand>(sql, values);
-  return result.rows[0];
+  const record: Record<string, any> = {};
+  if (data.brand_name !== undefined) record.brand_name = data.brand_name;
+  if (data.parent_company !== undefined)
+    record.parent_company = data.parent_company;
+  if (data.website_url !== undefined) record.website_url = data.website_url;
+  return insert("brands", record);
 }
 
 // Update brand
@@ -55,59 +33,32 @@ export async function updateBrand(
   id: string,
   data: Partial<Brand>
 ): Promise<Brand | null> {
-  const updates: string[] = [];
-  const values: any[] = [];
-  let index = 1;
-
-  const fields: (keyof Brand)[] = ['brand_name', 'parent_company', 'website_url'];
-
-  for (const field of fields) {
-    if (data[field] !== undefined) {
-      updates.push(`${field} = $${index}`);
-      values.push(data[field]);
-      index++;
-    }
-  }
-
-  if (updates.length === 0) {
-    return getBrandById(id);
-  }
-
-  values.push(id);
-  const sql = `
-    UPDATE brands
-    SET ${updates.join(', ')}, updated_at = CURRENT_TIMESTAMP
-    WHERE id = $${index}
-    RETURNING *
-  `;
-
-  const result = await query<Brand>(sql, values);
-  return result.rows[0] || null;
+  const patch: Record<string, any> = {};
+  if (data.brand_name !== undefined) patch.brand_name = data.brand_name;
+  if (data.parent_company !== undefined)
+    patch.parent_company = data.parent_company;
+  if (data.website_url !== undefined) patch.website_url = data.website_url;
+  return update("brands", (b) => b.id === id, patch);
 }
 
 // Delete brand
 export async function deleteBrand(id: string): Promise<boolean> {
-  const result = await query<Brand>(
-    'DELETE FROM brands WHERE id = $1 RETURNING id',
-    [id]
-  );
-  return result.rows.length > 0;
+  const n = await remove("brands", (b) => b.id === id);
+  return n > 0;
 }
 
 // Search brands by name
 export async function searchBrands(searchQuery: string): Promise<Brand[]> {
-  const result = await query<Brand>(
-    'SELECT * FROM brands WHERE brand_name ILIKE $1 ORDER BY brand_name',
-    [`%${searchQuery}%`]
-  );
-  return result.rows;
+  const brands = await getAll("brands");
+  const q = searchQuery.toLowerCase();
+  return brands
+    .filter((b: Brand) => (b.brand_name || "").toLowerCase().includes(q))
+    .sort((a: Brand, b: Brand) =>
+      (a.brand_name || "").localeCompare(b.brand_name || "")
+    );
 }
 
 // Get brand by exact name
 export async function getBrandByName(name: string): Promise<Brand | null> {
-  const result = await query<Brand>(
-    'SELECT * FROM brands WHERE brand_name = $1',
-    [name]
-  );
-  return result.rows[0] || null;
+  return findOne("brands", (b) => b.brand_name === name);
 }
