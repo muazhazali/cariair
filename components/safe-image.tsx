@@ -9,7 +9,7 @@ interface SafeImageProps {
   className?: string
 }
 
-export function SafeImage({ src, alt, fallback = "/placeholder.jpg", className }: SafeImageProps) {
+export function SafeImage({ src, alt, fallback = "/placeholder.svg", className }: SafeImageProps) {
   const [currentSrc, setCurrentSrc] = useState(src)
 
   return (

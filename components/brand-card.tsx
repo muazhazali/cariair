@@ -34,7 +34,7 @@ export function BrandCard({ brand, translations }: BrandCardProps) {
       {/* Image */}
       <div className="relative h-44 bg-muted">
         <SafeImage
-          src={brand.imageUrl ?? "/placeholder.jpg"}
+          src={brand.imageUrl ?? "/placeholder.svg"}
           alt={brand.brand_name}
           className="absolute inset-0 h-full w-full object-contain p-4"
         />

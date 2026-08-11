@@ -51,12 +51,12 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
   // Get image URL - handles both object format {id, filename, url} and string format
   const getImageUrl = (): string => {
     if (!product.images || product.images.length === 0) {
-      return '/placeholder.jpg'
+      return '/placeholder.svg'
     }
     const firstImage = product.images[0]
     // If it's an object with id property, use it; if it's a string, use directly
     const imageId = typeof firstImage === 'string' ? firstImage : firstImage?.id
-    return imageId ? `/api/images/${imageId}` : '/placeholder.jpg'
+    return imageId ? `/api/images/${imageId}` : '/placeholder.svg'
   }
 
   const imageUrl = getImageUrl()

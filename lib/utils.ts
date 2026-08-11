@@ -16,7 +16,7 @@ export function getImageUrl(
 ): string {
   // Handle undefined/null
   if (!imageId) {
-    return '/placeholder.jpg';
+    return '/placeholder.svg';
   }
 
   // If first arg is a string, it's the image ID
@@ -32,5 +32,5 @@ export function getImageUrl(
     return `/api/images/${id}`;
   }
 
-  return '/placeholder.jpg';
+  return '/placeholder.svg';
 }

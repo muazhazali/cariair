@@ -1262,6 +1262,14 @@
       "ext": "webp",
       "size_bytes": 85048,
       "created_at": "2026-08-11T12:25:36.696Z"
+    },
+    {
+      "id": "fc1f3cac-311b-4903-88f8-56a5cb7eb9d9",
+      "filename": "fc1f3cac-311b-4903-88f8-56a5cb7eb9d9.webp",
+      "mime_type": "image/webp",
+      "ext": "webp",
+      "size_bytes": 25426,
+      "created_at": "2026-08-11T20:57:31.000Z"
     }
   ],
   "productImages": [
@@ -1342,6 +1350,12 @@
       "image_id": "c7a0c500-0069-40ce-b397-263bfb678934",
       "sort_order": 0,
       "created_at": "2026-08-11T12:25:36.696Z"
+    },
+    {
+      "product_id": "fc1f3cac-311b-4903-88f8-56a5cb7eb9d9",
+      "image_id": "fc1f3cac-311b-4903-88f8-56a5cb7eb9d9",
+      "sort_order": 0,
+      "created_at": "2026-08-11T20:57:31.000Z"
     }
   ],
   "users": [
