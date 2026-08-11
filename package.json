@@ -4,22 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
-    "build": "next build",
+    "build": "next build && cp -r .next/static .next/standalone/.next/static && cp -r public .next/standalone/public",
     "start": "next start",
     "lint": "next lint",
     "db:schema": "psql -h $DB_HOST -U $DB_USER -d $DB_NAME -f sql/schema.sql",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio",
-    "dev:db": "docker compose up -d",
-    "dev:db:stop": "docker compose down",
-    "dev:db:logs": "docker compose logs -f postgres",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report"
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",
@@ -98,14 +89,11 @@
     "@types/react": "19.2.8",
     "@types/react-dom": "19.2.3",
     "@types/uuid": "^9.0.8",
-    "@playwright/test": "^1.45.0",
-    "@vitest/coverage-v8": "^1.6.0",
     "pocketbase": "^0.27.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.17",
     "ts-node": "^10.9.2",
-    "typescript": "^5",
-    "vitest": "^1.6.0"
+    "typescript": "^5"
   },
   "pnpm": {
     "overrides": {
