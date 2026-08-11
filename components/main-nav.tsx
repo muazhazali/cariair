@@ -5,8 +5,13 @@ import { usePathname } from "next/navigation"
 import { Droplet } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
+import type { Locale } from "@/i18n/routing"
 
-export function MainNav() {
+interface MainNavProps {
+  initialLocale: Locale
+}
+
+export function MainNav({ initialLocale }: MainNavProps) {
   const pathname = usePathname()
   const t = useTranslations("nav")
 
@@ -44,7 +49,7 @@ export function MainNav() {
 
         {/* Language Switcher - right side */}
         <div className="ml-auto">
-          <LanguageSwitcher />
+          <LanguageSwitcher initialLocale={initialLocale} />
         </div>
       </div>
     </header>

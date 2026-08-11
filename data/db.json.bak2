@@ -1198,70 +1198,6 @@
       "ext": "webp",
       "size_bytes": 64430,
       "created_at": "2026-06-14T13:35:04.861Z"
-    },
-    {
-      "id": "8bcdd1e3-e6d2-4aa7-8ef9-de0b877ef0ed",
-      "filename": "cactus.webp",
-      "mime_type": "image/webp",
-      "ext": "webp",
-      "size_bytes": 57134,
-      "created_at": "2026-08-11T12:25:36.693Z"
-    },
-    {
-      "id": "91e223fc-57b0-4685-9d4e-82d556d7cc26",
-      "filename": "dasani.webp",
-      "mime_type": "image/webp",
-      "ext": "webp",
-      "size_bytes": 19908,
-      "created_at": "2026-08-11T12:25:36.695Z"
-    },
-    {
-      "id": "6ad10ea3-0630-463c-b017-ac108a934a66",
-      "filename": "desa_mineral.webp",
-      "mime_type": "image/webp",
-      "ext": "webp",
-      "size_bytes": 9708,
-      "created_at": "2026-08-11T12:25:36.695Z"
-    },
-    {
-      "id": "e3faabf0-5570-425b-8fcc-fcdaeeddb893",
-      "filename": "evian.webp",
-      "mime_type": "image/webp",
-      "ext": "webp",
-      "size_bytes": 9518,
-      "created_at": "2026-08-11T12:25:36.695Z"
-    },
-    {
-      "id": "5ba136e3-6f95-4177-bea8-0016ee9ff219",
-      "filename": "ice_mountain.webp",
-      "mime_type": "image/webp",
-      "ext": "webp",
-      "size_bytes": 39888,
-      "created_at": "2026-08-11T12:25:36.695Z"
-    },
-    {
-      "id": "839acda1-201c-469c-a499-b6b2134c7546",
-      "filename": "le_minerale.webp",
-      "mime_type": "image/webp",
-      "ext": "webp",
-      "size_bytes": 29918,
-      "created_at": "2026-08-11T12:25:36.696Z"
-    },
-    {
-      "id": "1edcc8df-b8c3-4c2e-8fbc-305c737cf258",
-      "filename": "summer.webp",
-      "mime_type": "image/webp",
-      "ext": "webp",
-      "size_bytes": 21670,
-      "created_at": "2026-08-11T12:25:36.696Z"
-    },
-    {
-      "id": "c7a0c500-0069-40ce-b397-263bfb678934",
-      "filename": "volvic.webp",
-      "mime_type": "image/webp",
-      "ext": "webp",
-      "size_bytes": 85048,
-      "created_at": "2026-08-11T12:25:36.696Z"
     }
   ],
   "productImages": [
@@ -1294,54 +1230,6 @@
       "image_id": "ef2c4fa6-85b0-41cc-af7e-a3a76d542a88",
       "sort_order": 0,
       "created_at": "2026-06-14T11:18:12.126Z"
-    },
-    {
-      "product_id": "857026fe-2704-4916-bf1e-f4760ffd6a4c",
-      "image_id": "8bcdd1e3-e6d2-4aa7-8ef9-de0b877ef0ed",
-      "sort_order": 0,
-      "created_at": "2026-08-11T12:25:36.694Z"
-    },
-    {
-      "product_id": "4cb01915-2a76-4622-bcea-4134855edb00",
-      "image_id": "91e223fc-57b0-4685-9d4e-82d556d7cc26",
-      "sort_order": 0,
-      "created_at": "2026-08-11T12:25:36.695Z"
-    },
-    {
-      "product_id": "bec52739-469d-418e-a273-058e7fd88d77",
-      "image_id": "6ad10ea3-0630-463c-b017-ac108a934a66",
-      "sort_order": 0,
-      "created_at": "2026-08-11T12:25:36.695Z"
-    },
-    {
-      "product_id": "5b023f93-ae46-44a3-ae7f-f89664ef352f",
-      "image_id": "e3faabf0-5570-425b-8fcc-fcdaeeddb893",
-      "sort_order": 0,
-      "created_at": "2026-08-11T12:25:36.695Z"
-    },
-    {
-      "product_id": "3c2bde7e-fe84-401d-b567-b578f7131b31",
-      "image_id": "5ba136e3-6f95-4177-bea8-0016ee9ff219",
-      "sort_order": 0,
-      "created_at": "2026-08-11T12:25:36.696Z"
-    },
-    {
-      "product_id": "e72803e3-be82-4448-b875-d89fe0a0990e",
-      "image_id": "839acda1-201c-469c-a499-b6b2134c7546",
-      "sort_order": 0,
-      "created_at": "2026-08-11T12:25:36.696Z"
-    },
-    {
-      "product_id": "002e2e3f-86e4-4294-bc13-2da337a6a780",
-      "image_id": "1edcc8df-b8c3-4c2e-8fbc-305c737cf258",
-      "sort_order": 0,
-      "created_at": "2026-08-11T12:25:36.696Z"
-    },
-    {
-      "product_id": "b2694dd3-be24-4ab1-a304-6fe603987cd1",
-      "image_id": "c7a0c500-0069-40ce-b397-263bfb678934",
-      "sort_order": 0,
-      "created_at": "2026-08-11T12:25:36.696Z"
     }
   ],
   "users": [

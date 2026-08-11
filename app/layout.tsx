@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { MainNav } from "@/components/main-nav"
 import { Footer } from "@/components/footer"
 import { ANALYTICS_CONFIG } from "@/lib/features"
+import { locales, type Locale } from '@/i18n/routing'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale()
   const messages = await getMessages()
+  const initialLocale = (locales.includes(locale as Locale) ? locale : 'ms') as Locale
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -34,7 +36,7 @@ export default async function RootLayout({
       </head>
       <body suppressHydrationWarning className="min-h-screen bg-background">
         <NextIntlClientProvider messages={messages}>
-          <MainNav />
+          <MainNav initialLocale={initialLocale} />
           {children}
           <Footer />
           <Toaster />

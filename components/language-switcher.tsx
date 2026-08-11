@@ -1,33 +1,30 @@
 'use client'
 
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { LOCALE_COOKIE, locales, type Locale } from '@/i18n/routing'
 import { Button } from '@/components/ui/button'
 
-function getCurrentLocale(): Locale {
-  if (typeof document === 'undefined') return 'ms'
-  const match = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith(`${LOCALE_COOKIE}=`))
-  const val = match?.split('=')[1]
-  return locales.includes(val as Locale) ? (val as Locale) : 'ms'
+interface LanguageSwitcherProps {
+  initialLocale: Locale
 }
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({ initialLocale }: LanguageSwitcherProps) {
   const t = useTranslations('languageSwitcher')
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
+  const [currentLocale, setCurrentLocale] = useState<Locale>(initialLocale)
 
   const switchLocale = (locale: Locale) => {
+    if (locale === currentLocale) return
     document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=31536000; SameSite=Lax`
+    setCurrentLocale(locale)
     startTransition(() => {
       router.refresh()
     })
   }
-
-  const currentLocale = getCurrentLocale()
 
   return (
     <div
