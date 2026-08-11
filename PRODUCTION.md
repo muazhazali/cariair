@@ -11,7 +11,8 @@ CariAir runs natively with Node.js behind a systemd service. This is the recomme
 sudo ./scripts/install-native.sh
 ```
 
-This runs CariAir directly with Node.js using the system's PostgreSQL.
+This builds CariAir and runs it directly with Node.js using the standalone
+build output.
 
 ## Systemd Commands
 
@@ -42,34 +43,21 @@ sudo systemctl disable cariair
 
 ## Environment Configuration
 
-### Required Environment Variables
+### Environment Variables (all optional)
 
 Create `.env.production.local` in the installation directory (`/opt/cariair/`):
 
 ```bash
-# Database Configuration
-DB_HOST=postgres
-DB_PORT=5432
-DB_USER=postgres
-DB_PASS=your-secure-password
-DB_NAME=cariair
-
-# NextAuth.js (Required)
-AUTH_SECRET="$(openssl rand -base64 32)"
-
-# Google OAuth (Optional)
-AUTH_GOOGLE_ID=your-google-client-id
-AUTH_GOOGLE_SECRET=your-google-client-secret
-
 # Groq API (Optional - for chatbot)
 GROQ_API_KEY=your-groq-api-key
+
+# Analytics (Optional)
+NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://...
+NEXT_PUBLIC_UMAMI_WEBSITE_ID=...
 ```
 
-### Generate AUTH_SECRET
-
-```bash
-openssl rand -base64 32
-```
+No database environment variables are required — all data lives in
+`data/db.json` via `lib/json-store.ts`.
 
 ## Troubleshooting
 
@@ -78,15 +66,6 @@ openssl rand -base64 32
 # Check systemd logs
 sudo journalctl -u cariair -n 50 --no-pager
 
-# Check if PostgreSQL is running
-sudo systemctl status postgresql
-
-# Test database connection
-sudo -u postgres psql -d cariair -c "SELECT 1;"
-```
-
-### Port already in use
-```bash
 # Check what's using port 3000
 sudo lsof -i :3000
 
@@ -116,9 +95,8 @@ sudo systemctl daemon-reload
 
 ## Security Notes
 
-1. **Change default passwords**: Update `DB_PASS` from the default `postgres`
-2. **Generate secure AUTH_SECRET**: Use `openssl rand -base64 32`
-3. **Environment files**: Keep `.env.production.local` secure (chmod 600)
+1. **Environment files**: Keep `.env.production.local` secure (chmod 600)
+2. **TypeScript strict mode** enabled for compile-time safety
 
 ## Reverse Proxy (Optional)
 
@@ -156,12 +134,15 @@ server {
 
 ## Backup and Restore
 
-```bash
-# Backup database
-sudo -u postgres pg_dump cariair > backup_$(date +%Y%m%d_%H%M%S).sql
+The entire dataset is the single file `data/db.json`:
 
-# Restore database
-sudo -u postgres psql -d cariair < backup_file.sql
+```bash
+# Backup
+sudo cp /opt/cariair/data/db.json backup_$(date +%Y%m%d_%H%M%S).json
+
+# Restore
+sudo cp backup_file.json /opt/cariair/data/db.json
+sudo systemctl restart cariair
 ```
 
 ## Updating

@@ -4,10 +4,8 @@ Malaysia's Mineral and Spring Water Source Registry
 
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js" alt="Next.js 16">
-  <img src="https://img.shields.io/badge/PostgreSQL-16-blue?style=flat&logo=postgresql" alt="PostgreSQL">
   <img src="https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript" alt="TypeScript">
   <img src="https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat&logo=tailwind-css" alt="Tailwind CSS">
-  <img src="https://img.shields.io/badge/Drizzle-ORM-000000?style=flat" alt="Drizzle ORM">
 </p>
 
 ## Overview
@@ -26,8 +24,7 @@ CariAir is a Next.js 16 web platform serving as Malaysia's comprehensive mineral
 - **Framework**: Next.js 16 with App Router (React Server Components)
 - **Frontend**: React 19, TypeScript (Strict Mode), Tailwind CSS
 - **UI Components**: shadcn/ui (Radix UI primitives)
-- **Database**: PostgreSQL with Drizzle ORM
-- **Authentication**: NextAuth.js v5 (Auth.js) with Google OAuth + credentials
+- **Storage**: JSON file (`data/db.json`) via `lib/json-store.ts` — no database server required
 - **Internationalization**: next-intl (Malay `ms` as default, English `en`)
 - **API Documentation**: Swagger/OpenAPI at `/docs`
 - **Deployment**: Native Node.js with systemd
@@ -38,7 +35,6 @@ CariAir is a Next.js 16 web platform serving as Malaysia's comprehensive mineral
 
 - Node.js 20+
 - pnpm 10+
-- PostgreSQL 16+
 
 ### Installation
 
@@ -50,57 +46,38 @@ cd cariair
 # Install dependencies
 pnpm install
 
-# Set up environment variables
+# Set up environment variables (optional — only for chatbot/analytics)
 cp .env.example .env.local
-# Edit .env.local with your database credentials
+# Edit .env.local as needed
 ```
 
 ### Development
 
-**Recommended: Local PostgreSQL, Next.js locally (fastest)**
-
 ```bash
-# Set up PostgreSQL database
-createdb cariair
-psql -d cariair -f sql/schema.sql
-
 # Start Next.js dev server
 pnpm dev
 ```
 
 The app will be available at `http://localhost:3000`
 
-**Alternative: PostgreSQL in Docker**
-
-If you prefer to run PostgreSQL in Docker (optional, not required):
-
-```bash
-# Start PostgreSQL in Docker (requires Docker installed)
-docker run --name cariair-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cariair -p 5432:5432 -d postgres:16-alpine
-
-# Start dev server
-pnpm dev
-```
+No database setup is required — all data is read from and written to
+`data/db.json` at runtime.
 
 ## Environment Variables
 
-Create `.env.local` for development:
+Create `.env.local` for development (all optional):
 
 ```bash
-# Database
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASS=your-password
-DB_NAME=cariair
+# Chatbot (optional)
+GROQ_API_KEY=""
 
-# Authentication (Required)
-AUTH_SECRET=your-secret-key
-
-# Google OAuth (Optional)
-AUTH_GOOGLE_ID=your-google-client-id
-AUTH_GOOGLE_SECRET=your-google-client-secret
+# Analytics (optional)
+NEXT_PUBLIC_UMAMI_SCRIPT_URL=""
+NEXT_PUBLIC_UMAMI_WEBSITE_ID=""
 ```
+
+The JSON store needs no environment variables. See `.env.example` for the
+authoritative list.
 
 ## Production Deployment
 
@@ -113,8 +90,6 @@ Build the standalone Next.js app and run it directly with Node.js:
 pnpm build
 
 # Start the production server
-node server.js
-# or
 ./start-prod.sh
 ```
 
@@ -149,18 +124,16 @@ cariair/
 ├── components/            # React components
 │   └── ui/               # shadcn/ui components
 ├── lib/                   # Utilities and helpers
-│   ├── db/               # Database operations
-│   │   ├── schema.ts     # Drizzle ORM schema
-│   │   ├── drizzle.ts    # Drizzle client
+│   ├── db/               # Data operations (JSON store wrappers)
 │   │   ├── products.ts   # Product queries
 │   │   ├── sources.ts    # Source queries
 │   │   └── ...
-│   ├── auth.ts           # NextAuth configuration
+│   ├── json-store.ts     # JSON file storage engine
+│   ├── products.ts       # Compatibility shim (used by app/page.tsx)
+│   ├── features.ts       # Feature flags
 │   └── types/            # TypeScript types
-├── drizzle/              # Drizzle ORM migrations
-│   └── migrations/       # Migration files
-├── sql/                  # Database scripts
-│   └── schema.sql        # Full schema + seed data
+├── data/                  # JSON database
+│   └── db.json           # All app data
 ├── i18n/                 # Internationalization
 ├── messages/             # Translation files
 │   ├── ms.json          # Malay
@@ -170,14 +143,14 @@ cariair/
 
 ## Key Features
 
-### Database Architecture
+### Data Architecture
 
-- PostgreSQL with Drizzle ORM for type-safe queries
-- NextAuth adapter tables for authentication
-- Images stored as BYTEA in database
-- Proper foreign key relationships between products, brands, sources, and manufacturers
-- Connection pooling to prevent exhaustion
-- Incremental database migrations with Drizzle Kit
+- JSON file storage via `lib/json-store.ts` (atomic tmp+rename writes,
+  in-memory cache, serialized writes)
+- Images stored as files in `public/images/db/`, not in the data store
+- `lib/db/{products,brands,sources,manufacturers,images}.ts` are thin
+  wrappers over the JSON store
+- Record field names are snake_case; see `lib/types/db.ts`
 
 ### API Routes
 
@@ -189,6 +162,8 @@ cariair/
 - `/api/export/products` - CSV export of all products
 - `/api/export/products/json` - JSON export of all products
 - `/api/openapi` - OpenAPI specification
+- `/api/health` - Health check + data store stats
+- `/api/db-test` - Data store connectivity test
 
 ### API Documentation
 
@@ -208,7 +183,7 @@ Export all product data for analysis:
 
 ### Internationalization
 
-- Locale detection via cookie (not URL prefix)
+- Locale detection via cookie (`CARIAIR_LOCALE`), not URL prefix
 - Malay (`ms`) as default language
 - English (`en`) as secondary
 - Easy to add more languages
@@ -218,49 +193,11 @@ Export all product data for analysis:
 | Command | Description |
 |---------|-------------|
 | `pnpm dev` | Start development server |
-| `pnpm build` | Build for production |
-| `pnpm start` | Start production server |
-| `pnpm lint` | Run ESLint |
-| `pnpm run db:schema` | Initialize database schema |
-| `pnpm run db:generate` | Generate Drizzle migrations |
-| `pnpm run db:migrate` | Run database migrations |
-| `pnpm run db:studio` | Open Drizzle Studio GUI |
+| `pnpm build` | Build for production (standalone output) |
+| `pnpm start` | Start production server (`next start`) |
+| `pnpm lint` | Run ESLint (deprecated in Next 16) |
 
-## Database Commands
-
-PostgreSQL runs natively. Use these commands to manage it:
-
-```bash
-# Start PostgreSQL (if not running as a system service)
-sudo systemctl start postgresql
-
-# View database logs
-sudo journalctl -u postgresql -f
-
-# Connect to the database
-psql -d cariair
-
-# Reset the database (drop and recreate)
-dropdb cariair && createdb cariair
-psql -d cariair -f sql/schema.sql
-```
-
-See [PRODUCTION.md](PRODUCTION.md) for detailed deployment instructions.
-
-## Database Migrations
-
-We use Drizzle ORM for type-safe database operations and migrations:
-
-```bash
-# Generate migrations after schema changes
-pnpm run db:generate
-
-# Apply migrations to database
-pnpm run db:migrate
-
-# Open Drizzle Studio to browse data
-pnpm run db:studio
-```
+Typecheck with `pnpm exec tsc --noEmit` (no dedicated script).
 
 ## Contributing
 
@@ -268,10 +205,8 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
 ## Security
 
-- Change default database passwords in production
-- Generate secure `AUTH_SECRET` with `openssl rand -base64 32`
+- Generate secure secrets with `openssl rand -base64 32`
 - Keep `.env` files secure (chmod 600)
-- PostgreSQL port not exposed externally in production
 - TypeScript strict mode enabled for compile-time safety
 
 See [SECURITY.md](SECURITY.md) for security policies.

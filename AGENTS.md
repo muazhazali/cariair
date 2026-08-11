@@ -16,19 +16,19 @@ exists).
   is the source of truth for storage.
 - Images live in `public/images/db/`, not in the DB.
 - Record field names are snake_case (mirrors the old Postgres schema); see
-  `lib/types/db.ts` and `lib/data-schema.ts`.
+  `lib/types/db.ts`.
+- `lib/products.ts` is a live compatibility shim (used by `app/page.tsx`) that
+  re-exports `lib/db/*` helpers as `getBrands`/`searchWaterSources`/etc. Its
+  comments mention PostgreSQL but it calls the JSON store.
 
 ## Environment
 
 - `.env.example` is authoritative. The JSON store needs no env vars. Optional:
   `GROQ_API_KEY` (chatbot), `NEXT_PUBLIC_UMAMI_*` (analytics).
-- `lib/env.ts` validates `DB_HOST/DB_USER/DB_NAME/AUTH_SECRET` and **throws on
-  import** if missing — but **nothing imports it**. Do not add `@/lib/env`
-  imports unless you also supply DB env vars or remove those requirements. It
-  is stale.
-- Feature flags: `lib/features.ts` hardcodes `CHATBOT_ENABLED = false`. The
-  `NEXT_PUBLIC_*` flags in `lib/env.ts` are unused. Toggle features by editing
-  `lib/features.ts`, not via env.
+- Feature flags live in `lib/features.ts`: `CHATBOT_ENABLED` (hardcoded
+  `false`) and `ANALYTICS_CONFIG` (enabled only when both
+  `NEXT_PUBLIC_UMAMI_SCRIPT_URL` and `NEXT_PUBLIC_UMAMI_WEBSITE_ID` are set).
+  Toggle features by editing `lib/features.ts`, not via env.
 
 ## Commands
 
@@ -36,23 +36,29 @@ exists).
   not npm/yarn.
 - `pnpm dev` — Next.js dev server on `0.0.0.0:3000`.
 - `pnpm build` — `next build` (standalone output) **plus** copies
-  `.next/static`, `public/`, and `data/` into `.next/standalone/`. Do not
-  strip the copy steps; the standalone server needs them.
+  `.next/static`, `public/`, and `data/` into `.next/standalone/` via Unix
+  `cp -r`. Do not strip the copy steps; the standalone server needs them.
+  **Note:** the `cp` commands fail on Windows PowerShell; run the build under
+  Git Bash/WSL, or replace with cross-platform copies if developing on Windows.
 - `pnpm start` — `next start` (not the production deployment path).
-- `pnpm lint` — `next lint`. No typecheck script; run `pnpm exec tsc --noEmit`.
+- `pnpm lint` — `next lint`, which is **deprecated in Next 16** and errors with
+  "Invalid project directory". Use a direct ESLint invocation instead, or
+  migrate to the new lint setup.
+- No typecheck script; run `pnpm exec tsc --noEmit`.
 - No `db:*`, `test`, or `e2e` scripts are defined despite README listing them.
-  Run tests directly:
-  - Unit: `pnpm exec vitest` (config `vitest.config.ts`; `tests/setup.ts`
-    injects mock env vars).
-  - E2e: `pnpm exec playwright test` (config `playwright.config.ts`; auto-
-    starts `pnpm dev` as the `webServer`).
 
-## Tests are partially broken — verify before trusting
+## Tests
 
-- `tests/db.test.ts` imports `toCamelCase/toSnakeCase/isValidUUID/
-  buildWhereClause` from `@/lib/db`, but those helpers do not exist in the
-  JSON-store modules. This test will fail to import. Don't assume green tests.
-- `tsconfig.json` excludes `tests/` and `e2e/` from typechecking.
+- No unit tests currently exist (`tests/` was removed — the previous tests
+  imported nonexistent Postgres helpers). `vitest.config.ts` is gone.
+- E2e: `playwright.config.ts` exists but `@playwright/test` is **not a
+  dependency**. To run e2e, first `pnpm add -D @playwright/test`, then
+  `pnpm exec playwright test` (config auto-starts `pnpm dev` as the
+  `webServer`). Only `e2e/api.spec.ts` remains; it tests `/api/health`,
+  `/api/products`, and `/api/sources`.
+- `tsconfig.json` excludes `e2e/` and `playwright.config.ts` from
+  typechecking (the latter is needed so `next build` doesn't fail on the
+  missing `@playwright/test` import).
 
 ## i18n (next-intl, cookie-based)
 
@@ -60,28 +66,35 @@ exists).
 - Locale is selected via the **`CARIAIR_LOCALE` cookie**, not a URL prefix
   (`i18n/routing.ts`, `i18n/request.ts`, `middleware.ts`). Do not add
   `/[locale]` route segments.
-- `middleware.ts` sets the cookie, guards `/contribute` and `/analytics`
-  (redirect to `/login`), and redirects logged-in users away from `/login`
-  and `/register`.
+- `middleware.ts` currently only sets the locale cookie. Auth-based route
+  protection (`/contribute`, `/analytics`) is **disabled** because the auth
+  layer is unimplemented (see below).
 
 ## Auth caveat
 
-- `middleware.ts` imports `auth` from `@/lib/auth`, but **no `lib/auth.ts`
-  exists** in the repo. The auth layer is unimplemented/missing; protected-
-  route redirects will error at runtime. Confirm the current state before
-  adding auth-dependent code.
+- **No `lib/auth.ts` exists.** The auth layer is unimplemented/missing.
+- `middleware.ts` previously imported `auth` from `@/lib/auth` and guarded
+  `/contribute` + `/analytics` (redirect to `/login`) and redirected logged-in
+  users away from `/login` + `/register`. That auth logic was removed to make
+  the build pass; restore it only when `lib/auth.ts` is implemented.
+- There is no `next-auth` dependency, no `lib/auth.ts`, and no
+  `types/next-auth.d.ts` (removed — it augmented a module that wasn't
+  installed). Confirm the current state before adding auth-dependent code.
 
 ## App structure
 
 - Next.js 16 App Router, React 19, TypeScript strict, Tailwind, shadcn/ui
   (`components/ui/`).
-- Path alias: `@/*` -> repo root (tsconfig + vitest).
+- Path alias: `@/*` -> repo root (tsconfig).
 - API routes under `app/api/`: `products`, `brands`, `sources`,
   `manufacturers`, `images`, `export/{products,products/json}`, `openapi`,
   `health`, `db-test`, `chat`, `rate-limit`. Swagger UI at `/docs`.
-- `server.js` (root) is a committed standalone Next.js server entry used in
-  production; `start-prod.sh` runs `.next/standalone/server.js`. Note:
-  `server.js` hardcodes `outputFileTracingRoot: "/opt/cariair"`.
+- `components/ui/` contains only the shadcn components actually used by the
+  app (19 files). Removed ~30 unused shadcn components and their Radix deps
+  during cleanup; re-add via `pnpm dlx shadcn@latest add <name>` if needed.
+- Production runs `.next/standalone/server.js` (the build output), launched
+  by `start-prod.sh` or the systemd service. There is no longer a root
+  `server.js` entry.
 
 ## Production deploy
 

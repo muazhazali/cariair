@@ -14,7 +14,7 @@ Before creating bug reports, please check the existing issues to see if the prob
 
 - **Use a clear and descriptive title**
 - **Describe the exact steps to reproduce the problem**
-- **Provide specific examples** (e.g., which water brand data is incorrect)
+- **Provide specific examples** (e.g. which water brand data is incorrect)
 - **Describe the behavior you observed** and what behavior you expected
 - **Include screenshots** if applicable
 - **Include your environment details** (OS, browser, Node.js version)
@@ -49,7 +49,7 @@ One of the main ways to contribute is by adding or updating water source data:
 1. Fork the repository
 2. Create a new branch from `main`: `git checkout -b feature/my-feature`
 3. Make your changes
-4. Run tests and ensure code quality: `pnpm lint`
+4. Verify the build: `pnpm build`
 5. Commit with clear messages
 6. Push to your fork and submit a pull request
 
@@ -66,43 +66,21 @@ One of the main ways to contribute is by adding or updating water source data:
 
 - Node.js 20+
 - pnpm 10+
-- Docker (for PostgreSQL database)
 
-### Recommended: PostgreSQL in Docker, Next.js Locally
-
-This is the fastest development setup with hot reload support:
+### Setup
 
 ```bash
 git clone https://github.com/muazhazali/cariair.git
 cd cariair
-cp .env.example .env.local
+cp .env.example .env.local   # optional — only for chatbot/analytics
 pnpm install
-
-# Terminal 1: Start PostgreSQL in Docker
-pnpm run dev:db
-
-# Terminal 2: Start Next.js dev server (hot reload)
 pnpm dev
 ```
 
-The app will be available at `http://localhost:3000`
+The app will be available at `http://localhost:3000`.
 
-### Alternative: Manual PostgreSQL Setup
-
-If you prefer to run PostgreSQL without Docker:
-
-```bash
-git clone https://github.com/muazhazali/cariair.git
-cd cariair
-pnpm install
-
-# Setup PostgreSQL manually
-createdb cariair
-psql -d cariair -f sql/schema.sql
-
-# Start dev server
-pnpm dev
-```
+No database setup is required — all data lives in `data/db.json` and is
+read/written at runtime via `lib/json-store.ts`.
 
 ## Style Guidelines
 
