@@ -1,306 +1,119 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, MapPin, Droplet, BarChart3, Calendar, Building2, Globe, CheckCircle2 } from "lucide-react"
+import { getTranslations } from "next-intl/server"
+import { getProductById } from "@/lib/db/products"
+import type { Product } from "@/lib/types/db"
 import { MineralCompositionPanel } from "@/components/mineral-composition-panel"
 import { HealthBenefitsPanel } from "@/components/health-benefits-panel"
 import { WaterTypeBadge } from "@/components/water-type-badge"
 import { ClientDate } from "@/components/client-date"
-import { getTranslations } from "next-intl/server"
-import { getProductById } from "@/lib/db/products";
-import { Product } from "@/lib/types/db";
+import { ClientMapWrapper } from "@/components/client-map-wrapper"
+import { SafeImage } from "@/components/safe-image"
+import { ArrowIcon, PanelHeading, RegistryGlyph } from "@/components/editorial-primitives"
 
-import { ClientMapWrapper } from "@/components/client-map-wrapper";
-import { SafeImage } from "@/components/safe-image";
+export const dynamic = "force-dynamic"
 
-export const dynamic = 'force-dynamic'
+type Mineral = { name: string; symbol?: string; amount: number; unit?: string }
 
-// Fetch product from PostgreSQL
 async function getProduct(id: string) {
-  try {
-    return await getProductById(id);
-  } catch (error) {
-    console.error("[sources/[id]] Error fetching product:", id, error);
-    return null;
-  }
+  try { return await getProductById(id) }
+  catch (error) { console.error("[sources/[id]] Error fetching product:", id, error); return null }
 }
 
 export default async function SourcePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+  const { id } = await params
+  let product: Product | null = null
+  let t: Awaited<ReturnType<typeof getTranslations<"product">>>
+  try { [product, t] = await Promise.all([getProduct(id), getTranslations("product")]) }
+  catch { product = await getProduct(id); t = ((key: string) => key) as typeof t }
+  if (!product) notFound()
 
-  let product: Product | null = null;
-  let t: Awaited<ReturnType<typeof getTranslations<'product'>>>;
-  try {
-    [product, t] = await Promise.all([getProduct(id), getTranslations('product')]);
-  } catch (error) {
-    console.error("[sources/[id]] Error loading page:", error);
-    // If getTranslations fails, load without translations
-    product = await getProduct(id);
-    t = ((key: string) => key) as any;
-  }
+  const { brand, source } = product
+  const image = product.images?.[0]
+  const imageId = image ? typeof image === "string" ? image : image.id : null
+  const imageUrl = imageId ? `/api/images/${imageId}` : "/placeholder.svg"
+  const rawMinerals = product.minerals_json
+  let minerals: Mineral[] = []
+  if (typeof rawMinerals === "string") {
+    try { const parsed = JSON.parse(rawMinerals); minerals = Array.isArray(parsed) ? parsed : Object.values(parsed) }
+    catch (error) { console.error("Error parsing minerals JSON", error) }
+  } else if (Array.isArray(rawMinerals)) minerals = rawMinerals as Mineral[]
+  else if (rawMinerals && typeof rawMinerals === "object") minerals = Object.values(rawMinerals) as Mineral[]
 
-  if (!product) {
-    notFound();
-  }
-
-  const brand = product.brand;
-  const source = product.source;
-
-  // Get image URL - handles both object format {id, filename, url} and string format
-  const getImageUrl = (): string => {
-    if (!product.images || product.images.length === 0) {
-      return '/placeholder.svg'
-    }
-    const firstImage = product.images[0]
-    // If it's an object with id property, use it; if it's a string, use directly
-    const imageId = typeof firstImage === 'string' ? firstImage : firstImage?.id
-    return imageId ? `/api/images/${imageId}` : '/placeholder.svg'
-  }
-
-  const imageUrl = getImageUrl()
-
-  // Parse minerals if it's a string, or use as is if it's already an object/array
-  let minerals: any[] = [];
-  if (typeof product.minerals_json === 'string') {
-    try {
-      minerals = JSON.parse(product.minerals_json);
-    } catch (e) {
-      console.error("Error parsing minerals JSON", e);
-    }
-  } else if (Array.isArray(product.minerals_json)) {
-    minerals = product.minerals_json;
-  }
-
-  // lat/lng are already numbers from the database transformation
-  const lat = source?.lat ?? null;
-  const lng = source?.lng ?? null;
+  const hasCoordinates = source?.lat != null && source?.lng != null
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
-      <div className="container px-4 py-6 md:px-6 md:py-8">
-        <Button variant="ghost" asChild className="mb-6 -ml-2">
-          <Link href="/#sources">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('backToSources')}
-          </Link>
-        </Button>
-
-        {/* Hero Section */}
-        <div className="mb-8">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
-            <div className="flex-1">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3">
-                {product.product_name}
-              </h1>
-              <div className="flex flex-wrap items-center gap-3 mb-4">
-                <WaterTypeBadge type={source?.type || "Mineral Water"} className="text-sm px-3 py-1" />
-                {source?.location_address && (
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                    <MapPin className="mr-1.5 h-4 w-4" />
-                    <span>{source.location_address}</span>
-                  </div>
-                )}
+    <main id="main-content" className="min-h-screen bg-bone">
+      <header className="editorial-texture border-b border-border">
+        <div className="mx-auto max-w-[88rem] px-5 pb-14 pt-8 sm:px-8 sm:pb-20 lg:px-12">
+          <Link href="/#sources" className="text-link"><ArrowIcon direction="left" />{t("backToSources")}</Link>
+          <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end lg:gap-16">
+            <div>
+              <p className="section-index">Source record / {product.id.slice(0, 8)}</p>
+              <h1 className="mt-5 max-w-5xl font-display text-[clamp(3.25rem,7vw,6.75rem)] leading-[0.9] tracking-[-0.052em] text-pretty">{product.product_name}</h1>
+              <div className="mt-7 flex flex-wrap items-center gap-4">
+                <WaterTypeBadge type={source?.type || "Mineral Water"} />
+                {source?.location_address && <span className="flex items-center gap-2 text-sm text-muted-foreground"><RegistryGlyph kind="map" className="h-7 w-7 rounded-[4px]" />{source.location_address}</span>}
               </div>
             </div>
-            <div className="relative w-full md:w-64 h-64 md:h-64 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg">
-              <SafeImage
-                src={imageUrl}
-                alt={product.product_name || "Product Image"}
-                className="object-contain p-6 w-full h-full"
-              />
+            <div className="relative h-72 overflow-hidden rounded-xl border border-border bg-[#eeece5] sm:h-80">
+              <span className="absolute right-4 top-4 z-10 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">Product image</span>
+              <SafeImage src={imageUrl} alt={product.product_name || "Bottled water product"} className="h-full w-full object-contain p-7" />
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Main Content Grid */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Left Sidebar - Company Info */}
-          <div className="lg:col-span-1 space-y-6">
-            <Card className="border-2">
-              <CardHeader>
-                <CardTitle className="flex items-center text-lg">
-                  <Building2 className="mr-2 h-5 w-5" />
-                  {t('companyInfo')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('brand')}</span>
-                  <p className="text-base font-semibold mt-1">{brand?.brand_name || t('unknown')}</p>
-                </div>
-                {brand?.parent_company && (
-                  <div>
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('parentCompany')}</span>
-                    <p className="text-base font-medium mt-1">{brand.parent_company}</p>
-                  </div>
-                )}
-                <div>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('country')}</span>
-                  <p className="text-base font-medium mt-1">{source?.country || "Malaysia"}</p>
-                </div>
-                {brand?.website_url && (
-                  <div>
-                    <a
-                      href={brand.website_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center text-sm font-medium text-primary hover:underline"
-                    >
-                      <Globe className="mr-2 h-4 w-4" />
-                      {t('visitWebsite')}
-                    </a>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+      <div className="mx-auto grid max-w-[88rem] gap-6 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-[19rem_minmax(0,1fr)] lg:items-start lg:px-12 lg:py-24">
+        <aside className="space-y-5 lg:sticky lg:top-28">
+          <InfoPanel title={t("companyInfo")} index="01">
+            <InfoRow label={t("brand")} value={brand?.brand_name || t("unknown")} />
+            {brand?.parent_company && <InfoRow label={t("parentCompany")} value={brand.parent_company} />}
+            <InfoRow label={t("country")} value={source?.country || "Malaysia"} />
+            {brand?.website_url && <a href={brand.website_url} target="_blank" rel="noopener noreferrer" className="text-link mt-1">{t("visitWebsite")}<ArrowIcon direction="up-right" /></a>}
+          </InfoPanel>
 
-            <Card className="border-2">
-              <CardHeader>
-                <CardTitle className="flex items-center text-lg">
-                  <CheckCircle2 className="mr-2 h-5 w-5" />
-                  {t('verification')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('status')}</span>
-                  <div className="mt-1">
-                    <Badge variant={product.status === 'approved' ? 'default' : 'secondary'} className="text-sm">
-                      {product.status || 'Pending'}
-                    </Badge>
-                  </div>
-                </div>
-                <div>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('created')}</span>
-                  <p className="text-base font-medium mt-1 flex items-center">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    <ClientDate date={product.created_at} />
-                  </p>
-                </div>
-                {source?.kkm_approval_number && (
-                  <div>
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('kkmApproval')}</span>
-                    <p className="text-base font-medium mt-1 font-mono text-sm">{source.kkm_approval_number}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+          <InfoPanel title={t("verification")} index="02">
+            <div><span className="section-index">{t("status")}</span><p className="mt-2 inline-flex rounded-full bg-[#edf3ec] px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-[#346538]">{product.status || "pending"}</p></div>
+            <InfoRow label={t("created")} value={<ClientDate date={product.created_at} />} />
+            {source?.kkm_approval_number && <InfoRow label={t("kkmApproval")} value={<span className="font-mono text-xs">{source.kkm_approval_number}</span>} />}
+          </InfoPanel>
+        </aside>
 
-          {/* Right Content - Properties, Minerals, Map */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Water Properties Section */}
-            <Card className="border-2">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center text-xl">
-                  <Droplet className="mr-2 h-6 w-6 text-blue-500" />
-                  {t('waterProperties')}
-                </CardTitle>
-                <CardDescription className="text-base mt-2">
-                  {t('waterPropertiesDesc')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-lg border-2 border-gray-200 dark:border-gray-800 p-6 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20">
-                    <div className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">{t('phLevel')}</div>
-                    <div className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-1">
-                      {product.ph_level || "-"}
-                    </div>
-                    <div className="text-sm font-medium text-gray-600 dark:text-gray-500">
-                      {product.ph_level ? (
-                        product.ph_level < 7 ? (
-                          <span className="text-red-600 dark:text-red-400">{t('acidic')}</span>
-                        ) : product.ph_level > 7 ? (
-                          <span className="text-blue-600 dark:text-blue-400">{t('alkaline')}</span>
-                        ) : (
-                          <span className="text-gray-600 dark:text-gray-400">{t('neutral')}</span>
-                        )
-                      ) : ""}
-                    </div>
-                  </div>
-                  <div className="rounded-lg border-2 border-gray-200 dark:border-gray-800 p-6 bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20">
-                    <div className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">{t('tds')}</div>
-                    <div className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-1">
-                      {product.tds || "-"}
-                    </div>
-                    <div className="text-sm font-medium text-gray-600 dark:text-gray-500">
-                      {product.tds ? "mg/L" : ""}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      {t('totalDissolvedSolids')}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        <div className="min-w-0 space-y-6">
+          <section className="rounded-xl border border-border bg-card p-6 sm:p-8">
+            <PanelHeading index="03 / Analysis" title={t("waterProperties")} description={t("waterPropertiesDesc")} />
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <Metric label={t("phLevel")} value={product.ph_level != null ? Number(product.ph_level).toFixed(1) : "—"} note={product.ph_level == null ? undefined : product.ph_level < 7 ? t("acidic") : product.ph_level > 7 ? t("alkaline") : t("neutral")} />
+              <Metric label={t("tds")} value={product.tds != null ? Number(product.tds).toFixed(0) : "—"} unit={product.tds != null ? "mg/L" : undefined} note={t("totalDissolvedSolids")} />
+            </div>
+          </section>
 
-            {/* Mineral Composition Section - Enhanced */}
-            <MineralCompositionPanel minerals={minerals} productName={product.product_name || "Unknown"} />
+          <MineralCompositionPanel minerals={minerals} productName={product.product_name || t("unknown")} />
+          <HealthBenefitsPanel minerals={minerals} phLevel={product.ph_level} tds={product.tds} productName={product.product_name || t("unknown")} />
 
-            {/* Health Benefits Section */}
-            <HealthBenefitsPanel
-              minerals={minerals}
-              phLevel={product.ph_level}
-              tds={product.tds}
-              productName={product.product_name || "Unknown"}
-            />
-
-            {/* Map Section */}
-            {lat && lng ? (
-              <Card className="border-2">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center text-xl">
-                    <MapPin className="mr-2 h-6 w-6 text-red-500" />
-                    {t('sourceLocation')}
-                  </CardTitle>
-                  <CardDescription className="text-base mt-2">
-                    {t('sourceLocationDesc')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ClientMapWrapper
-                    lat={lat}
-                    lng={lng}
-                    sourceName={source?.source_name || product.product_name}
-                    locationAddress={source?.location_address}
-                    height="500px"
-                  />
-                </CardContent>
-              </Card>
+          <section className="overflow-hidden rounded-xl border border-border bg-card">
+            <div className="p-6 sm:p-8"><PanelHeading index="06 / Coordinates" title={t("sourceLocation")} description={t("sourceLocationDesc")} /></div>
+            {hasCoordinates ? (
+              <ClientMapWrapper lat={Number(source!.lat)} lng={Number(source!.lng)} sourceName={source?.source_name || product.product_name} locationAddress={source?.location_address} height="30rem" />
             ) : (
-              <Card className="border-2">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center text-xl">
-                    <MapPin className="mr-2 h-6 w-6 text-red-500" />
-                    {t('sourceLocation')}
-                  </CardTitle>
-                  <CardDescription className="text-base mt-2">
-                    {t('sourceLocationDesc')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[500px] rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center bg-gray-50 dark:bg-gray-900/50">
-                    <div className="text-center">
-                      <MapPin className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-700 mb-3" />
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {t('locationNotAvailable')}
-                      </p>
-                      {source?.location_address && (
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                          {source.location_address}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="grid min-h-72 place-items-center border-t border-border bg-muted/50 p-8 text-center"><div><RegistryGlyph kind="map" className="mx-auto" /><p className="mt-4 text-sm text-muted-foreground">{t("locationNotAvailable")}</p>{source?.location_address && <p className="mt-1 text-xs text-muted-foreground">{source.location_address}</p>}</div></div>
             )}
-          </div>
+          </section>
         </div>
       </div>
-    </div>
+    </main>
   )
+}
+
+function InfoPanel({ title, index, children }: { title: string; index: string; children: React.ReactNode }) {
+  return <section className="rounded-xl border border-border bg-card p-6"><div className="flex items-baseline justify-between border-b border-border pb-4"><h2 className="font-display text-2xl tracking-[-0.03em]">{title}</h2><span className="font-mono text-[9px] text-muted-foreground">{index}</span></div><div className="mt-5 space-y-5">{children}</div></section>
+}
+
+function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
+  return <div><span className="section-index">{label}</span><p className="mt-1.5 text-sm font-medium leading-6">{value}</p></div>
+}
+
+function Metric({ label, value, unit, note }: { label: string; value: string; unit?: string; note?: string }) {
+  return <article className="rounded-lg border border-border bg-[#f4f2ec] p-6"><p className="section-index">{label}</p><p className="mt-4 font-display text-6xl leading-none tracking-[-0.05em] tabular-nums">{value}{unit && <span className="ml-2 font-sans text-xs tracking-normal text-muted-foreground">{unit}</span>}</p>{note && <p className="mt-3 text-xs text-muted-foreground">{note}</p>}</article>
 }

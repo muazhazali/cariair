@@ -1,86 +1,20 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 
-interface SingleSourceMapProps {
-  lat: number
-  lng: number
-  sourceName?: string | null
-  locationAddress?: string | null
-  height?: string
-}
-
-export function SingleSourceMap({ 
-  lat, 
-  lng, 
-  sourceName, 
-  locationAddress,
-  height = "500px"
-}: SingleSourceMapProps) {
+export function SingleSourceMap({ lat, lng, sourceName, locationAddress, height = "500px" }: { lat: number; lng: number; sourceName?: string | null; locationAddress?: string | null; height?: string }) {
   const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const numLat = Number(lat), numLng = Number(lng)
+  const marker = useMemo(() => L.icon({
+    iconUrl: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='34' viewBox='0 0 28 34'%3E%3Cpath fill='%232f382a' d='M14 0C6.27 0 0 6.27 0 14c0 9.63 14 20 14 20s14-10.37 14-20C28 6.27 21.73 0 14 0Z'/%3E%3Ccircle cx='14' cy='14' r='5' fill='%23dfe8d9'/%3E%3C/svg%3E",
+    iconSize: [28, 34], iconAnchor: [14, 34], popupAnchor: [0, -31],
+  }), [])
 
-  const numLat = Number(lat)
-  const numLng = Number(lng)
+  if (!mounted) return <div className="grid w-full animate-pulse place-items-center border-t border-border bg-muted" style={{ height }}><p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Loading map</p></div>
 
-  useEffect(() => {
-    setMounted(true)
-
-    // Fix for default marker icons in Leaflet with Next.js
-    const DefaultIcon = L.icon({
-      iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-      shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-    })
-
-    L.Marker.prototype.options.icon = DefaultIcon
-  }, [])
-
-  if (!mounted) {
-    return (
-      <div 
-        className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
-        style={{ height }}
-      >
-        <p className="text-gray-500 dark:text-gray-400">Loading map...</p>
-      </div>
-    )
-  }
-
-  return (
-    <div 
-      className="w-full rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden"
-      style={{ height }}
-    >
-      <MapContainer 
-        center={[numLat, numLng]} 
-        zoom={13} 
-        style={{ height: "100%", width: "100%" }}
-        scrollWheelZoom={true}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker position={[numLat, numLng]}>
-          <Popup>
-            <div className="space-y-1">
-              {sourceName && (
-                <h3 className="font-semibold text-base">{sourceName}</h3>
-              )}
-              {locationAddress && (
-                <p className="text-sm text-gray-600">{locationAddress}</p>
-              )}
-              <p className="text-xs text-gray-500 mt-1">
-                Coordinates: {numLat.toFixed(6)}, {numLng.toFixed(6)}
-              </p>
-            </div>
-          </Popup>
-        </Marker>
-      </MapContainer>
-    </div>
-  )
+  return <div className="w-full overflow-hidden border-t border-border" style={{ height }}><MapContainer center={[numLat, numLng]} zoom={13} style={{ height: "100%", width: "100%" }} scrollWheelZoom><TileLayer attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" /><Marker position={[numLat, numLng]} icon={marker}><Popup><article className="space-y-1">{sourceName && <h3 className="text-sm font-semibold">{sourceName}</h3>}{locationAddress && <p className="text-xs text-muted-foreground">{locationAddress}</p>}<p className="font-mono text-[10px] text-muted-foreground">{numLat.toFixed(5)}, {numLng.toFixed(5)}</p></article></Popup></Marker></MapContainer></div>
 }

@@ -1,91 +1,15 @@
 "use client"
 
-import { HelpCircle } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { RegistryGlyph } from "@/components/editorial-primitives"
 
-interface WaterMetricsHelpProps {
-  translations: {
-    trigger: string
-    title: string
-    phTitle: string
-    phDesc: string
-    phAcidic: string
-    phNeutral: string
-    phAlkaline: string
-    tdsTitle: string
-    tdsDesc: string
-    tdsLow: string
-    tdsMedium: string
-    tdsHigh: string
-  }
+interface Props { translations: { trigger: string; title: string; phTitle: string; phDesc: string; phAcidic: string; phNeutral: string; phAlkaline: string; tdsTitle: string; tdsDesc: string; tdsLow: string; tdsMedium: string; tdsHigh: string } }
+
+export function WaterMetricsHelp({ translations: t }: Props) {
+  return <Dialog><DialogTrigger asChild><Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:bg-transparent hover:text-foreground"><span className="grid h-5 w-5 place-items-center rounded-full border border-current font-mono text-[10px]">?</span>{t.trigger}</Button></DialogTrigger><DialogContent className="max-w-lg rounded-xl border-border p-0"><DialogHeader className="border-b border-border p-6 pr-12"><p className="section-index">Reading water</p><DialogTitle className="font-display text-3xl font-normal tracking-[-0.03em]">{t.title}</DialogTitle></DialogHeader><div className="space-y-8 p-6 text-sm"><MetricHelp index="01" title={t.phTitle} description={t.phDesc} items={[t.phAcidic,t.phNeutral,t.phAlkaline]} /><MetricHelp index="02" title={t.tdsTitle} description={t.tdsDesc} items={[t.tdsLow,t.tdsMedium,t.tdsHigh]} /></div></DialogContent></Dialog>
 }
 
-export function WaterMetricsHelp({ translations }: WaterMetricsHelpProps) {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground">
-          <HelpCircle className="h-4 w-4" />
-          {translations.trigger}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{translations.title}</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 text-sm">
-          {/* pH */}
-          <div className="space-y-1.5">
-            <h3 className="font-semibold text-base">{translations.phTitle}</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              {translations.phDesc}
-            </p>
-            <ul className="space-y-1 pt-1">
-              <li className="flex items-center gap-2">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-orange-500" />
-                <span>{translations.phAcidic}</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-green-500" />
-                <span>{translations.phNeutral}</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-500" />
-                <span>{translations.phAlkaline}</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* TDS */}
-          <div className="space-y-1.5">
-            <h3 className="font-semibold text-base">{translations.tdsTitle}</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              {translations.tdsDesc}
-            </p>
-            <ul className="space-y-1 pt-1">
-              <li className="flex items-center gap-2">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-slate-300" />
-                <span>{translations.tdsLow}</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-400" />
-                <span>{translations.tdsMedium}</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-purple-500" />
-                <span>{translations.tdsHigh}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  )
+function MetricHelp({ index, title, description, items }: { index: string; title: string; description: string; items: string[] }) {
+  return <section className="grid gap-4 sm:grid-cols-[2.5rem_1fr]"><span className="font-mono text-[10px] text-muted-foreground">{index}</span><div><h3 className="text-base font-semibold">{title}</h3><p className="mt-1.5 leading-6 text-muted-foreground">{description}</p><ul className="mt-4 divide-y divide-border border-y border-border">{items.map((item, i) => <li key={item} className="flex gap-3 py-2.5"><span className="font-mono text-[9px] text-[#66765a]">0{i+1}</span><span>{item}</span></li>)}</ul></div></section>
 }

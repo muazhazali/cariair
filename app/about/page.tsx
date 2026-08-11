@@ -1,76 +1,54 @@
 import Link from "next/link"
-import { Droplet, Github } from "lucide-react"
+import { getTranslations } from "next-intl/server"
+import { ArrowIcon, PageIntro, PanelHeading, RegistryGlyph } from "@/components/editorial-primitives"
 
-export const metadata = {
-  title: "About - CariAir",
-  description: "About CariAir — Malaysia's Water Source Registry",
+export async function generateMetadata() {
+  const t = await getTranslations("about")
+  return { title: t("title"), description: t("subtitle") }
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const t = await getTranslations("about")
+  const home = await getTranslations("home")
+  const product = await getTranslations("product")
+
   return (
-    <div className="container max-w-2xl mx-auto px-4 py-12">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <Droplet className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-        <h1 className="text-3xl font-bold mb-3">About CariAir</h1>
-        <p className="text-muted-foreground">
-          Malaysia&apos;s open registry for mineral and drinking water sources.
-        </p>
-      </div>
+    <main id="main-content" className="min-h-screen bg-background">
+      <PageIntro index="CariAir / About" title={t("title")} description={t("subtitle")}>
+        <Link href="/#sources" className="text-link mt-6">{home("heroCtaBrowse")}<ArrowIcon /></Link>
+      </PageIntro>
 
-      {/* Content */}
-      <div className="space-y-8">
-        <section>
-          <h2 className="text-lg font-semibold mb-2">What We Do</h2>
-          <p className="text-muted-foreground leading-relaxed">
-            CariAir is a community-driven platform that collects and presents data on
-            mineral and drinking water brands in Malaysia. We believe consumers should
-            have easy access to information about water quality, pH levels, TDS, and mineral
-            composition.
-          </p>
+      <div className="mx-auto max-w-[88rem] px-5 py-16 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
+        <section className="grid gap-10 lg:grid-cols-[.72fr_1.28fr] lg:gap-20">
+          <PanelHeading index="01 / Purpose" title={t("whatWeDoTitle")} description={t("whatWeDoDesc")} />
+          <div className="border-t border-border pt-7 text-lg leading-8 text-muted-foreground lg:mt-1">
+            <p>{t("whatWeDoContent1")}</p>
+            <p className="mt-5">{t("whatWeDoContent2")} <Link href="/#sources" className="text-link">{t("sourcesLink")}</Link>, <Link href="/#map" className="text-link">{t("mapLink")}</Link>, <Link href="/learn/guide" className="text-link">{t("learnLink")}</Link> {t("whatWeDoContent3")}</p>
+          </div>
         </section>
 
-        <section>
-          <h2 className="text-lg font-semibold mb-2">Data Sources</h2>
-          <p className="text-muted-foreground leading-relaxed">
-            Our data comes from public records, product labels, and direct submissions
-            from manufacturers. All information is verified before publication.
-            If you notice any inaccuracies, please let us know.
-          </p>
+        <section className="mt-20 grid gap-4 border-t border-border pt-10 sm:grid-cols-3 lg:mt-28">
+          <DataPoint index="01" label={product("phLevel")} value="0—14" />
+          <DataPoint index="02" label={product("tds")} value="mg/L" />
+          <DataPoint index="03" label={product("sourceLocation")} value="MY" />
         </section>
 
-        <section>
-          <h2 className="text-lg font-semibold mb-2">Open Source</h2>
-          <p className="text-muted-foreground leading-relaxed">
-            CariAir is an open-source project. The code is available on GitHub and
-            we welcome contributions from the community.
-          </p>
-          <a
-            href="https://github.com/muazhazali/cariair"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 mt-3 text-blue-600 hover:underline"
-          >
-            <Github className="h-4 w-4" />
-            View on GitHub
-          </a>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-semibold mb-2">Contribute</h2>
-          <p className="text-muted-foreground leading-relaxed">
-            Want to add a water source or update information?
-            Please open an issue or pull request on our GitHub repository.
-          </p>
+        <section className="mt-20 grid overflow-hidden rounded-xl border border-border bg-card lg:grid-cols-[1.15fr_.85fr] lg:mt-28">
+          <div className="p-7 sm:p-10 lg:p-14">
+            <RegistryGlyph kind="code" />
+            <h2 className="mt-8 font-display text-4xl tracking-[-0.04em] sm:text-5xl">{t("openSourceTitle")}</h2>
+            <p className="mt-4 max-w-xl leading-7 text-muted-foreground">{t("openSourceContent")}</p>
+            <a href="https://github.com/muazhazali/cariair" target="_blank" rel="noopener noreferrer" className="quiet-button mt-7">GitHub<ArrowIcon direction="up-right" /></a>
+          </div>
+          <div className="editorial-texture flex min-h-64 items-end border-t border-border p-7 lg:border-l lg:border-t-0 lg:p-10">
+            <p className="max-w-sm font-display text-3xl leading-tight tracking-[-0.03em]">{t("openSourceDesc")}</p>
+          </div>
         </section>
       </div>
-
-      {/* Footer */}
-      <div className="mt-16 pt-8 border-t text-center">
-        <Link href="/" className="text-blue-600 hover:underline">
-          ← Back to Home
-        </Link>
-      </div>
-    </div>
+    </main>
   )
+}
+
+function DataPoint({ index, label, value }: { index: string; label: string; value: string }) {
+  return <article className="flex items-end justify-between border-b border-border py-6 last:border-b-0 sm:border-b-0 sm:border-r sm:px-7 sm:first:pl-0 sm:last:border-r-0"><div><p className="font-display text-4xl tracking-[-0.04em]">{value}</p><p className="mt-1 text-sm text-muted-foreground">{label}</p></div><span className="font-mono text-[10px] text-muted-foreground">{index}</span></article>
 }
