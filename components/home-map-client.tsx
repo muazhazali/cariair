@@ -1,8 +1,8 @@
 "use client"
 
-import { useMemo } from "react"
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
-import { Icon } from "leaflet"
+import { useEffect, useMemo } from "react"
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet"
+import { Icon, latLngBounds } from "leaflet"
 import "leaflet/dist/leaflet.css"
 import { Product } from "@/lib/types/db"
 import Link from "next/link"
@@ -19,12 +19,27 @@ const waterIcon = new Icon({
   popupAnchor: [0, -23],
 })
 
+// Fits the map view to all marker coordinates on mount/when markers change.
+function FitBounds({ products }: { products: Product[] }) {
+  const map = useMap()
+  useEffect(() => {
+    if (products.length === 0) return
+    const points = products.map((p) => [Number(p.source!.lat), Number(p.source!.lng)] as [number, number])
+    if (points.length === 1) {
+      map.setView(points[0], 12)
+      return
+    }
+    const bounds = latLngBounds(points)
+    map.fitBounds(bounds, { padding: [40, 40] })
+  }, [map, products])
+  return null
+}
+
 export function HomeMapClient({ products }: HomeMapClientProps) {
   // Filter products that have coordinates (using lat/lng from database)
   const productsWithCoords = useMemo(() => {
     return products.filter((p) => {
       const source = p.source
-      // Check for lat/lng (database column names) and ensure they're valid numbers
       const lat = source?.lat
       const lng = source?.lng
       return lat != null && lng != null && !isNaN(Number(lat)) && !isNaN(Number(lng))
@@ -44,6 +59,7 @@ export function HomeMapClient({ products }: HomeMapClientProps) {
       className="h-full w-full"
       style={{ zIndex: 1 }}
     >
+      <FitBounds products={productsWithCoords} />
       <TileLayer
         attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
