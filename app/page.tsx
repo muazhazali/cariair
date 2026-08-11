@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server"
 import { HomeContent } from "@/components/home-content"
 import { HomeMap } from "@/components/home-map"
 import { HomeFilters } from "@/components/home-filters"
+import { WaterMetricsHelp } from "@/components/water-metrics-help"
 
 export const dynamic = 'force-dynamic'
 
@@ -75,13 +76,31 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
 
       {/* Product Grid */}
       <section className="container px-4 py-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold tracking-tight">
-            {hasFilters ? t('matchingProducts') : t('exploreBrands')}
-          </h2>
-          <p className="text-muted-foreground mt-1">
-            {hasFilters ? t('matchingProductsDesc') : t('exploreBrandsDesc')}
-          </p>
+        <div className="mb-6 flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">
+              {hasFilters ? t('matchingProducts') : t('exploreBrands')}
+            </h2>
+            <p className="text-muted-foreground mt-1">
+              {hasFilters ? t('matchingProductsDesc') : t('exploreBrandsDesc')}
+            </p>
+          </div>
+          <WaterMetricsHelp
+            translations={{
+              trigger: t('helpTrigger'),
+              title: t('helpTitle'),
+              phTitle: t('helpPhTitle'),
+              phDesc: t('helpPhDesc'),
+              phAcidic: t('helpPhAcidic'),
+              phNeutral: t('helpPhNeutral'),
+              phAlkaline: t('helpPhAlkaline'),
+              tdsTitle: t('helpTdsTitle'),
+              tdsDesc: t('helpTdsDesc'),
+              tdsLow: t('helpTdsLow'),
+              tdsMedium: t('helpTdsMedium'),
+              tdsHigh: t('helpTdsHigh'),
+            }}
+          />
         </div>
         <HomeContent products={products} />
       </section>
