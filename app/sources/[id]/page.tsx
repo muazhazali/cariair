@@ -13,6 +13,7 @@ import { getProductById } from "@/lib/db/products";
 import { Product } from "@/lib/types/db";
 
 import { ClientMapWrapper } from "@/components/client-map-wrapper";
+import { SafeImage } from "@/components/safe-image";
 
 export const dynamic = 'force-dynamic'
 
@@ -104,14 +105,10 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
               </div>
             </div>
             <div className="relative w-full md:w-64 h-64 md:h-64 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg">
-              <img
+              <SafeImage
                 src={imageUrl}
                 alt={product.product_name || "Product Image"}
                 className="object-contain p-6 w-full h-full"
-                onError={(e) => {
-                  const img = e.currentTarget as HTMLImageElement;
-                  img.src = '/placeholder.jpg';
-                }}
               />
             </div>
           </div>

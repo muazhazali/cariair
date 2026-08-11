@@ -57,7 +57,22 @@
     "featuredDesc": "Terokai komposisi dan data kualiti terperinci",
     "browseAll": "Semak Semua Sumber Air",
     "noProducts": "Tiada produk ditemui. Tambah beberapa sumber air untuk bermula.",
-    "viewFullMap": "Lihat Peta Penuh"
+    "viewFullMap": "Lihat Peta Penuh",
+    "exploreBrands": "Terokai Jenama",
+    "exploreBrandsDesc": "Semak jenama air botol Malaysia mengikut syarikat induk, lokasi sumber, dan purata ciri air.",
+    "matchingProducts": "Produk Air Sepadan",
+    "matchingProductsDesc": "Produk yang sepadan dengan carian dan tapisan anda.",
+    "allWaterSources": "Semua Produk Air",
+    "allWaterSourcesDesc": "Setiap produk yang diluluskan dalam pendaftaran.",
+    "brandsProducts": "Produk",
+    "brandsProductSingular": "Produk",
+    "brandsAvgPh": "Purata pH",
+    "brandsAvgTds": "Purata TDS",
+    "brandsParentCompany": "Syarikat Induk",
+    "brandsViewBrand": "Lihat produk jenama",
+    "brandsNoData": "-",
+    "brandsNoBrands": "Tiada jenama ditemui",
+    "brandsNoBrandsDesc": "Produk diluluskan dengan jenama perlu ditambah sebelum jenama dipaparkan di sini."
   },
   "sources": {
     "title": "Pendaftaran Sumber Air",

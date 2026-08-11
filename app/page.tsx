@@ -1,9 +1,11 @@
 import { Suspense } from "react"
 import { getBrands, searchWaterSources } from "@/lib/products"
+import { getBrandsWithStats } from "@/lib/db/brands"
 import { getTranslations } from "next-intl/server"
 import { HomeContent } from "@/components/home-content"
 import { HomeMap } from "@/components/home-map"
 import { HomeFilters } from "@/components/home-filters"
+import { BrandGrid } from "@/components/brand-grid"
 
 export const dynamic = 'force-dynamic'
 
@@ -30,8 +32,8 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
   const minTds = searchParams.min_tds ? Number(searchParams.min_tds) : undefined
   const maxTds = searchParams.max_tds ? Number(searchParams.max_tds) : undefined
 
-  // Fetch data
-  const [products, brands] = await Promise.all([
+  // Fetch data in parallel: products (filtered) + brands list (for filters) + brand stats (for grid)
+  const [products, brands, brandsWithStats] = await Promise.all([
     searchWaterSources({
       query,
       types,
@@ -42,7 +44,11 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
       maxTds,
     }),
     getBrands(),
+    getBrandsWithStats(),
   ])
+
+  const hasFilters = Boolean(query) || brandIds.length > 0 || types.length > 0 ||
+    minPh !== undefined || maxPh !== undefined || minTds !== undefined || maxTds !== undefined
 
   return (
     <div className="min-h-screen">
@@ -70,8 +76,56 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
         </div>
       </div>
 
-      {/* Product Grid */}
-      <section className="container px-4 py-6">
+      {/* Brand Grid - Primary content when no brand filter is active */}
+      {!hasFilters && (
+        <section className="container px-4 py-8">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold tracking-tight">
+              {t('exploreBrands')}
+            </h2>
+            <p className="text-muted-foreground mt-1">
+              {t('exploreBrandsDesc')}
+            </p>
+          </div>
+          <BrandGrid
+            brands={brandsWithStats}
+            translations={{
+              products: t('brandsProducts'),
+              productSingular: t('brandsProductSingular'),
+              avgPh: t('brandsAvgPh'),
+              avgTds: t('brandsAvgTds'),
+              parentCompany: t('brandsParentCompany'),
+              viewBrand: t('brandsViewBrand'),
+              noData: t('brandsNoData'),
+              noBrands: t('brandsNoBrands'),
+              noBrandsDesc: t('brandsNoBrandsDesc'),
+            }}
+          />
+        </section>
+      )}
+
+      {/* Product Grid - Shown when filters are active (drill-down), or as secondary content */}
+      <section className={`container px-4 ${hasFilters ? 'py-6' : 'pt-2 pb-10'}`}>
+        {hasFilters && (
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold tracking-tight">
+              {t('matchingProducts')}
+            </h2>
+            <p className="text-muted-foreground mt-1">
+              {t('matchingProductsDesc')}
+            </p>
+          </div>
+        )}
+        {!hasFilters && products.length > 0 && (
+          <div className="mb-6 mt-8">
+            <h2 className="text-2xl font-bold tracking-tight">
+              {t('allWaterSources')}
+            </h2>
+            <p className="text-muted-foreground mt-1">
+              {t('allWaterSourcesDesc')}
+            </p>
+          </div>
+        )}
         <HomeContent products={products} />
       </section>
     </div>

@@ -57,7 +57,22 @@
     "featuredDesc": "Explore detailed composition and quality data",
     "browseAll": "Browse All Water Sources",
     "noProducts": "No products found. Add some water sources to get started.",
-    "viewFullMap": "View Full Map"
+    "viewFullMap": "View Full Map",
+    "exploreBrands": "Explore Brands",
+    "exploreBrandsDesc": "Browse Malaysian bottled water brands by parent company, source location, and average water properties.",
+    "matchingProducts": "Matching Water Products",
+    "matchingProductsDesc": "Products matching your search and filter criteria.",
+    "allWaterSources": "All Water Products",
+    "allWaterSourcesDesc": "Every approved product in the registry.",
+    "brandsProducts": "Products",
+    "brandsProductSingular": "Product",
+    "brandsAvgPh": "Avg pH",
+    "brandsAvgTds": "Avg TDS",
+    "brandsParentCompany": "Parent Company",
+    "brandsViewBrand": "View brand products",
+    "brandsNoData": "-",
+    "brandsNoBrands": "No brands found",
+    "brandsNoBrandsDesc": "Approved products with brands need to be added before brands appear here."
   },
   "sources": {
     "title": "Water Sources Registry",

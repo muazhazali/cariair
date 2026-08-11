@@ -11,12 +11,12 @@ interface HomeMapClientProps {
   products: Product[]
 }
 
-// Custom icon for water sources
+// Custom icon for water sources — droplet with pin tail
 const waterIcon = new Icon({
-  iconUrl: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22a8 8 0 0 0 8-8c0-3.5-2-6-4-8.5-1.5-1.5-3-3-4-6-1 3-2.5 4.5-4 6-2 2.5-4 5-4 8.5a8 8 0 0 0 8 8Z'/%3E%3C/svg%3E",
-  iconSize: [24, 24],
-  iconAnchor: [12, 24],
-  popupAnchor: [0, -24],
+  iconUrl: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='25' viewBox='0 0 32 40'%3E%3Cpath fill='%232563EB' d='M16 0C7.16 0 0 7.16 0 16c0 11 16 24 16 24s16-13 16-24C32 7.16 24.84 0 16 0Z'/%3E%3Cpath fill='%23ffffff' d='M16 8c-3.3 0-6 2.7-6 6 0 4 6 10 6 10s6-6 6-10c0-3.3-2.7-6-6-6Z'/%3E%3C/svg%3E",
+  iconSize: [20, 25],
+  iconAnchor: [10, 25],
+  popupAnchor: [0, -23],
 })
 
 export function HomeMapClient({ products }: HomeMapClientProps) {
@@ -40,7 +40,7 @@ export function HomeMapClient({ products }: HomeMapClientProps) {
     <MapContainer
       center={center as [number, number]}
       zoom={6}
-      scrollWheelZoom={false}
+      scrollWheelZoom={"center"}
       className="h-full w-full"
       style={{ zIndex: 1 }}
     >
