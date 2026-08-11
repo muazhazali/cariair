@@ -42,13 +42,12 @@ export function ProductCard({ product }: ProductCardProps) {
         <img
           src={imageUrl}
           alt={product.product_name || "Product"}
-          className="object-contain p-4 w-full h-full"
-          onError={(e) => {
-            // Fallback to placeholder if image fails to load
-            const img = e.currentTarget as HTMLImageElement
-            img.src = '/placeholder.jpg'
-          }}
+          className="absolute inset-0 h-full w-full object-contain p-4"
           loading="lazy"
+          onError={(e) => {
+            const img = e.currentTarget
+            if (img.src !== '/placeholder.jpg') img.src = '/placeholder.jpg'
+          }}
         />
       </div>
 
