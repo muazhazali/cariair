@@ -11,8 +11,8 @@ interface HomeMapProps {
 const HomeMapClient = dynamic(() => import("./home-map-client").then((mod) => mod.HomeMapClient), {
   ssr: false,
   loading: () => (
-    <div className="h-full w-full bg-muted flex items-center justify-center">
-      <span className="text-muted-foreground">Loading map...</span>
+    <div className="flex h-full w-full animate-pulse items-center justify-center bg-muted">
+      <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Loading map</span>
     </div>
   ),
 })

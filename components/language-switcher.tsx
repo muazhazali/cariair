@@ -28,7 +28,7 @@ export function LanguageSwitcher({ initialLocale }: LanguageSwitcherProps) {
 
   return (
     <div
-      className="flex items-center gap-0.5 rounded-lg border border-white/30 dark:border-white/20 bg-white/10 dark:bg-black/10 p-0.5"
+      className="flex items-center gap-0.5 rounded-md border border-border bg-muted/60 p-0.5"
       aria-label={t('label')}
     >
       {locales.map((locale) => (
@@ -38,10 +38,10 @@ export function LanguageSwitcher({ initialLocale }: LanguageSwitcherProps) {
           size="sm"
           disabled={isPending}
           onClick={() => switchLocale(locale)}
-          className={`h-7 px-2 text-xs font-semibold rounded-md transition-all ${
+          className={`h-7 rounded-[3px] px-2 font-mono text-[10px] font-semibold uppercase tracking-wider transition-colors ${
             currentLocale === locale
-              ? 'bg-white/30 dark:bg-white/20 text-foreground shadow-sm'
-              : 'text-foreground/60 hover:text-foreground hover:bg-white/20 dark:hover:bg-white/10'
+              ? 'bg-background text-foreground ring-1 ring-border'
+              : 'text-muted-foreground hover:bg-background/70 hover:text-foreground'
           }`}
         >
           {t(locale as 'ms' | 'en')}

@@ -9,9 +9,17 @@ import { locales, type Locale } from '@/i18n/routing'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'CariAir | Malaysia Mineral & Drinking Water Source Registry',
+  title: {
+    default: 'CariAir — Malaysia water source registry',
+    template: '%s — CariAir',
+  },
   description: 'The definitive registry of mineral and drinking water sources in Malaysia. Compare pH levels, TDS, and mineral composition of brands like Spritzer, Cactus, and more.',
   keywords: ['mineral water Malaysia', 'drinking water sources', 'water quality Malaysia', 'pH level mineral water', 'best mineral water brand Malaysia', 'CariAir'],
+  openGraph: {
+    title: 'CariAir — Malaysia water source registry',
+    description: 'Trace bottled water to its source and compare its composition.',
+    type: 'website',
+  },
 }
 
 export default async function RootLayout({
@@ -35,6 +43,7 @@ export default async function RootLayout({
         )}
       </head>
       <body suppressHydrationWarning className="min-h-screen bg-background">
+        <a href="#main-content" className="skip-link">Skip to content</a>
         <NextIntlClientProvider messages={messages}>
           <MainNav initialLocale={initialLocale} />
           {children}
