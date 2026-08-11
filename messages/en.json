@@ -18,14 +18,16 @@
   },
   "nav": {
     "home": "Home",
-    "allSources": "All Sources",
+    "allSources": "Sources",
     "analytics": "Analytics",
     "map": "Map",
     "learn": "Learn",
     "contribute": "Contribute",
     "about": "About",
+    "docs": "API",
     "github": "GitHub",
-    "moreOptions": "More Options"
+    "moreOptions": "More Options",
+    "contributeCta": "Contribute data"
   },
   "footer": {
     "copyright": "© {year} CariAir. Open-source project for the community.",
@@ -41,6 +43,13 @@
   },
   "home": {
     "tagline": "The secret to better hydration starts here.",
+    "heroEyebrow": "Malaysia's water registry",
+    "heroTitle": "Know exactly what's in your bottled water.",
+    "heroSubtitle": "Compare pH, TDS, and mineral composition of every mineral and spring water brand sold in Malaysia — traced to its source, verified against KKM approvals.",
+    "heroCtaBrowse": "Browse all sources",
+    "heroCtaMap": "Explore the map",
+    "heroCtaLearn": "Learn how to read water",
+    "heroSourceNote": "Open data · community-verified",
     "quickFilters": "Quick filters:",
     "filterLowPh": "Low pH (<7)",
     "filterAlkaline": "Alkaline (pH 7.5+)",

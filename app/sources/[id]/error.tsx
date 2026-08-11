@@ -14,7 +14,7 @@ export default function SourceError({ reset }: { error: Error; reset: () => void
         </p>
         <div className="flex gap-3 justify-center">
           <Button variant="outline" asChild>
-            <Link href="/sources">
+            <Link href="/#sources">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Sources
             </Link>

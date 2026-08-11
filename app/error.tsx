@@ -59,7 +59,7 @@ export default function RootErrorBoundary({ error, reset }: ErrorBoundaryProps) 
             </Link>
           </Button>
           <Button variant="ghost" asChild>
-            <Link href="/sources">
+            <Link href="/#sources">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Browse Sources
             </Link>

@@ -23,7 +23,7 @@ export default async function GuidePage() {
                 <div className="mx-auto max-w-4xl space-y-8">
                     <div className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 transition-colors mb-4">
                         <ArrowLeft className="h-4 w-4" />
-                        <Link href="/learn">{t("title")}</Link>
+                        <Link href="/">{t("title")}</Link>
                     </div>
 
                     <div className="space-y-4 text-center mb-12">
@@ -60,13 +60,13 @@ export default async function GuidePage() {
                         <h2 className="text-2xl font-bold mb-4">Ready to compare?</h2>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link
-                                href="/sources"
+                                href="/#sources"
                                 className="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-3 text-sm font-medium text-white shadow transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-300"
                             >
                                 Browse All Sources
                             </Link>
                             <Link
-                                href="/map"
+                                href="/#map"
                                 className="inline-flex items-center justify-center rounded-md border border-gray-200 bg-white px-6 py-3 text-sm font-medium shadow-sm transition-colors hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-950 dark:hover:bg-gray-800"
                             >
                                 Explore Map

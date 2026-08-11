@@ -81,7 +81,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
       <div className="container px-4 py-6 md:px-6 md:py-8">
         <Button variant="ghost" asChild className="mb-6 -ml-2">
-          <Link href="/sources">
+          <Link href="/#sources">
             <ArrowLeft className="mr-2 h-4 w-4" />
             {t('backToSources')}
           </Link>

@@ -18,14 +18,16 @@
   },
   "nav": {
     "home": "Utama",
-    "allSources": "Semua Sumber",
+    "allSources": "Sumber",
     "analytics": "Analitik",
     "map": "Peta",
     "learn": "Pelajari",
     "contribute": "Sumbang",
     "about": "Tentang",
+    "docs": "API",
     "github": "GitHub",
-    "moreOptions": "Lagi Pilihan"
+    "moreOptions": "Lagi Pilihan",
+    "contributeCta": "Sumbang data"
   },
   "footer": {
     "copyright": "© {year} CariAir. Projek sumber terbuka untuk komuniti.",
@@ -41,6 +43,13 @@
   },
   "home": {
     "tagline": "Rahsia hidrasi terbaik bermula di sini.",
+    "heroEyebrow": "Pendaftaran air Malaysia",
+    "heroTitle": "Tahu tepat apa dalam air botol anda.",
+    "heroSubtitle": "Bandingkan pH, TDS, dan komposisi mineral setiap jenama air mineral dan spring di Malaysia — dikesan ke sumbernya, disahkan dengan kelulusan KKM.",
+    "heroCtaBrowse": "Semak semua sumber",
+    "heroCtaMap": "Terokai peta",
+    "heroCtaLearn": "Belajar baca label air",
+    "heroSourceNote": "Data terbuka · disahkan komuniti",
     "quickFilters": "Penapis pantas:",
     "filterLowPh": "pH Rendah (<7)",
     "filterAlkaline": "Alkali (pH 7.5+)",
