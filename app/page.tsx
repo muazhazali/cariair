@@ -104,9 +104,9 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
         </section>
       )}
 
-      {/* Product Grid - Shown when filters are active (drill-down), or as secondary content */}
-      <section className={`container px-4 ${hasFilters ? 'py-6' : 'pt-2 pb-10'}`}>
-        {hasFilters && (
+      {/* Product Grid - Shown only when filters are active (drill-down) */}
+      {hasFilters && (
+        <section className="container px-4 py-6">
           <div className="mb-6">
             <h2 className="text-2xl font-bold tracking-tight">
               {t('matchingProducts')}
@@ -115,19 +115,9 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
               {t('matchingProductsDesc')}
             </p>
           </div>
-        )}
-        {!hasFilters && products.length > 0 && (
-          <div className="mb-6 mt-8">
-            <h2 className="text-2xl font-bold tracking-tight">
-              {t('allWaterSources')}
-            </h2>
-            <p className="text-muted-foreground mt-1">
-              {t('allWaterSourcesDesc')}
-            </p>
-          </div>
-        )}
-        <HomeContent products={products} />
-      </section>
+          <HomeContent products={products} />
+        </section>
+      )}
     </div>
   )
 }
