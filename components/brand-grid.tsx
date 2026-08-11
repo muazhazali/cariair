@@ -6,10 +6,10 @@ import { BrandWithStats } from "@/lib/types/db"
 interface BrandGridProps {
   brands: BrandWithStats[]
   translations: {
-    products: string
-    productSingular: string
-    avgPh: string
-    avgTds: string
+    waterType: string
+    alkaline: string
+    neutral: string
+    acidic: string
     parentCompany: string
     viewBrand: string
     noData: string

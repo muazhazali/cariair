@@ -1,17 +1,17 @@
 "use client"
 
 import Link from "next/link"
-import { Droplet, FlaskConical, MapPin, Package } from "lucide-react"
+import { FlaskConical, MapPin, Waves } from "lucide-react"
 import { BrandWithStats } from "@/lib/types/db"
 import { SafeImage } from "@/components/safe-image"
 
 interface BrandCardProps {
   brand: BrandWithStats
   translations: {
-    products: string
-    productSingular: string
-    avgPh: string
-    avgTds: string
+    waterType: string
+    alkaline: string
+    neutral: string
+    acidic: string
     parentCompany: string
     viewBrand: string
     noData: string
@@ -19,12 +19,22 @@ interface BrandCardProps {
 }
 
 export function BrandCard({ brand, translations }: BrandCardProps) {
-  const productLabel =
-    brand.productCount === 1 ? translations.productSingular : translations.products
-
   const href = brand.featuredProductId
     ? `/sources/${brand.featuredProductId}`
     : `/?brand=${brand.id}`
+
+  // Derive a pH category from the average pH for a glanceable label.
+  const phClass =
+    brand.avgPh === null
+      ? null
+      : brand.avgPh < 7
+        ? { label: translations.acidic, color: "text-orange-600" }
+        : brand.avgPh > 7
+          ? { label: translations.alkaline, color: "text-blue-600" }
+          : { label: translations.neutral, color: "text-green-600" }
+
+  // Primary water type (first if multiple).
+  const waterType = brand.waterTypes[0] ?? null
 
   return (
     <Link
@@ -52,30 +62,23 @@ export function BrandCard({ brand, translations }: BrandCardProps) {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-2 text-sm">
-          <div className="flex flex-col">
-            <span className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Package className="h-3 w-3" />
-              {productLabel}
-            </span>
-            <span className="font-medium">{brand.productCount}</span>
-          </div>
+        <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="flex flex-col">
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <FlaskConical className="h-3 w-3" />
-              {translations.avgPh}
+              pH
             </span>
-            <span className="font-medium">
-              {brand.avgPh !== null ? brand.avgPh.toFixed(1) : translations.noData}
+            <span className={`font-medium ${phClass?.color ?? ""}`}>
+              {phClass ? phClass.label : translations.noData}
             </span>
           </div>
           <div className="flex flex-col">
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Droplet className="h-3 w-3" />
-              {translations.avgTds}
+              <Waves className="h-3 w-3" />
+              {translations.waterType}
             </span>
-            <span className="font-medium">
-              {brand.avgTds !== null ? brand.avgTds.toFixed(0) : translations.noData}
+            <span className="font-medium line-clamp-1">
+              {waterType ?? translations.noData}
             </span>
           </div>
         </div>
