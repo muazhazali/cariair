@@ -24,8 +24,8 @@ export default async function GuidePage() {
         <aside className="hidden lg:block">
           <div className="sticky top-28 border-t border-border pt-5">
             <RegistryGlyph kind="book" />
-            <p className="section-index mt-5">Reading note</p>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">pH, TDS and mineral composition explained in plain language.</p>
+            <p className="section-index mt-5">{t("readingNote")}</p>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{t("readingNoteDesc")}</p>
           </div>
         </aside>
 
@@ -33,9 +33,9 @@ export default async function GuidePage() {
           <ReactMarkdown components={{
             h3: ({ ...props }) => <h2 className="mb-5 mt-12 border-t border-border pt-9 font-display text-4xl leading-tight tracking-[-0.035em] first:mt-0 first:border-0 first:pt-0" {...props} />,
             h4: ({ ...props }) => <h3 className="mb-3 mt-9 text-lg font-semibold tracking-[-0.015em]" {...props} />,
-            p: ({ ...props }) => <p className="mb-5 text-[15px] leading-7 text-muted-foreground" {...props} />,
-            ul: ({ ...props }) => <ul className="mb-6 space-y-3 border-l border-border pl-5 text-[15px] leading-7 text-muted-foreground" {...props} />,
-            ol: ({ ...props }) => <ol className="mb-6 list-decimal space-y-3 pl-5 text-[15px] leading-7 text-muted-foreground marker:font-mono" {...props} />,
+            p: ({ ...props }) => <p className="mb-5 text-base leading-7 text-muted-foreground" {...props} />,
+            ul: ({ ...props }) => <ul className="mb-6 space-y-3 border-l border-border pl-5 text-base leading-7 text-muted-foreground" {...props} />,
+            ol: ({ ...props }) => <ol className="mb-6 list-decimal space-y-3 pl-5 text-base leading-7 text-muted-foreground marker:font-mono" {...props} />,
             li: ({ ...props }) => <li className="pl-1" {...props} />,
             strong: ({ ...props }) => <strong className="font-semibold text-foreground" {...props} />,
           }}>{t("articleContent")}</ReactMarkdown>
@@ -45,7 +45,7 @@ export default async function GuidePage() {
       <section className="border-t border-border bg-background">
         <div className="mx-auto flex max-w-[88rem] flex-col gap-6 px-5 py-12 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
           <h2 className="font-display text-3xl tracking-[-0.035em]">{home("heroCtaBrowse")}</h2>
-          <div className="flex flex-wrap gap-3"><Link href="/#sources" className="quiet-button">{home("heroCtaBrowse")}<ArrowIcon /></Link><Link href="/#map" className="inline-flex h-11 items-center rounded-md border border-border bg-background px-5 text-sm font-semibold hover:bg-muted">{home("heroCtaMap")}</Link></div>
+          <div className="flex flex-wrap gap-3"><Link href="/#sources" className="quiet-button">{home("heroCtaBrowse")}<ArrowIcon /></Link><Link href="/#map" className="outline-button">{home("heroCtaMap")}</Link></div>
         </div>
       </section>
     </main>

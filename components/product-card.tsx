@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Product } from "@/lib/types/db"
+import { SafeImage } from "@/components/safe-image"
 
 interface ProductCardProps { product: Product; index?: number }
 
@@ -15,13 +16,12 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     <Link href={`/sources/${product.id}`}
       className="group flex min-h-[28rem] flex-col overflow-hidden rounded-xl border border-border bg-card transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-foreground/25 hover:shadow-[0_4px_18px_rgba(52,50,42,0.04)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}>
-      <div className="relative flex min-h-56 flex-1 items-center justify-center overflow-hidden border-b border-border bg-[#eeece5] p-6 sm:min-h-64">
-        <span className="absolute left-4 top-4 rounded-full bg-[#dfe8d9] px-2.5 py-1 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-[#405039]">{waterType}</span>
-        <span className="absolute right-4 top-4 font-mono text-[9px] text-muted-foreground">/{String(index + 1).padStart(2, "0")}</span>
-        <img src={imageUrl} alt={product.product_name || product.brand?.brand_name || "Bottled water product"}
-          width={640} height={640}
+      <div className="relative flex min-h-56 flex-1 items-center justify-center overflow-hidden border-b border-border bg-specimen p-6 sm:min-h-64">
+        <span className="absolute left-4 top-4 rounded-full bg-survey-pale px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-survey-foreground">{waterType}</span>
+        <span className="absolute right-4 top-4 font-mono text-[10px] text-muted-foreground">/{String(index + 1).padStart(2, "0")}</span>
+        <SafeImage src={imageUrl} alt={product.product_name || product.brand?.brand_name || "Bottled water product"}
           className="h-48 w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.04] sm:h-56"
-          loading="lazy" onError={(event) => { if (!event.currentTarget.src.endsWith("placeholder.svg")) event.currentTarget.src = "/placeholder.svg" }} />
+          loading="lazy" />
       </div>
 
       <div className="p-5 sm:p-6">
@@ -47,7 +47,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 }
 
 function Metric({ label, value, unit, bordered }: { label: string; value: string; unit?: string; bordered?: boolean }) {
-  return <div className={bordered ? "border-l border-border pl-4" : "pr-4"}><span className="block text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{label}</span><span className="mt-1 block font-mono text-lg tabular-nums">{value}{unit && <small className="ml-1 text-[9px] text-muted-foreground">{unit}</small>}</span></div>
+  return <div className={bordered ? "border-l border-border pl-4" : "pr-4"}><span className="block text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{label}</span><span className="mt-1 block font-mono text-lg tabular-nums">{value}{unit && <small className="ml-1 text-[10px] text-muted-foreground">{unit}</small>}</span></div>
 }
 
 function ArrowGlyph() { return <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md border border-border transition-colors group-hover:bg-foreground group-hover:text-background"><svg viewBox="0 0 20 20" className="h-4 w-4" aria-hidden="true" fill="none"><path d="M5 15 15 5M8 5h7v7" stroke="currentColor" strokeWidth="1.8"/></svg></span> }

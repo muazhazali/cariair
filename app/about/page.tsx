@@ -14,7 +14,7 @@ export default async function AboutPage() {
 
   return (
     <main id="main-content" className="min-h-screen bg-background">
-      <PageIntro index="CariAir / About" title={t("title")} description={t("subtitle")}>
+      <PageIntro index={`CariAir / ${t("title")}`} title={t("title")} description={t("subtitle")}>
         <Link href="/#sources" className="text-link mt-6">{home("heroCtaBrowse")}<ArrowIcon /></Link>
       </PageIntro>
 
