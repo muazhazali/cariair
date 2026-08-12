@@ -4,16 +4,18 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { ProductCard } from "./product-card"
 import { Product } from "@/lib/types/db"
+import { RegistryGlyph } from "./editorial-primitives"
 
 export function HomeContent({ products }: { products: Product[] }) {
   const t = useTranslations("sourcesView")
+  const filters = useTranslations("filters")
   if (products.length === 0) {
     return (
       <div className="border-y border-border py-20 text-center">
-        <span className="mx-auto grid h-12 w-12 place-items-center rounded-lg bg-[#dfe8d9] text-[#405039]" aria-hidden="true">∅</span>
+        <RegistryGlyph kind="water" className="mx-auto h-12 w-12" />
         <h3 className="mt-5 font-display text-3xl tracking-[-0.03em]">{t("noResults")}</h3>
         <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">{t("noResultsDesc")}</p>
-        <Link href="/" className="quiet-button mt-6">{t("search")}</Link>
+        <Link href="/" className="quiet-button mt-6">{filters("clearAll")}</Link>
       </div>
     )
   }

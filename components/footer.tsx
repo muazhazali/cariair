@@ -6,9 +6,10 @@ export async function Footer() {
   const nav = await getTranslations("nav")
   const home = await getTranslations("home")
   const about = await getTranslations("about")
+  const footer = await getTranslations("footer")
 
   return (
-    <footer className="border-t border-border bg-[#ece9e1]">
+    <footer className="border-t border-border bg-parchment">
       <div className="mx-auto max-w-[88rem] px-5 py-12 sm:px-8 lg:px-12">
         <div className="grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
           <div>
@@ -28,7 +29,7 @@ export async function Footer() {
           </nav>
         </div>
         <div className="mt-12 flex flex-col gap-2 border-t border-foreground/10 pt-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} CariAir. Open-source project.</p>
+          <p>{footer("copyright", { year: new Date().getFullYear() })}</p>
           <p className="font-mono uppercase tracking-[0.1em]">{about("openSourceTitle")}</p>
         </div>
       </div>

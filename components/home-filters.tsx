@@ -101,7 +101,7 @@ export function HomeFilters({ brands, currentQuery, currentTypes, currentBrands,
           <SheetTrigger asChild>
             <Button variant="outline" className="h-10 rounded-md border-border bg-background shadow-none">
               <FilterGlyph /> {tf("filterButton")}
-              {activeFilterCount > 0 && <span className="rounded-full bg-[#dfe8d9] px-1.5 py-0.5 font-mono text-[10px] text-[#405039]">{activeFilterCount}</span>}
+              {activeFilterCount > 0 && <span className="rounded-full bg-survey-pale px-1.5 py-0.5 font-mono text-[10px] text-survey-foreground">{activeFilterCount}</span>}
             </Button>
           </SheetTrigger>
           <SheetContent side="right" className="w-full border-l border-border bg-background p-0 sm:max-w-md">
@@ -158,7 +158,7 @@ export function HomeFilters({ brands, currentQuery, currentTypes, currentBrands,
             <SelectItem value="tds_asc">{tso("tdsAsc")}</SelectItem><SelectItem value="tds_desc">{tso("tdsDesc")}</SelectItem>
           </SelectContent>
         </Select>
-        <span className="ml-auto hidden whitespace-nowrap font-mono text-[11px] text-muted-foreground sm:block" aria-live="polite">{ts("waterSourcesFound", { count: resultCount })}</span>
+        <span className="ml-auto hidden whitespace-nowrap font-mono text-[10px] text-muted-foreground sm:block" aria-live="polite">{ts("waterSourcesFound", { count: resultCount })}</span>
       </div>
     </div>
   )

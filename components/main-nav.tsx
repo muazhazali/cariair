@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -14,6 +14,17 @@ export function MainNav({ initialLocale }: MainNavProps) {
   const pathname = usePathname()
   const t = useTranslations("nav")
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  useEffect(() => setMobileOpen(false), [pathname])
+
+  useEffect(() => {
+    if (!mobileOpen) return
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false)
+    }
+    window.addEventListener("keydown", closeOnEscape)
+    return () => window.removeEventListener("keydown", closeOnEscape)
+  }, [mobileOpen])
 
   const routes = [
     { href: "/", label: t("home"), active: pathname === "/" },
@@ -35,7 +46,7 @@ export function MainNav({ initialLocale }: MainNavProps) {
           {routes.map((route) => (
             <Link key={route.href} href={route.href} aria-current={route.active ? "page" : undefined}
               className={cn(
-                "relative py-2 text-[13px] font-medium transition-colors duration-200 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:bg-foreground after:transition-transform",
+                "relative py-2 text-sm font-medium transition-colors duration-200 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:bg-foreground after:transition-transform",
                 route.active ? "text-foreground after:scale-x-100" : "text-muted-foreground after:scale-x-0 hover:text-foreground hover:after:scale-x-100"
               )}>
               {route.label}
@@ -75,7 +86,7 @@ export function MainNav({ initialLocale }: MainNavProps) {
 
 export function BrandMark({ small = false }: { small?: boolean }) {
   return (
-    <span className={cn("grid place-items-center rounded-md bg-[#dfe8d9] text-[#405039] transition-transform duration-200 group-hover:-rotate-3", small ? "h-7 w-7" : "h-9 w-9")} aria-hidden="true">
+    <span className={cn("grid place-items-center rounded-md bg-survey-pale text-survey-foreground transition-transform duration-200 group-hover:-rotate-3", small ? "h-7 w-7" : "h-9 w-9")} aria-hidden="true">
       <svg viewBox="0 0 24 24" className={small ? "h-4 w-4" : "h-5 w-5"} fill="none">
         <path d="M12 3.5c-2.8 4-5.2 6.5-5.2 10a5.2 5.2 0 0 0 10.4 0c0-3.5-2.4-6-5.2-10Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
         <path d="M9.5 14.2c.3 1.2 1.1 1.9 2.4 2.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" />

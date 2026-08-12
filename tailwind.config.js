@@ -52,6 +52,18 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        bone: "#f4f2ec",
+        specimen: "#eeece5",
+        parchment: "#ece9e1",
+        survey: {
+          DEFAULT: "#66765a",
+          pale: "#dfe8d9",
+          foreground: "#405039",
+        },
+        source: {
+          pale: "#e1f3ee",
+          foreground: "#346558",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -76,4 +88,3 @@ module.exports = {
   },
   plugins: [require("tailwindcss-animate")],
 }
-

@@ -7,9 +7,10 @@ import "leaflet/dist/leaflet.css"
 import { Product } from "@/lib/types/db"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { ArrowIcon } from "@/components/editorial-primitives"
 
 const waterIcon = new Icon({
-  iconUrl: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='34' viewBox='0 0 28 34'%3E%3Cpath fill='%232f382a' d='M14 0C6.27 0 0 6.27 0 14c0 9.63 14 20 14 20s14-10.37 14-20C28 6.27 21.73 0 14 0Z'/%3E%3Ccircle cx='14' cy='14' r='5' fill='%23dfe8d9'/%3E%3C/svg%3E",
+  iconUrl: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='34' viewBox='0 0 28 34'%3E%3Cpath fill='%2324251f' d='M14 0C6.27 0 0 6.27 0 14c0 9.63 14 20 14 20s14-10.37 14-20C28 6.27 21.73 0 14 0Z'/%3E%3Ccircle cx='14' cy='14' r='5' fill='%23dfe8d9'/%3E%3C/svg%3E",
   iconSize: [28, 34], iconAnchor: [14, 34], popupAnchor: [0, -31],
 })
 
@@ -42,7 +43,7 @@ export function HomeMapClient({ products }: { products: Product[] }) {
               <p className="text-sm font-semibold">{product.brand?.brand_name}</p>
               <p className="text-xs text-muted-foreground">{product.product_name}</p>
               {product.source!.location_address && <p className="mt-1 text-xs text-muted-foreground">{product.source!.location_address}</p>}
-              <Link href={`/sources/${product.id}`} className="mt-2 inline-block border-b border-current text-xs font-semibold text-[#405039]">View details →</Link>
+              <Link href={`/sources/${product.id}`} className="mt-2 inline-flex items-center gap-1 border-b border-current text-xs font-semibold text-survey-foreground">{t("viewDetails")}<ArrowIcon /></Link>
             </article>
           </Popup>
         </Marker>

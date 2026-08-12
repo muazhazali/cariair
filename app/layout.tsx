@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
-import { getLocale, getMessages } from 'next-intl/server'
+import { getLocale, getMessages, getTranslations } from 'next-intl/server'
 import { Toaster } from "@/components/ui/toaster"
 import { MainNav } from "@/components/main-nav"
 import { Footer } from "@/components/footer"
@@ -33,6 +33,7 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale()
   const messages = await getMessages()
+  const common = await getTranslations('common')
   const initialLocale = (locales.includes(locale as Locale) ? locale : 'ms') as Locale
 
   return (
@@ -47,7 +48,7 @@ export default async function RootLayout({
         )}
       </head>
       <body suppressHydrationWarning className="min-h-screen bg-background">
-        <a href="#main-content" className="skip-link">Skip to content</a>
+        <a href="#main-content" className="skip-link">{common('skipToContent')}</a>
         <NextIntlClientProvider messages={messages}>
           <MainNav initialLocale={initialLocale} />
           {children}

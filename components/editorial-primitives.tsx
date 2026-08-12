@@ -15,7 +15,7 @@ export function RegistryGlyph({ kind = "water", className }: { kind?: "water" | 
     map: <><path d="M12 21s6-6.2 6-11a6 6 0 1 0-12 0c0 4.8 6 11 6 11Z" /><circle cx="12" cy="10" r="2" /></>,
     error: <><path d="M12 4 3.5 20h17Z" /><path d="M12 9v5M12 17h.01" /></>,
   }
-  return <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-md bg-[#dfe8d9] text-[#405039]", className)} aria-hidden="true"><svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="square" strokeLinejoin="miter">{paths[kind]}</svg></span>
+  return <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-md bg-survey-pale text-survey-foreground", className)} aria-hidden="true"><svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="square" strokeLinejoin="miter">{paths[kind]}</svg></span>
 }
 
 export function PageIntro({ index, title, description, children }: { index: string; title: string; description?: string; children?: ReactNode }) {
@@ -24,8 +24,8 @@ export function PageIntro({ index, title, description, children }: { index: stri
       <div className="mx-auto max-w-[88rem] px-5 pb-14 pt-12 sm:px-8 sm:pb-20 sm:pt-16 lg:px-12">
         <p className="section-index">{index}</p>
         <div className="mt-5 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,.42fr)] lg:items-end lg:gap-16">
-          <h1 className="max-w-5xl font-display text-[clamp(3rem,7vw,6.5rem)] leading-[0.92] tracking-[-0.05em] text-pretty">{title}</h1>
-          {(description || children) && <div className="border-l border-foreground/20 pl-6"><p className="max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">{description}</p>{children}</div>}
+          <h1 className="max-w-5xl text-pretty font-display text-[clamp(2.75rem,7vw,6rem)] leading-[0.94] tracking-[-0.04em]">{title}</h1>
+          {(description || children) && <div className="border-t border-foreground/20 pt-6 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0"><p className="max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">{description}</p>{children}</div>}
         </div>
       </div>
     </header>
