@@ -98,16 +98,6 @@ export interface MineralComposition {
   [mineralName: string]: number;
 }
 
-export interface BrandWithStats extends Brand {
-  productCount: number;
-  avgPh: number | null;
-  avgTds: number | null;
-  waterTypes: SourceType[];
-  sourceLocations: string[];
-  imageUrl: string | null;
-  featuredProductId: string | null;
-}
-
 export interface SearchFilters {
   query?: string;
   types?: string[];

@@ -113,7 +113,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
               <HomeMap products={sortedProducts} />
             </Suspense>
             <div className="pointer-events-none absolute left-4 top-4 z-10 border border-border bg-background/95 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground backdrop-blur-sm">
-              {format.number(sortedProducts.length)} {t("statsProducts")} / Malaysia
+              {format.number(sortedProducts.filter((product) => product.source?.lat != null && product.source?.lng != null).length)} {t("statsProducts")} / {t("mapOverlayRegion")}
             </div>
           </div>
         </div>

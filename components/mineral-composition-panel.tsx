@@ -7,6 +7,26 @@ import { PanelHeading, RegistryGlyph } from "@/components/editorial-primitives"
 
 interface Mineral { name: string; symbol?: string; amount: number; unit?: string }
 
+const BENEFIT_KEYS: Record<string, string> = {
+  calcium: "Calcium",
+  magnesium: "Magnesium",
+  potassium: "Potassium",
+  sodium: "Sodium",
+  bicarbonate: "Bicarbonate",
+  chloride: "Chloride",
+  sulfate: "Sulfate",
+  sulphate: "Sulfate",
+  silica: "Silica",
+  fluoride: "Fluoride",
+  nitrate: "Nitrate",
+  iron: "Iron",
+  zinc: "Zinc",
+}
+
+function benefitKey(name: string): string | null {
+  return BENEFIT_KEYS[name.toLowerCase().trim()] ?? null
+}
+
 export function MineralCompositionPanel({ minerals }: { minerals: Mineral[]; productName: string }) {
   const t = useTranslations("mineralPanel")
   const enriched = (minerals || []).map((mineral) => ({
@@ -14,7 +34,6 @@ export function MineralCompositionPanel({ minerals }: { minerals: Mineral[]; pro
     info: getMineralInfo(mineral.name),
     daily: calculateDailyIntakePercentage(mineral.name, mineral.amount),
   })).sort((a, b) => (b.amount || 0) - (a.amount || 0))
-
   if (enriched.length === 0) {
     return <section className="rounded-xl border border-border bg-card p-6 sm:p-8"><PanelHeading index="04 / Composition" title={t("title")} description={t("description")} /><div className="mt-8 grid min-h-40 place-items-center border-y border-border py-10 text-center"><RegistryGlyph kind="info" className="mx-auto" /><p className="mt-4 text-sm text-muted-foreground">{t("noData")}</p></div></section>
   }
@@ -47,7 +66,7 @@ export function MineralCompositionPanel({ minerals }: { minerals: Mineral[]; pro
           <div className="mt-5 overflow-x-auto border-y border-border">
             <table className="w-full min-w-[42rem] text-left">
               <thead><tr className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground"><th className="px-3 py-3 font-medium">{t("mineral")}</th><th className="px-3 py-3 text-right font-medium">{t("amount")}</th><th className="px-3 py-3 font-medium">{t("healthBenefit")}</th><th className="px-3 py-3 text-center font-medium" title={t("dailyTooltip")}>{t("dailyPct")}</th></tr></thead>
-              <tbody>{enriched.map((mineral) => <tr key={mineral.name} className="border-t border-border transition-colors hover:bg-muted/50"><td className="px-3 py-4"><span className="font-semibold">{mineral.info.name}</span><span className="ml-2 font-mono text-[10px] text-muted-foreground">{mineral.info.symbol}</span></td><td className="px-3 py-4 text-right font-mono tabular-nums">{mineral.amount}<span className="ml-1 text-[10px] text-muted-foreground">{mineral.unit || "mg/L"}</span></td><td className="max-w-sm px-3 py-4 text-xs leading-5 text-muted-foreground">{mineral.info.healthBenefit}</td><td className="px-3 py-4 text-center">{mineral.daily != null ? <span className="rounded-full bg-[#edf3ec] px-2 py-1 font-mono text-[10px] text-[#346538]">{mineral.daily.toFixed(1)}%</span> : <span className="text-xs text-muted-foreground">—</span>}</td></tr>)}</tbody>
+              <tbody>{enriched.map((mineral) => <tr key={mineral.name} className="border-t border-border transition-colors hover:bg-muted/50"><td className="px-3 py-4"><span className="font-semibold">{mineral.info.name}</span><span className="ml-2 font-mono text-[10px] text-muted-foreground">{mineral.info.symbol}</span></td><td className="px-3 py-4 text-right font-mono tabular-nums">{mineral.amount}<span className="ml-1 text-[10px] text-muted-foreground">{mineral.unit || "mg/L"}</span></td><td className="max-w-sm px-3 py-4 text-xs leading-5 text-muted-foreground">{benefitKey(mineral.name) ? t(`benefit${benefitKey(mineral.name)}` as "benefitCalcium") : t("benefitGeneric")}</td><td className="px-3 py-4 text-center">{mineral.daily != null ? <span className="rounded-full bg-[#edf3ec] px-2 py-1 font-mono text-[10px] text-[#346538]">{mineral.daily.toFixed(1)}%</span> : <span className="text-xs text-muted-foreground">—</span>}</td></tr>)}</tbody>
             </table>
           </div>
         </div>

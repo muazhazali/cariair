@@ -26,6 +26,7 @@ function FitBounds({ products }: { products: Product[] }) {
 
 export function HomeMapClient({ products }: { products: Product[] }) {
   const t = useTranslations("map")
+  const tp = useTranslations("mapPopup")
   const productsWithCoords = useMemo(() => products.filter((product) => {
     const { lat, lng } = product.source ?? {}
     return lat != null && lng != null && !isNaN(Number(lat)) && !isNaN(Number(lng))
@@ -42,7 +43,7 @@ export function HomeMapClient({ products }: { products: Product[] }) {
               <p className="text-sm font-semibold">{product.brand?.brand_name}</p>
               <p className="text-xs text-muted-foreground">{product.product_name}</p>
               {product.source!.location_address && <p className="mt-1 text-xs text-muted-foreground">{product.source!.location_address}</p>}
-              <Link href={`/sources/${product.id}`} className="mt-2 inline-block border-b border-current text-xs font-semibold text-[#405039]">View details →</Link>
+              <Link href={`/sources/${product.id}`} className="mt-2 inline-block border-b border-current text-xs font-semibold text-[#405039]">{tp("viewDetails")} →</Link>
             </article>
           </Popup>
         </Marker>

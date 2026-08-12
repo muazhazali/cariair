@@ -1,5 +1,5 @@
 import { getAll, write } from "@/lib/json-store";
-import type { Brand, BrandWithStats, SourceType } from "@/lib/types/db";
+import type { Brand } from "@/lib/types/db";
 import { slugify } from "./products";
 
 export async function getBrands(): Promise<Brand[]> {
@@ -52,26 +52,4 @@ export async function updateBrand(id: string, data: Partial<Brand>): Promise<Bra
 
 export async function deleteBrand(_id?: string): Promise<boolean> {
   throw new Error("Delete the brand's product records instead");
-}
-
-export async function getBrandsWithStats(): Promise<BrandWithStats[]> {
-  const [brands, products] = await Promise.all([getBrands(), getAll("products")]);
-  return brands.map((brand) => {
-    const matching = products.filter((product) => slugify(product.brand) === brand.id && product.status === "approved");
-    const ph = matching.map((product) => product.ph).filter((value): value is number => value !== null);
-    const tds = matching.map((product) => product.tds_mg_l).filter((value): value is number => value !== null);
-    const sourceTypes = new Set<SourceType>();
-    const typeMap: Record<string, SourceType> = { underground: "Underground", spring: "Spring", municipal: "Municipal", oxygenated: "Oxygenated" };
-    for (const product of matching) if (product.source_type && typeMap[product.source_type]) sourceTypes.add(typeMap[product.source_type]);
-    return {
-      ...brand,
-      productCount: matching.length,
-      avgPh: ph.length ? ph.reduce((sum, value) => sum + value, 0) / ph.length : null,
-      avgTds: tds.length ? tds.reduce((sum, value) => sum + value, 0) / tds.length : null,
-      waterTypes: [...sourceTypes],
-      sourceLocations: [...new Set(matching.map((product) => product.source_address).filter((value): value is string => Boolean(value)))],
-      imageUrl: matching[0] ? `/images/products/${matching[0].image}` : null,
-      featuredProductId: matching[0]?.id ?? null,
-    };
-  });
 }

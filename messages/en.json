@@ -62,8 +62,9 @@
     "statsBrands": "Brands",
     "statsWaterSources": "Water Sources",
     "mapSectionIndex": "Field notes / 01",
+    "mapOverlayRegion": "Southeast Asia",
     "registrySectionIndex": "Registry / 02",
-    "browseAllSources": "Browse All Sources",
+    "browseAllSources": "Browse all sources",
     "exploreMap": "Explore Water Sources Across Malaysia",
     "featuredSources": "Featured Water Sources",
     "featuredDesc": "Explore detailed composition and quality data",
@@ -438,7 +439,20 @@
     "keyHighlights": "Key Highlights",
     "provides": "Provides",
     "ofDailyIntake": "of daily recommended intake",
-    "traceAmounts": "Contains trace amounts of essential minerals"
+    "traceAmounts": "Contains trace amounts of essential minerals",
+    "benefitCalcium": "Essential for bone health, teeth strength, and muscle function",
+    "benefitMagnesium": "Supports energy production, muscle relaxation, and nervous system",
+    "benefitPotassium": "Regulates blood pressure, heart function, and fluid balance",
+    "benefitSodium": "Maintains fluid balance and supports nerve function",
+    "benefitBicarbonate": "Helps regulate pH balance and supports digestion",
+    "benefitChloride": "Aids digestion and maintains proper fluid balance",
+    "benefitSulfate": "Supports detoxification and protein synthesis",
+    "benefitSilica": "Promotes healthy skin, hair, nails, and joint health",
+    "benefitFluoride": "Strengthens tooth enamel and prevents dental cavities",
+    "benefitNitrate": "Supports cardiovascular health in low amounts",
+    "benefitIron": "Essential for oxygen transport and energy production",
+    "benefitZinc": "Supports immune function and wound healing",
+    "benefitGeneric": "Contributes to overall mineral content"
   },
   "healthPanel": {
     "title": "Health Benefits",
@@ -514,5 +528,27 @@
     "registerError": "Error",
     "registerFailed": "Failed to create account",
     "registerGoogleFailed": "Failed to sign up with Google"
+  },
+  "notFound": {
+    "eyebrow": "404 / Not found",
+    "title": "This source ran dry.",
+    "description": "The page may have moved, or the address may be incorrect.",
+    "backHome": "Return home"
+  },
+  "error": {
+    "genericTitle": "Something went wrong",
+    "genericDescription": "We couldn't load this page. Please try again or return to the registry.",
+    "tryAgain": "Try again",
+    "backHome": "Back to home",
+    "sourceTitle": "Source unavailable",
+    "sourceDescription": "We couldn't load this water-source record.",
+    "backToSources": "Back to sources",
+    "aboutTitle": "Page unavailable",
+    "aboutDescription": "We couldn't load the information about CariAir.",
+    "docsTitle": "Documentation unavailable",
+    "docsDescription": "We couldn't load the API reference."
+  },
+  "mapPopup": {
+    "viewDetails": "View details"
   }
 }

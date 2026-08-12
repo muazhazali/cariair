@@ -74,6 +74,15 @@ export const mineralDatabase: Record<string, MineralInfo> = {
     color: "#a855f7", // purple
     icon: "🔬",
   },
+  sulphate: {
+    name: "Sulphate",
+    symbol: "SO4",
+    healthBenefit: "Supports detoxification and protein synthesis",
+    dailyIntake: undefined,
+    unit: "mg/L",
+    color: "#a855f7", // purple
+    icon: "🔬",
+  },
   silica: {
     name: "Silica",
     symbol: "Si",

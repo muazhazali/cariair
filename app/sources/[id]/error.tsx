@@ -1,3 +1,7 @@
 "use client"
+import { useTranslations } from "next-intl"
 import { EditorialErrorState } from "@/components/editorial-error-state"
-export default function SourceError({ reset }: { error: Error; reset: () => void }) { return <EditorialErrorState title="Source unavailable" description="We couldn't load this water-source record." reset={reset} backHref="/#sources" backLabel="Back to sources" /> }
+export default function SourceError({ reset }: { error: Error; reset: () => void }) {
+  const t = useTranslations("error")
+  return <EditorialErrorState title={t("sourceTitle")} description={t("sourceDescription")} reset={reset} backHref="/#sources" backLabel={t("backToSources")} />
+}

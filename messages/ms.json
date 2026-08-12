@@ -62,8 +62,9 @@
     "statsBrands": "Jenama",
     "statsWaterSources": "Sumber Air",
     "mapSectionIndex": "Catatan lapangan / 01",
+    "mapOverlayRegion": "Asia Tenggara",
     "registrySectionIndex": "Daftar / 02",
-    "browseAllSources": "Semak Semua Sumber",
+    "browseAllSources": "Semak semua sumber",
     "exploreMap": "Terokai Sumber Air Di Seluruh Malaysia",
     "featuredSources": "Sumber Air Pilihan",
     "featuredDesc": "Terokai komposisi dan data kualiti terperinci",
@@ -350,7 +351,7 @@
     "title": "Tapis Sumber Air",
     "description": "Halusi keputusan carian anda dengan melaraskan penapis di bawah",
     "activeFilters": "Penapis aktif:",
-    "applyFilters": "Guna Penapis",
+    "applyFilters": "Terapkan Penapis",
     "clearAll": "Kosongkan Semua",
     "reset": "Set Semula",
     "filterButton": "Penapis",
@@ -438,7 +439,20 @@
     "keyHighlights": "Sorotan Utama",
     "provides": "Menyediakan",
     "ofDailyIntake": "daripada pengambilan harian yang disyorkan",
-    "traceAmounts": "Mengandungi jumlah surih mineral penting"
+    "traceAmounts": "Mengandungi jumlah surih mineral penting",
+    "benefitCalcium": "Penting untuk kesihatan tulang, kekuatan gigi, dan fungsi otot",
+    "benefitMagnesium": "Menyokong penghasilan tenaga, kelonggaran otot, dan sistem saraf",
+    "benefitPotassium": "Mengawal tekanan darah, fungsi jantung, dan keseimbangan cecair",
+    "benefitSodium": "Mengekalkan keseimbangan cecair dan menyokong fungsi saraf",
+    "benefitBicarbonate": "Membantu mengawal keseimbangan pH dan menyokong pencernaan",
+    "benefitChloride": "Membantu pencernaan dan mengekalkan keseimbangan cecair",
+    "benefitSulfate": "Menyokong detoksifikasi dan sintesis protein",
+    "benefitSilica": "Menggalakkan kulit, rambut, kuku, dan kesihatan sendi",
+    "benefitFluoride": "Menguatkan enamel gigi dan mencegah kaviti",
+    "benefitNitrate": "Menyokong kesihatan kardiovaskular dalam jumlah yang rendah",
+    "benefitIron": "Penting untuk pengangkutan oksigen dan penghasilan tenaga",
+    "benefitZinc": "Menyokong fungsi imun dan penyembuhan luka",
+    "benefitGeneric": "Menyumbang kepada kandungan mineral keseluruhan"
   },
   "healthPanel": {
     "title": "Faedah Kesihatan",
@@ -514,5 +528,27 @@
     "registerError": "Ralat",
     "registerFailed": "Gagal membuat akaun",
     "registerGoogleFailed": "Gagal mendaftar dengan Google"
+  },
+  "notFound": {
+    "eyebrow": "404 / Tidak ditemui",
+    "title": "Sumber ini telah kering.",
+    "description": "Halaman mungkin telah berpindah, atau alamatnya tidak tepat.",
+    "backHome": "Kembali ke laman utama"
+  },
+  "error": {
+    "genericTitle": "Sesuatu tidak kena",
+    "genericDescription": "Kami tidak dapat memuatkan halaman ini. Sila cuba lagi atau kembali ke pendaftaran.",
+    "tryAgain": "Cuba lagi",
+    "backHome": "Kembali ke laman utama",
+    "sourceTitle": "Sumber tidak tersedia",
+    "sourceDescription": "Kami tidak dapat memuatkan rekod sumber air ini.",
+    "backToSources": "Kembali ke sumber",
+    "aboutTitle": "Halaman tidak tersedia",
+    "aboutDescription": "Kami tidak dapat memuatkan maklumat tentang CariAir.",
+    "docsTitle": "Dokumentasi tidak tersedia",
+    "docsDescription": "Kami tidak dapat memuatkan rujukan API."
+  },
+  "mapPopup": {
+    "viewDetails": "Lihat butiran"
   }
 }
