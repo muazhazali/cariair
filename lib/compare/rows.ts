@@ -146,14 +146,6 @@ export function buildCompareRows(products: Product[]): CompareRows {
       direction: null,
     },
     {
-      key: "sourceType",
-      label: "sourceType",
-      kind: "text",
-      values: products.map((p) => p.source?.type ?? null),
-      bestIndex: null,
-      direction: null,
-    },
-    {
       key: "sourceLocation",
       label: "location",
       kind: "text",
@@ -190,7 +182,7 @@ export function buildCompareRows(products: Product[]): CompareRows {
   for (const key of unionKeys) {
     const info = getMineralInfo(key === "sulphate" ? "sulfate" : key)
     const values = perProduct.map((m) => {
-      const v = m[key] ?? m[key === "sulfate" ? "sulphate" : "sulphate"]
+      const v = m[key]
       return v == null ? null : Number(v)
     })
     const direction: "higher" | "lower" = LOWER_IS_BETTER.has(key) ? "lower" : "higher"

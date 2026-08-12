@@ -89,7 +89,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
             </div>
           </section>
 
-          <MineralCompositionPanel minerals={minerals} productName={productName} />
+          <MineralCompositionPanel minerals={minerals} />
           <HealthBenefitsPanel minerals={minerals} phLevel={product.ph_level} tds={product.tds} productName={productName} />
 
           <section className="overflow-hidden rounded-xl border border-border bg-card">

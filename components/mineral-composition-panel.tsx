@@ -27,7 +27,7 @@ function benefitKey(name: string): string | null {
   return BENEFIT_KEYS[name.toLowerCase().trim()] ?? null
 }
 
-export function MineralCompositionPanel({ minerals }: { minerals: Mineral[]; productName: string }) {
+export function MineralCompositionPanel({ minerals }: { minerals: Mineral[] }) {
   const t = useTranslations("mineralPanel")
   const enriched = (minerals || []).map((mineral) => ({
     ...mineral,

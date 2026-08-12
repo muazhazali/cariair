@@ -86,8 +86,8 @@ export function SourcesTable({ products, sort }: SourcesTableProps) {
           </tr>
         </thead>
         <tbody>
-          {products.map((product, index) => (
-            <TableRow key={product.id} product={product} index={index} />
+          {products.map((product) => (
+            <TableRow key={product.id} product={product} />
           ))}
         </tbody>
       </table>
@@ -142,7 +142,7 @@ function SortIcon({ state }: { state: "asc" | "desc" | null }) {
   )
 }
 
-function TableRow({ product }: { product: Product; index: number }) {
+function TableRow({ product }: { product: Product }) {
   const brand = product.brand?.brand_name ?? "Independent"
   const productName = product.product_name
   const imageUrl = product.images?.[0]?.url ?? "/placeholder.svg"
