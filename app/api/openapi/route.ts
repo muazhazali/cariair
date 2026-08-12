@@ -41,8 +41,8 @@ const openApiSpec = {
           {
             name: 'brand',
             in: 'query',
-            description: 'Filter by brand ID (UUID)',
-            schema: { type: 'string', format: 'uuid' },
+            description: 'Filter by brand slug',
+            schema: { type: 'string', example: 'spritzer' },
           },
           {
             name: 'type',
@@ -128,8 +128,8 @@ const openApiSpec = {
             name: 'id',
             in: 'path',
             required: true,
-            description: 'Product UUID',
-            schema: { type: 'string', format: 'uuid' },
+            description: 'Product brand/type slug',
+            schema: { type: 'string', example: 'spritzer-mineral-water' },
           },
         ],
         responses: {
@@ -220,8 +220,8 @@ const openApiSpec = {
             name: 'id',
             in: 'path',
             required: true,
-            description: 'Source UUID',
-            schema: { type: 'string', format: 'uuid' },
+            description: 'Source slug',
+            schema: { type: 'string', example: 'taiping-underground-water' },
           },
         ],
         responses: {
@@ -315,10 +315,10 @@ const openApiSpec = {
       Product: {
         type: 'object',
         properties: {
-          id: { type: 'string', format: 'uuid', description: 'Product UUID' },
-          brandId: { type: 'string', format: 'uuid', nullable: true, description: 'Brand UUID' },
-          manufacturerId: { type: 'string', format: 'uuid', nullable: true, description: 'Manufacturer UUID' },
-          sourceId: { type: 'string', format: 'uuid', nullable: true, description: 'Water source UUID' },
+          id: { type: 'string', example: 'spritzer-mineral-water', description: 'Stable brand/type slug' },
+          brandId: { type: 'string', example: 'spritzer', description: 'Brand slug' },
+          manufacturerId: { type: 'string', example: 'chuan-sin', description: 'Manufacturer slug' },
+          sourceId: { type: 'string', example: 'taiping-underground-water', description: 'Water source slug' },
           productName: { type: 'string', nullable: true, description: 'Product name' },
           barcode: { type: 'string', nullable: true, description: 'Product barcode' },
           phLevel: { type: 'number', nullable: true, description: 'pH level (0-14)' },
@@ -335,7 +335,7 @@ const openApiSpec = {
       Brand: {
         type: 'object',
         properties: {
-          id: { type: 'string', format: 'uuid', description: 'Brand UUID' },
+          id: { type: 'string', example: 'spritzer', description: 'Brand slug' },
           brandName: { type: 'string', description: 'Brand name' },
           parentCompany: { type: 'string', nullable: true, description: 'Parent company name' },
           websiteUrl: { type: 'string', format: 'uri', nullable: true, description: 'Website URL' },
@@ -346,7 +346,7 @@ const openApiSpec = {
       Source: {
         type: 'object',
         properties: {
-          id: { type: 'string', format: 'uuid', description: 'Source UUID' },
+          id: { type: 'string', example: 'taiping-underground-water', description: 'Source slug' },
           sourceName: { type: 'string', nullable: true, description: 'Source name' },
           type: { type: 'string', enum: ['Underground', 'Spring', 'Municipal', 'Oxygenated'], nullable: true, description: 'Water source type' },
           locationAddress: { type: 'string', nullable: true, description: 'Physical address' },
@@ -361,7 +361,7 @@ const openApiSpec = {
       Manufacturer: {
         type: 'object',
         properties: {
-          id: { type: 'string', format: 'uuid', description: 'Manufacturer UUID' },
+          id: { type: 'string', example: 'chuan-sin', description: 'Manufacturer slug' },
           name: { type: 'string', description: 'Manufacturer name' },
           address: { type: 'string', nullable: true, description: 'Physical address' },
           createdAt: { type: 'string', format: 'date-time' },

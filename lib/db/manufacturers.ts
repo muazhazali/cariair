@@ -1,61 +1,40 @@
-// ==========================================
-// Manufacturer Operations (JSON storage)
-// ==========================================
+import { getAll } from "@/lib/json-store";
+import type { Manufacturer } from "@/lib/types/db";
+import { slugify } from "./products";
 
-import { getAll, findOne, insert, update, remove } from "@/lib/json-store";
-import { Manufacturer } from "@/lib/types/db";
-
-// Get all manufacturers
 export async function getManufacturers(): Promise<Manufacturer[]> {
-  const items = await getAll("manufacturers");
-  return items.sort((a: Manufacturer, b: Manufacturer) =>
-    (a.name || "").localeCompare(b.name || "")
-  );
+  const manufacturers = new Map<string, Manufacturer>();
+  for (const product of await getAll("products")) {
+    if (!product.manufacturer) continue;
+    const id = slugify(product.manufacturer);
+    if (!manufacturers.has(id)) manufacturers.set(id, {
+      id,
+      name: product.manufacturer,
+      address: product.manufacturer_address,
+      created_at: product.created_at,
+      updated_at: product.updated_at,
+    });
+  }
+  return [...manufacturers.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
-// Get manufacturer by ID
-export async function getManufacturerById(
-  id: string
-): Promise<Manufacturer | null> {
-  return findOne("manufacturers", (m) => m.id === id);
+export async function getManufacturerById(id: string): Promise<Manufacturer | null> {
+  return (await getManufacturers()).find((manufacturer) => manufacturer.id === id) ?? null;
 }
 
-// Create new manufacturer
-export async function createManufacturer(
-  data: Partial<Manufacturer>
-): Promise<Manufacturer> {
-  const record: Record<string, any> = {};
-  if (data.name !== undefined) record.name = data.name;
-  if (data.address !== undefined) record.address = data.address;
-  return insert("manufacturers", record);
+export async function searchManufacturers(query: string): Promise<Manufacturer[]> {
+  const value = query.toLowerCase();
+  return (await getManufacturers()).filter((manufacturer) => manufacturer.name.toLowerCase().includes(value));
 }
 
-// Update manufacturer
-export async function updateManufacturer(
-  id: string,
-  data: Partial<Manufacturer>
-): Promise<Manufacturer | null> {
-  const patch: Record<string, any> = {};
-  if (data.name !== undefined) patch.name = data.name;
-  if (data.address !== undefined) patch.address = data.address;
-  return update("manufacturers", (m) => m.id === id, patch);
+export async function createManufacturer(_data?: Partial<Manufacturer>): Promise<never> {
+  throw new Error("Manufacturers are stored inside flat product records");
 }
 
-// Delete manufacturer
-export async function deleteManufacturer(id: string): Promise<boolean> {
-  const n = await remove("manufacturers", (m) => m.id === id);
-  return n > 0;
+export async function updateManufacturer(_id?: string, _data?: Partial<Manufacturer>): Promise<never> {
+  throw new Error("Update the containing flat product records instead");
 }
 
-// Search manufacturers by name
-export async function searchManufacturers(
-  searchQuery: string
-): Promise<Manufacturer[]> {
-  const items = await getAll("manufacturers");
-  const q = searchQuery.toLowerCase();
-  return items
-    .filter((m: Manufacturer) => (m.name || "").toLowerCase().includes(q))
-    .sort((a: Manufacturer, b: Manufacturer) =>
-      (a.name || "").localeCompare(b.name || "")
-    );
+export async function deleteManufacturer(_id?: string): Promise<boolean> {
+  throw new Error("Delete or update the containing product records instead");
 }

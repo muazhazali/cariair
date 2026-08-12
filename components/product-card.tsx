@@ -8,10 +8,7 @@ interface ProductCardProps { product: Product; index?: number }
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const t = useTranslations("productCard")
-  const imageId = product.images?.[0]
-    ? typeof product.images[0] === "string" ? product.images[0] : product.images[0].id
-    : null
-  const imageUrl = imageId ? `/api/images/${imageId}` : "/placeholder.svg"
+  const imageUrl = product.images?.[0]?.url ?? "/placeholder.svg"
   const waterType = product.source?.type ?? "Water"
 
   return (

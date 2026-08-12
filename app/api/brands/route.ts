@@ -5,7 +5,7 @@
 // ==========================================
 
 import { NextRequest, NextResponse } from "next/server";
-import { getBrands, createBrand } from "@/lib/db/brands";
+import { getBrands } from "@/lib/db/brands";
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,24 +21,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    
-    // Validation
-    if (!body.brand_name) {
-      return NextResponse.json(
-        { error: "Brand name is required" },
-        { status: 400 }
-      );
-    }
-    
-    const brand = await createBrand(body);
-    return NextResponse.json(brand, { status: 201 });
-  } catch (error) {
-    console.error("Error creating brand:", error);
-    return NextResponse.json(
-      { error: "Failed to create brand" },
-      { status: 500 }
-    );
-  }
+  void request;
+  return NextResponse.json(
+    { error: "Brands are created with their first product record" },
+    { status: 405, headers: { Allow: "GET" } }
+  );
 }

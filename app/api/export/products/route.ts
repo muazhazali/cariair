@@ -42,12 +42,13 @@ export async function GET() {
     ]);
 
     // Escape and format CSV cells
-    const escapeCsv = (cell: string) => {
+    const escapeCsv = (cell: string | null) => {
+      const value = cell ?? '';
       // If cell contains comma, quote, or newline, wrap in quotes and escape quotes
-      if (/[",\n\r]/.test(cell)) {
-        return `"${cell.replace(/"/g, '""')}"`;
+      if (/[",\n\r]/.test(value)) {
+        return `"${value.replace(/"/g, '""')}"`;
       }
-      return cell;
+      return value;
     };
 
     // Build CSV content

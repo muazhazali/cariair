@@ -30,8 +30,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
 
   const { brand, source } = product
   const image = product.images?.[0]
-  const imageId = image ? typeof image === "string" ? image : image.id : null
-  const imageUrl = imageId ? `/api/images/${imageId}` : "/placeholder.svg"
+  const imageUrl = image?.url ?? "/placeholder.svg"
   const rawMinerals = product.minerals_json
   let minerals: Mineral[] = []
   if (typeof rawMinerals === "string") {

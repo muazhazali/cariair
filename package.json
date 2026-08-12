@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
     "build": "next build && cp -r .next/static .next/standalone/.next/static && cp -r public/. .next/standalone/public/ && cp -r data .next/standalone/data",
+    "data:validate": "node scripts/validate-catalog.mjs",
     "start": "next start",
     "lint": "next lint"
   },

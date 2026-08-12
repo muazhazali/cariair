@@ -7,14 +7,17 @@ exists).
 
 ## Storage: JSON file, NOT PostgreSQL
 
-- All data lives in `data/db.json` via `lib/json-store.ts` (atomic tmp+rename
+- All data lives in the schema-v2 `data/db.json` via `lib/json-store.ts` (atomic tmp+rename
   writes, in-memory cache, serialized writes). No DB server required.
-- `lib/db/{products,brands,sources,manufacturers,images}.ts` are thin wrappers
-  over the JSON store; `lib/db/index.ts` re-exports them.
+- The canonical JSON is product-centric and flat. Brands, sources, and
+  manufacturers are derived compatibility views; they are not separate JSON collections.
+- Product IDs use `<brand>-<type>` slugs, where type is `mineral-water` or
+  `drinking-water`. Each product's image is `public/images/products/<id>.webp`.
+- Run `pnpm data:validate` after editing catalogue data.
 - **There is no PostgreSQL, Drizzle ORM, `drizzle/`, `sql/schema.sql`, or
   `pnpm run db:*` scripts.** Ignore those sections in the docs. `.env.example`
   is the source of truth for storage.
-- Images live in `public/images/db/`, not in the DB.
+- Images live in `public/images/products/`; their slug filename is recorded in each product.
 - Record field names are snake_case (mirrors the old Postgres schema); see
   `lib/types/db.ts`.
 - `lib/products.ts` is a live compatibility shim (used by `app/page.tsx`) that

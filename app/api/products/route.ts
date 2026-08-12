@@ -91,9 +91,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validate required fields
-    if (!body.product_name) {
+    if (!body.product_name || typeof body.brand !== "string" || !["mineral-water", "drinking-water"].includes(body.type)) {
       return NextResponse.json(
-        { error: "Product name is required" },
+        { error: "product_name, brand, and a valid type are required" },
         { status: 400 }
       );
     }

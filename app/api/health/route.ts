@@ -5,12 +5,14 @@
 
 import { NextResponse } from "next/server";
 import { getAll } from "@/lib/json-store";
+import { getBrands } from "@/lib/db/brands";
+import { getSources } from "@/lib/db/sources";
 
 export async function GET() {
   try {
     const [brands, sources, products] = await Promise.all([
-      getAll("brands"),
-      getAll("sources"),
+      getBrands(),
+      getSources(),
       getAll("products"),
     ]);
 

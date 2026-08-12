@@ -5,7 +5,7 @@
 // ==========================================
 
 import { NextRequest, NextResponse } from "next/server";
-import { getSources, createSource, getSourcesWithCoordinates } from "@/lib/db/sources";
+import { getSources, getSourcesWithCoordinates } from "@/lib/db/sources";
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,24 +32,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    
-    // Validation
-    if (!body.source_name) {
-      return NextResponse.json(
-        { error: "Source name is required" },
-        { status: 400 }
-      );
-    }
-    
-    const source = await createSource(body);
-    return NextResponse.json(source, { status: 201 });
-  } catch (error) {
-    console.error("Error creating source:", error);
-    return NextResponse.json(
-      { error: "Failed to create source" },
-      { status: 500 }
-    );
-  }
+  void request;
+  return NextResponse.json(
+    { error: "Sources are stored inside product records" },
+    { status: 405, headers: { Allow: "GET" } }
+  );
 }

@@ -34,10 +34,9 @@ async function fetchWaterContext(): Promise<{ data: any[]; error: string | null 
         tds: p.tds ?? "N/A",
         type: p.source?.type ?? "Standard",
         location: p.source?.location_address ?? "Unknown",
-        minerals:
-          (p.minerals_json as any[])
-            ?.map((m) => `${m.name}: ${m.amount}${m.unit}`)
-            .join(", ") ?? "None listed",
+        minerals: Object.values(p.minerals_json)
+          .map((mineral) => `${mineral.name}: ${mineral.amount}${mineral.unit}`)
+          .join(", ") || "None listed",
       }));
 
     return { data, error: null };

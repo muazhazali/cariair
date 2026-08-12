@@ -5,7 +5,7 @@
 // ==========================================
 
 import { NextRequest, NextResponse } from "next/server";
-import { getManufacturers, createManufacturer } from "@/lib/db/manufacturers";
+import { getManufacturers } from "@/lib/db/manufacturers";
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,24 +21,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    
-    // Validation
-    if (!body.name) {
-      return NextResponse.json(
-        { error: "Manufacturer name is required" },
-        { status: 400 }
-      );
-    }
-    
-    const manufacturer = await createManufacturer(body);
-    return NextResponse.json(manufacturer, { status: 201 });
-  } catch (error) {
-    console.error("Error creating manufacturer:", error);
-    return NextResponse.json(
-      { error: "Failed to create manufacturer" },
-      { status: 500 }
-    );
-  }
+  void request;
+  return NextResponse.json(
+    { error: "Manufacturers are stored inside product records" },
+    { status: 405, headers: { Allow: "GET" } }
+  );
 }
