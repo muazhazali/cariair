@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Product } from "@/lib/types/db"
 import { SafeImage } from "@/components/safe-image"
+import { CompareToggle } from "@/components/compare/compare-toggle"
 
 interface ProductCardProps { product: Product; index?: number }
 
@@ -11,6 +12,12 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const t = useTranslations("productCard")
   const imageUrl = product.images?.[0]?.url ?? "/placeholder.svg"
   const waterType = product.source?.type ?? "Water"
+  const compareSummary = {
+    id: product.id,
+    brandName: product.brand?.brand_name ?? "Independent",
+    productName: product.product_name || product.brand?.brand_name || "",
+    imageUrl,
+  }
 
   return (
     <Link href={`/sources/${product.id}`}
@@ -19,6 +26,9 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       <div className="relative flex min-h-56 flex-1 items-center justify-center overflow-hidden border-b border-border bg-specimen p-6 sm:min-h-64">
         <span className="absolute left-4 top-4 z-10 rounded-full bg-survey-pale px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-survey-foreground">{waterType}</span>
         <span className="absolute right-4 top-4 z-10 font-mono text-[10px] text-muted-foreground">/{String(index + 1).padStart(2, "0")}</span>
+        <div className="absolute left-4 bottom-4 z-10">
+          <CompareToggle summary={compareSummary} />
+        </div>
         <SafeImage src={imageUrl} alt={product.product_name || product.brand?.brand_name || "Bottled water product"}
           width={480} height={480}
           className="h-48 w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.04] sm:h-56"

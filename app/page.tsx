@@ -8,6 +8,7 @@ import { HomeContent } from "@/components/home-content"
 import { HomeMap } from "@/components/home-map"
 import { HomeFilters } from "@/components/home-filters"
 import { WaterMetricsHelp } from "@/components/water-metrics-help"
+import { CompareDock } from "@/components/compare/compare-dock"
 
 export const dynamic = "force-dynamic"
 
@@ -51,6 +52,8 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
 
   const hasFilters = Boolean(query) || brandIds.length > 0 || types.length > 0 ||
     minPh !== undefined || maxPh !== undefined || minTds !== undefined || maxTds !== undefined
+
+  const productsById = Object.fromEntries(sortedProducts.map((p) => [p.id, p]))
 
   return (
     <main id="main-content" className="min-h-screen overflow-hidden">
@@ -158,6 +161,8 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
           <HomeContent products={sortedProducts} />
         </div>
       </section>
+
+      <CompareDock productsById={productsById} />
     </main>
   )
 }

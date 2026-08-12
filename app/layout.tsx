@@ -4,6 +4,7 @@ import { getLocale, getMessages, getTranslations } from 'next-intl/server'
 import { Toaster } from "@/components/ui/toaster"
 import { MainNav } from "@/components/main-nav"
 import { Footer } from "@/components/footer"
+import { CompareProvider } from "@/components/compare/compare-store"
 import { ANALYTICS_CONFIG } from "@/lib/features"
 import { locales, type Locale } from '@/i18n/routing'
 import './globals.css'
@@ -50,10 +51,12 @@ export default async function RootLayout({
       <body suppressHydrationWarning className="min-h-screen bg-background">
         <a href="#main-content" className="skip-link">{common('skipToContent')}</a>
         <NextIntlClientProvider messages={messages}>
-          <MainNav initialLocale={initialLocale} />
-          {children}
-          <Footer />
-          <Toaster />
+          <CompareProvider>
+            <MainNav initialLocale={initialLocale} />
+            {children}
+            <Footer />
+            <Toaster />
+          </CompareProvider>
         </NextIntlClientProvider>
       </body>
     </html>
