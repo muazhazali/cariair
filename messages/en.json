@@ -14,7 +14,33 @@
     "viewAll": "View All",
     "viewFullMap": "View Full Map",
     "noResults": "No results found",
-    "noResultsDesc": "Try adjusting your search or filter criteria to find what you're looking for"
+    "noResultsDesc": "Try adjusting your search or filter criteria to find what you're looking for",
+    "skipToContent": "Skip to content",
+    "loadingPage": "Loading page…"
+  },
+  "errors": {
+    "systemResponse": "System response",
+    "tryAgain": "Try again",
+    "backHome": "Back to home",
+    "backSources": "Back to sources",
+    "genericTitle": "Something went wrong",
+    "genericDescription": "We couldn't load this page. Please try again or return to the registry.",
+    "aboutTitle": "Page unavailable",
+    "aboutDescription": "We couldn't load the information about CariAir.",
+    "docsTitle": "Documentation unavailable",
+    "docsDescription": "We couldn't load the API reference.",
+    "sourceTitle": "Source unavailable",
+    "sourceDescription": "We couldn't load this water-source record.",
+    "notFoundLabel": "Not found",
+    "notFoundTitle": "This source ran dry.",
+    "notFoundDescription": "The page may have moved, or the address may be incorrect.",
+    "returnHome": "Return home"
+  },
+  "docsPage": {
+    "title": "CariAir API",
+    "description": "Public endpoints for Malaysia's mineral and drinking water source registry.",
+    "openApiJson": "OpenAPI JSON",
+    "loading": "Loading API documentation…"
   },
   "nav": {
     "home": "Home",
@@ -76,6 +102,7 @@
     "matchingProducts": "Matching Water Products",
     "matchingProductsDesc": "Products matching your search and filter criteria.",
     "helpTrigger": "What do pH & TDS mean?",
+    "helpIndex": "Reading water",
     "helpTitle": "Understanding Water Metrics",
     "helpPhTitle": "pH Level",
     "helpPhDesc": "pH measures how acidic or alkaline the water is, on a scale of 0 to 14. It affects taste and how the water feels in your mouth.",
@@ -122,7 +149,8 @@
   "map": {
     "title": "Water Sources Map",
     "description": "Geographic distribution of registered mineral and drinking water sources in Malaysia.",
-    "loadingMap": "Loading map…"
+    "loadingMap": "Loading map…",
+    "viewDetails": "View details"
   },
   "learn": {
     "title": "Learn About Mineral Water",
@@ -215,6 +243,8 @@
     "tabArticles": "Articles",
     "articleTitle": "The Ultimate Guide to Mineral Water in Malaysia",
     "articleDesc": "Everything you need to know about pH levels, TDS, and choosing the best water brand for your health.",
+    "readingNote": "Reading note",
+    "readingNoteDesc": "pH, TDS and mineral composition explained in plain language.",
     "articleContent": "### Understanding Mineral Water Quality in Malaysia\n\nWhen it comes to hydration, not all water is created equal. In Malaysia, we are blessed with numerous natural mineral water sources, but choosing the right one requires understanding what's inside the bottle. This guide explores the key factors that determine water quality and how to choose the best brand for your needs.\n\n#### Why pH Levels Matter\n\nThe pH level of your drinking water indicates how acidic or alkaline it is. Most mineral waters in Malaysia range from slightly acidic (pH 6.5) to alkaline (pH 8.5). \n\n*   **Alkaline Water (pH 7.5+):** Many health enthusiasts prefer alkaline water for its potential to neutralize acid in the bloodstream and improve metabolism.\n*   **Neutral Water (pH 7.0):** Ideal for general daily consumption and maintaining a balanced internal environment.\n\n#### Decoding TDS (Total Dissolved Solids)\n\nTDS represents the concentration of dissolved substances in the water, including minerals like calcium, magnesium, and potassium. \n\n*   **Low TDS (<50 mg/L):** Usually found in purified or drinking water. It has a light, clean taste but fewer minerals.\n*   **Moderate TDS (150-500 mg/L):** The sweet spot for natural mineral water. Brands like **Spritzer** and **Cactus** often fall into this category, providing a balanced mineral profile.\n\n#### Top Mineral Water Brands in Malaysia\n\n1.  **Spritzer:** Malaysia's leading mineral water brand, sourced from a vast tropical rainforest in Taiping, Perak. Known for its high silica content which supports collagen production.\n2.  **Cactus:** A popular and affordable choice, also sourced from natural underground aquifers, offering reliable quality and a pleasant taste.\n3.  **Desa:** Sourced from the pristine foothills of Mount Kinabalu, it offers a unique mineral profile from one of the highest sources in the country.\n\n#### How to Choose the Best Water for You\n\n- **For Bone Health:** Look for brands with higher **Calcium** (Ca) and **Magnesium** (Mg) levels.\n- **For Athletic Recovery:** Choose water with mineral balance to replenish electrolytes.\n- **For Daily Wellbeing:** A neutral or slightly alkaline pH with moderate TDS is generally recommended.\n\nBy using the **CariAir Registry**, you can compare these brands side-by-side to find the perfect match for your health goals. Hydrate smarter, not just more!"
   },
   "about": {

@@ -40,6 +40,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
   else if (rawMinerals && typeof rawMinerals === "object") minerals = Object.values(rawMinerals) as Mineral[]
 
   const hasCoordinates = source?.lat != null && source?.lng != null
+  const productName = product.product_name || brand?.brand_name || t("unknown")
 
   return (
     <main id="main-content" className="min-h-screen bg-bone">
@@ -49,15 +50,15 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
           <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end lg:gap-16">
             <div>
               <p className="section-index">{t("sourceRecord")} / {product.id.slice(0, 8)}</p>
-              <h1 className="mt-5 max-w-5xl font-display text-[clamp(3.25rem,7vw,6.75rem)] leading-[0.9] tracking-[-0.052em] text-pretty">{product.product_name}</h1>
+              <h1 className="mt-5 max-w-5xl text-pretty font-display text-[clamp(2.75rem,7vw,6rem)] leading-[0.94] tracking-[-0.04em]">{productName}</h1>
               <div className="mt-7 flex flex-wrap items-center gap-4">
                 <WaterTypeBadge type={source?.type || "Mineral Water"} />
-                {source?.location_address && <span className="flex items-center gap-2 text-sm text-muted-foreground"><RegistryGlyph kind="map" className="h-7 w-7 rounded-[4px]" />{source.location_address}</span>}
+                {source?.location_address && <span className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground"><RegistryGlyph kind="map" className="h-7 w-7 rounded-sm" /><span className="text-pretty">{source.location_address}</span></span>}
               </div>
             </div>
-            <div className="relative h-72 overflow-hidden rounded-xl border border-border bg-[#eeece5] sm:h-80">
-              <span className="absolute right-4 top-4 z-10 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">{t("productImage")}</span>
-              <SafeImage src={imageUrl} alt={product.product_name || "Bottled water product"} loading="eager" fetchPriority="high" className="h-full w-full object-contain p-7" />
+            <div className="relative h-72 overflow-hidden rounded-xl border border-border bg-specimen sm:h-80">
+              <span className="absolute right-4 top-4 z-10 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{t("productImage")}</span>
+              <SafeImage src={imageUrl} alt={productName} loading="eager" fetchPriority="high" className="h-full w-full object-contain p-7" />
             </div>
           </div>
         </div>
@@ -73,7 +74,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
           </InfoPanel>
 
           <InfoPanel title={t("verification")} index="02">
-            <div><span className="section-index">{t("status")}</span><p className="mt-2 inline-flex rounded-full bg-[#edf3ec] px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-[#346538]">{product.status || t("pending")}</p></div>
+            <div><span className="section-index">{t("status")}</span><p className="mt-2 inline-flex rounded-full bg-source-pale px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-source-foreground">{product.status || t("pending")}</p></div>
             <InfoRow label={t("created")} value={<ClientDate date={product.created_at} />} />
             {source?.kkm_approval_number && <InfoRow label={t("kkmApproval")} value={<span className="font-mono text-xs">{source.kkm_approval_number}</span>} />}
           </InfoPanel>
@@ -81,18 +82,18 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
 
         <div className="min-w-0 space-y-6">
           <section className="rounded-xl border border-border bg-card p-6 sm:p-8">
-            <PanelHeading index="03 / Analysis" title={t("waterProperties")} description={t("waterPropertiesDesc")} />
+            <PanelHeading index="03" title={t("waterProperties")} description={t("waterPropertiesDesc")} />
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               <Metric label={t("phLevel")} value={product.ph_level != null ? Number(product.ph_level).toFixed(1) : "—"} note={product.ph_level == null ? undefined : product.ph_level < 7 ? t("acidic") : product.ph_level > 7 ? t("alkaline") : t("neutral")} />
               <Metric label={t("tds")} value={product.tds != null ? Number(product.tds).toFixed(0) : "—"} unit={product.tds != null ? "mg/L" : undefined} note={t("totalDissolvedSolids")} />
             </div>
           </section>
 
-          <MineralCompositionPanel minerals={minerals} productName={product.product_name || t("unknown")} />
-          <HealthBenefitsPanel minerals={minerals} phLevel={product.ph_level} tds={product.tds} productName={product.product_name || t("unknown")} />
+          <MineralCompositionPanel minerals={minerals} productName={productName} />
+          <HealthBenefitsPanel minerals={minerals} phLevel={product.ph_level} tds={product.tds} productName={productName} />
 
           <section className="overflow-hidden rounded-xl border border-border bg-card">
-            <div className="p-6 sm:p-8"><PanelHeading index="06 / Coordinates" title={t("sourceLocation")} description={t("sourceLocationDesc")} /></div>
+            <div className="p-6 sm:p-8"><PanelHeading index="06" title={t("sourceLocation")} description={t("sourceLocationDesc")} /></div>
             {hasCoordinates ? (
               <ClientMapWrapper lat={Number(source!.lat)} lng={Number(source!.lng)} sourceName={source?.source_name || product.product_name} locationAddress={source?.location_address} height="30rem" />
             ) : (
@@ -106,7 +107,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
 }
 
 function InfoPanel({ title, index, children }: { title: string; index: string; children: React.ReactNode }) {
-  return <section className="rounded-xl border border-border bg-card p-6"><div className="flex items-baseline justify-between border-b border-border pb-4"><h2 className="font-display text-2xl tracking-[-0.03em]">{title}</h2><span className="font-mono text-[9px] text-muted-foreground">{index}</span></div><div className="mt-5 space-y-5">{children}</div></section>
+  return <section className="rounded-xl border border-border bg-card p-6"><div className="flex items-baseline justify-between border-b border-border pb-4"><h2 className="font-display text-2xl tracking-[-0.03em]">{title}</h2><span className="font-mono text-[10px] text-muted-foreground">{index}</span></div><div className="mt-5 space-y-5">{children}</div></section>
 }
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
@@ -114,5 +115,5 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 function Metric({ label, value, unit, note }: { label: string; value: string; unit?: string; note?: string }) {
-  return <article className="rounded-lg border border-border bg-[#f4f2ec] p-6"><p className="section-index">{label}</p><p className="mt-4 font-display text-6xl leading-none tracking-[-0.05em] tabular-nums">{value}{unit && <span className="ml-2 font-sans text-xs tracking-normal text-muted-foreground">{unit}</span>}</p>{note && <p className="mt-3 text-xs text-muted-foreground">{note}</p>}</article>
+  return <article className="rounded-lg border border-border bg-bone p-6"><p className="section-index">{label}</p><p className="mt-4 font-display text-6xl leading-none tracking-[-0.04em] tabular-nums">{value}{unit && <span className="ml-2 font-sans text-xs tracking-normal text-muted-foreground">{unit}</span>}</p>{note && <p className="mt-3 text-xs text-muted-foreground">{note}</p>}</article>
 }

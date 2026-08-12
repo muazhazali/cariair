@@ -65,7 +65,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
 
           <div className="grid items-end gap-10 lg:grid-cols-[minmax(0,1.55fr)_minmax(19rem,.65fr)] lg:gap-20">
             <div>
-              <h1 className="max-w-5xl font-display text-[clamp(3.25rem,8vw,7.75rem)] leading-[0.88] tracking-[-0.055em] text-pretty">
+              <h1 className="max-w-5xl text-pretty font-display text-[clamp(2.75rem,8vw,6rem)] leading-[0.92] tracking-[-0.04em]">
                 {t("heroTitle")}
               </h1>
             </div>
@@ -108,12 +108,17 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
             </Link>
           </div>
 
-          <div className="relative h-[28rem] overflow-hidden rounded-xl border border-border bg-muted sm:h-[36rem]">
+            <div className="relative h-[24rem] overflow-hidden rounded-xl border border-border bg-muted sm:h-[32rem] lg:h-[36rem]">
             <Suspense fallback={<MapSkeleton />}>
               <HomeMap products={sortedProducts} />
             </Suspense>
+<<<<<<< HEAD
             <div className="pointer-events-none absolute left-4 top-4 z-10 border border-border bg-background/95 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground backdrop-blur-sm">
               {format.number(sortedProducts.filter((product) => product.source?.lat != null && product.source?.lng != null).length)} {t("statsProducts")} / {t("mapOverlayRegion")}
+=======
+            <div className="pointer-events-none absolute left-4 top-4 z-10 border border-border bg-background/95 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground backdrop-blur-sm">
+              {format.number(sortedProducts.length)} {t("statsProducts")} / Malaysia
+>>>>>>> 6f557c3b1bd383c199fae316538638869229d90b
             </div>
           </div>
         </div>
@@ -149,7 +154,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
               </p>
             </div>
             <WaterMetricsHelp translations={{
-              trigger: t("helpTrigger"), title: t("helpTitle"), phTitle: t("helpPhTitle"),
+              index: t("helpIndex"), trigger: t("helpTrigger"), title: t("helpTitle"), phTitle: t("helpPhTitle"),
               phDesc: t("helpPhDesc"), phAcidic: t("helpPhAcidic"), phNeutral: t("helpPhNeutral"),
               phAlkaline: t("helpPhAlkaline"), tdsTitle: t("helpTdsTitle"), tdsDesc: t("helpTdsDesc"),
               tdsLow: t("helpTdsLow"), tdsMedium: t("helpTdsMedium"), tdsHigh: t("helpTdsHigh"),
