@@ -424,6 +424,8 @@
     "placeholder": "Sort by…",
     "nameAsc": "Name (A-Z)",
     "nameDesc": "Name (Z-A)",
+    "brandAsc": "Brand (A-Z)",
+    "brandDesc": "Brand (Z-A)",
     "phAsc": "pH (Low to High)",
     "phDesc": "pH (High to Low)",
     "tdsAsc": "TDS (Low to High)",

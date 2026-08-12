@@ -14,7 +14,7 @@ export function ViewToggle({ current }: { current: ViewMode }) {
     const params = new URLSearchParams(searchParams.toString())
     if (mode === "cards") params.delete("view")
     else params.set("view", mode)
-    router.push(params.size ? `/?${params.toString()}` : "/")
+    router.replace(params.size ? `/?${params.toString()}` : "/", { scroll: false })
   }
 
   return (

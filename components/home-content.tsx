@@ -12,9 +12,10 @@ import type { ViewMode } from "@/lib/view"
 interface HomeContentProps {
   products: Product[]
   view: ViewMode
+  sort: string
 }
 
-export function HomeContent({ products, view }: HomeContentProps) {
+export function HomeContent({ products, view, sort }: HomeContentProps) {
   const t = useTranslations("sourcesView")
   const filters = useTranslations("filters")
   if (products.length === 0) {
@@ -33,7 +34,7 @@ export function HomeContent({ products, view }: HomeContentProps) {
         <ViewToggle current={view} />
       </div>
       {view === "table" ? (
-        <SourcesTable products={products} />
+        <SourcesTable products={products} sort={sort} />
       ) : (
         <div className="registry-grid grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((product, index) => (

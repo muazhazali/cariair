@@ -49,6 +49,8 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
     if (sort === "ph_desc") return (b.ph_level ?? -Infinity) - (a.ph_level ?? -Infinity)
     if (sort === "tds_asc") return (a.tds ?? Infinity) - (b.tds ?? Infinity)
     if (sort === "tds_desc") return (b.tds ?? -Infinity) - (a.tds ?? -Infinity)
+    if (sort === "brand_asc") return (a.brand?.brand_name ?? "").localeCompare(b.brand?.brand_name ?? "")
+    if (sort === "brand_desc") return (b.brand?.brand_name ?? "").localeCompare(a.brand?.brand_name ?? "")
     return nameA.localeCompare(nameB)
   })
 
@@ -160,7 +162,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
               tdsLow: t("helpTdsLow"), tdsMedium: t("helpTdsMedium"), tdsHigh: t("helpTdsHigh"),
             }} />
           </div>
-          <HomeContent products={sortedProducts} view={view} />
+          <HomeContent products={sortedProducts} view={view} sort={sort} />
         </div>
       </section>
 

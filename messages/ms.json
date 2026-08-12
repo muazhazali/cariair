@@ -424,6 +424,8 @@
     "placeholder": "Susun mengikut…",
     "nameAsc": "Nama (A-Z)",
     "nameDesc": "Nama (Z-A)",
+    "brandAsc": "Jenama (A-Z)",
+    "brandDesc": "Jenama (Z-A)",
     "phAsc": "pH (Rendah ke Tinggi)",
     "phDesc": "pH (Tinggi ke Rendah)",
     "tdsAsc": "TDS (Rendah ke Tinggi)",

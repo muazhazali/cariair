@@ -71,7 +71,7 @@ export function HomeFilters({ brands, currentQuery, currentTypes, currentBrands,
   const handleSort = (value: string) => {
     const params = new URLSearchParams(searchParams.toString())
     if (value === "name_asc") params.delete("sort"); else params.set("sort", value)
-    router.push(params.size ? `/?${params.toString()}` : "/")
+    router.replace(params.size ? `/?${params.toString()}` : "/", { scroll: false })
   }
 
   const activeFilterCount = types.length + selectedBrands.length +
@@ -154,6 +154,7 @@ export function HomeFilters({ brands, currentQuery, currentTypes, currentBrands,
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="name_asc">{tso("nameAsc")}</SelectItem><SelectItem value="name_desc">{tso("nameDesc")}</SelectItem>
+            <SelectItem value="brand_asc">{tso("brandAsc")}</SelectItem><SelectItem value="brand_desc">{tso("brandDesc")}</SelectItem>
             <SelectItem value="ph_asc">{tso("phAsc")}</SelectItem><SelectItem value="ph_desc">{tso("phDesc")}</SelectItem>
             <SelectItem value="tds_asc">{tso("tdsAsc")}</SelectItem><SelectItem value="tds_desc">{tso("tdsDesc")}</SelectItem>
           </SelectContent>
