@@ -170,27 +170,6 @@
   box-shadow: none;
 }
 
-@media (min-width: 1024px) {
-  .registry-grid > a:first-child {
-    grid-column: span 2;
-    display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
-    min-height: 24rem;
-  }
-
-  .registry-grid > a:first-child > div:first-child {
-    min-height: 24rem;
-    border-right: 1px solid hsl(var(--border));
-    border-bottom: 0;
-  }
-
-  .registry-grid > a:first-child > div:last-child {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-}
-
 /* Swagger is third-party UI, so this scope brings it into the CariAir system. */
 .api-docs .swagger-ui {
   color: #24251f;

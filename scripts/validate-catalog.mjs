@@ -20,18 +20,21 @@ for (const [index, product] of (db.products ?? []).entries()) {
   if (!["mineral-water", "drinking-water"].includes(product.type)) {
     errors.push(`${product.id}: unsupported type ${product.type}`);
   }
-  if (product.image !== `${product.id}.webp`) {
-    errors.push(`${product.id}: image must be ${product.id}.webp`);
+  const allowedImages = [`${product.id}.webp`, "placeholder.svg"];
+  if (!allowedImages.includes(product.image)) {
+    errors.push(`${product.id}: image must be ${product.id}.webp or placeholder.svg`);
   }
   for (const key of ["ph", "tds_mg_l", "latitude", "longitude"]) {
     if (product[key] !== null && typeof product[key] !== "number") {
       errors.push(`${product.id}: ${key} must be a number or null`);
     }
   }
-  try {
-    await access(path.join(root, "public", "images", "products", product.image));
-  } catch {
-    warnings.push(`${product.id}: image file is not available yet`);
+  if (product.image !== "placeholder.svg") {
+    try {
+      await access(path.join(root, "public", "images", "products", product.image));
+    } catch {
+      warnings.push(`${product.id}: image file is not available yet`);
+    }
   }
 }
 

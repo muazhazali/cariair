@@ -17,8 +17,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       className="group flex min-h-[28rem] flex-col overflow-hidden rounded-xl border border-border bg-card transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-foreground/25 hover:shadow-[0_4px_18px_rgba(52,50,42,0.04)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}>
       <div className="relative flex min-h-56 flex-1 items-center justify-center overflow-hidden border-b border-border bg-specimen p-6 sm:min-h-64">
-        <span className="absolute left-4 top-4 rounded-full bg-survey-pale px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-survey-foreground">{waterType}</span>
-        <span className="absolute right-4 top-4 font-mono text-[10px] text-muted-foreground">/{String(index + 1).padStart(2, "0")}</span>
+        <span className="absolute left-4 top-4 z-10 rounded-full bg-survey-pale px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-survey-foreground">{waterType}</span>
+        <span className="absolute right-4 top-4 z-10 font-mono text-[10px] text-muted-foreground">/{String(index + 1).padStart(2, "0")}</span>
         <SafeImage src={imageUrl} alt={product.product_name || product.brand?.brand_name || "Bottled water product"}
           width={480} height={480}
           className="h-48 w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.04] sm:h-56"

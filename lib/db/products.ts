@@ -91,7 +91,7 @@ export function expandProduct(raw: FlatProductRecord): Product {
     brand,
     manufacturer,
     source,
-    images: [{ id: raw.id, filename: raw.image, url: `/images/products/${raw.image}` }],
+    images: [{ id: raw.id, filename: raw.image, url: raw.image === "placeholder.svg" ? "/placeholder.svg" : `/images/products/${raw.image}` }],
   };
 }
 
