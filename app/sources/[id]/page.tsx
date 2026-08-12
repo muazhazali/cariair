@@ -58,7 +58,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
             </div>
             <div className="relative h-72 overflow-hidden rounded-xl border border-border bg-specimen sm:h-80">
               <span className="absolute right-4 top-4 z-10 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{t("productImage")}</span>
-              <SafeImage src={imageUrl} alt={productName} loading="eager" fetchPriority="high" className="h-full w-full object-contain p-7" />
+              <SafeImage src={imageUrl} alt={productName} width={640} height={640} loading="eager" fetchPriority="high" className="h-full w-full object-contain p-7" />
             </div>
           </div>
         </div>

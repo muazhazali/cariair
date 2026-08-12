@@ -20,6 +20,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         <span className="absolute left-4 top-4 rounded-full bg-survey-pale px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-survey-foreground">{waterType}</span>
         <span className="absolute right-4 top-4 font-mono text-[10px] text-muted-foreground">/{String(index + 1).padStart(2, "0")}</span>
         <SafeImage src={imageUrl} alt={product.product_name || product.brand?.brand_name || "Bottled water product"}
+          width={480} height={480}
           className="h-48 w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.04] sm:h-56"
           loading="lazy" />
       </div>

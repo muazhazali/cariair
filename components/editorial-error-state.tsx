@@ -5,11 +5,7 @@ import { useTranslations } from "next-intl"
 import { ArrowIcon, RegistryGlyph } from "./editorial-primitives"
 
 export function EditorialErrorState({ title, description, reset, backHref = "/", backLabel }: { title: string; description: string; reset?: () => void; backHref?: string; backLabel?: string }) {
-<<<<<<< HEAD
-  const t = useTranslations("error")
-=======
   const t = useTranslations("errors")
->>>>>>> 6f557c3b1bd383c199fae316538638869229d90b
   return (
     <main id="main-content" className="editorial-texture grid min-h-[70dvh] place-items-center px-5 py-20">
       <section className="w-full max-w-xl border-y border-border py-12 text-center">
@@ -19,11 +15,7 @@ export function EditorialErrorState({ title, description, reset, backHref = "/",
         <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-muted-foreground">{description}</p>
         <div className="mt-7 flex flex-wrap justify-center gap-3">
           {reset && <button type="button" onClick={reset} className="quiet-button">{t("tryAgain")}</button>}
-<<<<<<< HEAD
-          <Link href={backHref} className="inline-flex h-11 items-center gap-2 rounded-md border border-border bg-background px-5 text-sm font-semibold transition-colors hover:bg-muted"><ArrowIcon direction="left" />{backLabel ?? t("backHome")}</Link>
-=======
-          <Link href={backHref} className="outline-button"><ArrowIcon direction="left" />{backLabel || t("backHome")}</Link>
->>>>>>> 6f557c3b1bd383c199fae316538638869229d90b
+          <Link href={backHref} className="outline-button"><ArrowIcon direction="left" />{backLabel ?? t("backHome")}</Link>
         </div>
       </section>
     </main>

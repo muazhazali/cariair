@@ -44,11 +44,7 @@ export function HomeMapClient({ products }: { products: Product[] }) {
               <p className="text-sm font-semibold">{product.brand?.brand_name}</p>
               <p className="text-xs text-muted-foreground">{product.product_name}</p>
               {product.source!.location_address && <p className="mt-1 text-xs text-muted-foreground">{product.source!.location_address}</p>}
-<<<<<<< HEAD
-              <Link href={`/sources/${product.id}`} className="mt-2 inline-block border-b border-current text-xs font-semibold text-[#405039]">{tp("viewDetails")} →</Link>
-=======
               <Link href={`/sources/${product.id}`} className="mt-2 inline-flex items-center gap-1 border-b border-current text-xs font-semibold text-survey-foreground">{t("viewDetails")}<ArrowIcon /></Link>
->>>>>>> 6f557c3b1bd383c199fae316538638869229d90b
             </article>
           </Popup>
         </Marker>
