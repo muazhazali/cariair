@@ -1,11 +1,13 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { useTranslations } from "next-intl"
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 
 export function SingleSourceMap({ lat, lng, sourceName, locationAddress, height = "500px" }: { lat: number; lng: number; sourceName?: string | null; locationAddress?: string | null; height?: string }) {
+  const t = useTranslations("map")
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
   const numLat = Number(lat), numLng = Number(lng)
@@ -14,7 +16,7 @@ export function SingleSourceMap({ lat, lng, sourceName, locationAddress, height 
     iconSize: [28, 34], iconAnchor: [14, 34], popupAnchor: [0, -31],
   }), [])
 
-  if (!mounted) return <div className="grid w-full animate-pulse place-items-center border-t border-border bg-muted" style={{ height }}><p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Loading map</p></div>
+  if (!mounted) return <div className="grid w-full animate-pulse place-items-center border-t border-border bg-muted" style={{ height }} role="status"><p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{t("loadingMap")}</p></div>
 
-  return <div className="w-full overflow-hidden border-t border-border" style={{ height }}><MapContainer center={[numLat, numLng]} zoom={13} style={{ height: "100%", width: "100%" }} scrollWheelZoom><TileLayer attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" /><Marker position={[numLat, numLng]} icon={marker}><Popup><article className="space-y-1">{sourceName && <h3 className="text-sm font-semibold">{sourceName}</h3>}{locationAddress && <p className="text-xs text-muted-foreground">{locationAddress}</p>}<p className="font-mono text-[10px] text-muted-foreground">{numLat.toFixed(5)}, {numLng.toFixed(5)}</p></article></Popup></Marker></MapContainer></div>
+  return <div className="w-full overflow-hidden border-t border-border" style={{ height }} role="region" aria-label={t("title")}><MapContainer center={[numLat, numLng]} zoom={13} style={{ height: "100%", width: "100%" }} scrollWheelZoom><TileLayer attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" /><Marker position={[numLat, numLng]} icon={marker}><Popup><article className="space-y-1">{sourceName && <h3 className="text-sm font-semibold">{sourceName}</h3>}{locationAddress && <p className="text-xs text-muted-foreground">{locationAddress}</p>}<p className="font-mono text-[10px] text-muted-foreground">{numLat.toFixed(5)}, {numLng.toFixed(5)}</p></article></Popup></Marker></MapContainer></div>
 }

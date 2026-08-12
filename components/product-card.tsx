@@ -19,6 +19,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         <span className="absolute left-4 top-4 rounded-full bg-[#dfe8d9] px-2.5 py-1 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-[#405039]">{waterType}</span>
         <span className="absolute right-4 top-4 font-mono text-[9px] text-muted-foreground">/{String(index + 1).padStart(2, "0")}</span>
         <img src={imageUrl} alt={product.product_name || product.brand?.brand_name || "Bottled water product"}
+          width={640} height={640}
           className="h-48 w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.04] sm:h-56"
           loading="lazy" onError={(event) => { if (!event.currentTarget.src.endsWith("placeholder.svg")) event.currentTarget.src = "/placeholder.svg" }} />
       </div>

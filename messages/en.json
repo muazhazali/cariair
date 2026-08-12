@@ -1,8 +1,8 @@
 {
   "common": {
-    "loading": "Loading...",
-    "loadingMap": "Loading map...",
-    "loadingForm": "Loading form...",
+    "loading": "Loading…",
+    "loadingMap": "Loading map…",
+    "loadingForm": "Loading form…",
     "cancel": "Cancel",
     "save": "Save",
     "submit": "Submit",
@@ -27,6 +27,7 @@
     "docs": "API",
     "github": "GitHub",
     "moreOptions": "More Options",
+    "mobileNavigation": "Mobile navigation",
     "contributeCta": "Contribute data"
   },
   "footer": {
@@ -60,6 +61,8 @@
     "statsProducts": "Products",
     "statsBrands": "Brands",
     "statsWaterSources": "Water Sources",
+    "mapSectionIndex": "Field notes / 01",
+    "registrySectionIndex": "Registry / 02",
     "browseAllSources": "Browse All Sources",
     "exploreMap": "Explore Water Sources Across Malaysia",
     "featuredSources": "Featured Water Sources",
@@ -118,7 +121,7 @@
   "map": {
     "title": "Water Sources Map",
     "description": "Geographic distribution of registered mineral and drinking water sources in Malaysia.",
-    "loadingMap": "Loading map..."
+    "loadingMap": "Loading map…"
   },
   "learn": {
     "title": "Learn About Mineral Water",
@@ -260,7 +263,7 @@
     "productImage": "Product Image",
     "productImageDesc": "Upload a clear photo of the bottle/label.",
     "submitProduct": "Submit Product",
-    "submitting": "Submitting...",
+    "submitting": "Submitting…",
     "submitSuccess": "Submission Successful",
     "submitSuccessDesc": "Your product has been submitted for review.",
     "submitFailed": "Submission Failed",
@@ -303,7 +306,7 @@
     "sourceAddFailed": "Failed to add source",
     "addSourceButton": "Add Source",
     "cancel": "Cancel",
-    "loading": "Loading form..."
+    "loading": "Loading form…"
   },
   "product": {
     "backToSources": "Back to all sources",
@@ -327,14 +330,17 @@
     "sourceLocation": "Source Location",
     "sourceLocationDesc": "Geographic location of the water source",
     "locationNotAvailable": "Location data not available",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "sourceRecord": "Source record",
+    "productImage": "Product image",
+    "pending": "Pending"
   },
   "sourcesView": {
-    "updating": "Updating...",
+    "updating": "Updating…",
     "waterSourcesFound": "{count, plural, one {# water source found} other {# water sources found}}",
     "waterSourceFound": "water source",
     "waterSourcesFoundPlural": "water sources found",
-    "searchPlaceholder": "Search by brand, product...",
+    "searchPlaceholder": "Search brands or products, e.g. Spritzer…",
     "search": "Search",
     "showingResultsFor": "Showing results for",
     "noResults": "No results found",
@@ -348,6 +354,9 @@
     "clearAll": "Clear All",
     "reset": "Reset",
     "filterButton": "Filters",
+    "controlsLabel": "Registry controls",
+    "minimumValue": "Minimum {metric}",
+    "maximumValue": "Maximum {metric}",
     "recommendedForMe": "Recommended for Me",
     "waterType": "Water Type",
     "phLevel": "pH Level",
@@ -357,6 +366,12 @@
     "selected": "{count} selected",
     "type": "Type",
     "brand": "Brand",
+    "typeUnderground": "Underground",
+    "typeSpring": "Spring",
+    "typeMunicipal": "Municipal",
+    "typeOxygenated": "Oxygenated",
+    "typeMineral": "Mineral",
+    "typeDrinking": "Drinking",
     "presetBone": "Bone Health",
     "presetBoneDesc": "High calcium content",
     "presetHeart": "Heart Health",
@@ -367,7 +382,8 @@
     "presetEnergyDesc": "Rich in magnesium"
   },
   "sort": {
-    "placeholder": "Sort by...",
+    "label": "Sort water sources",
+    "placeholder": "Sort by…",
     "nameAsc": "Name (A-Z)",
     "nameDesc": "Name (Z-A)",
     "phAsc": "pH (Low to High)",
@@ -442,7 +458,28 @@
     "alkalineWater": "Alkaline Water",
     "alkalineWaterBenefit": "May Help Balance pH",
     "mineralRich": "Mineral-Rich",
-    "mineralRichBenefit": "Diverse Nutrition Profile"
+    "mineralRichBenefit": "Diverse Nutrition Profile",
+    "qualityScore": "Quality score",
+    "categoryBone": "Bone & teeth",
+    "categoryHeart": "Cardiovascular",
+    "categoryMuscle": "Muscle & energy",
+    "categoryHydration": "Hydration & balance",
+    "categoryNervous": "Nervous system",
+    "categoryImmune": "Immune system",
+    "calciumBones": "Calcium ({amount} mg/L) supports bones and teeth.",
+    "calciumHeart": "Calcium supports heart-muscle function.",
+    "magnesiumEnergy": "Magnesium ({amount} mg/L) supports energy production and muscle function.",
+    "magnesiumNervous": "Magnesium supports nervous-system function.",
+    "potassiumHeart": "Potassium ({amount} mg/L) supports normal heart rhythm.",
+    "potassiumFluid": "Potassium contributes to fluid balance.",
+    "sodiumFluid": "Sodium ({amount} mg/L) contributes to fluid balance.",
+    "sodiumNervous": "Sodium helps transmit nerve signals.",
+    "bicarbonateBuffering": "Bicarbonate contributes to the water's buffering profile.",
+    "silicaTissue": "Silica is associated with connective tissue.",
+    "fluorideTeeth": "Fluoride ({amount} mg/L) contributes to tooth-mineral content.",
+    "zincImmune": "Zinc ({amount} mg/L) supports normal immune function.",
+    "ironOxygen": "Iron contributes to normal oxygen transport.",
+    "phCommonRange": "The measured pH is {ph}, within the common bottled-water range."
   },
   "auth": {
     "welcomeBack": "Welcome Back",

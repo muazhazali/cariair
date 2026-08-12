@@ -48,7 +48,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
           <Link href="/#sources" className="text-link"><ArrowIcon direction="left" />{t("backToSources")}</Link>
           <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end lg:gap-16">
             <div>
-              <p className="section-index">Source record / {product.id.slice(0, 8)}</p>
+              <p className="section-index">{t("sourceRecord")} / {product.id.slice(0, 8)}</p>
               <h1 className="mt-5 max-w-5xl font-display text-[clamp(3.25rem,7vw,6.75rem)] leading-[0.9] tracking-[-0.052em] text-pretty">{product.product_name}</h1>
               <div className="mt-7 flex flex-wrap items-center gap-4">
                 <WaterTypeBadge type={source?.type || "Mineral Water"} />
@@ -56,8 +56,8 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
               </div>
             </div>
             <div className="relative h-72 overflow-hidden rounded-xl border border-border bg-[#eeece5] sm:h-80">
-              <span className="absolute right-4 top-4 z-10 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">Product image</span>
-              <SafeImage src={imageUrl} alt={product.product_name || "Bottled water product"} className="h-full w-full object-contain p-7" />
+              <span className="absolute right-4 top-4 z-10 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">{t("productImage")}</span>
+              <SafeImage src={imageUrl} alt={product.product_name || "Bottled water product"} loading="eager" fetchPriority="high" className="h-full w-full object-contain p-7" />
             </div>
           </div>
         </div>
@@ -73,7 +73,7 @@ export default async function SourcePage({ params }: { params: Promise<{ id: str
           </InfoPanel>
 
           <InfoPanel title={t("verification")} index="02">
-            <div><span className="section-index">{t("status")}</span><p className="mt-2 inline-flex rounded-full bg-[#edf3ec] px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-[#346538]">{product.status || "pending"}</p></div>
+            <div><span className="section-index">{t("status")}</span><p className="mt-2 inline-flex rounded-full bg-[#edf3ec] px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-[#346538]">{product.status || t("pending")}</p></div>
             <InfoRow label={t("created")} value={<ClientDate date={product.created_at} />} />
             {source?.kkm_approval_number && <InfoRow label={t("kkmApproval")} value={<span className="font-mono text-xs">{source.kkm_approval_number}</span>} />}
           </InfoPanel>

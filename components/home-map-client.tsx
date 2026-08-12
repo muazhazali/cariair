@@ -6,6 +6,7 @@ import { Icon, latLngBounds } from "leaflet"
 import "leaflet/dist/leaflet.css"
 import { Product } from "@/lib/types/db"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 
 const waterIcon = new Icon({
   iconUrl: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='34' viewBox='0 0 28 34'%3E%3Cpath fill='%232f382a' d='M14 0C6.27 0 0 6.27 0 14c0 9.63 14 20 14 20s14-10.37 14-20C28 6.27 21.73 0 14 0Z'/%3E%3Ccircle cx='14' cy='14' r='5' fill='%23dfe8d9'/%3E%3C/svg%3E",
@@ -24,13 +25,14 @@ function FitBounds({ products }: { products: Product[] }) {
 }
 
 export function HomeMapClient({ products }: { products: Product[] }) {
+  const t = useTranslations("map")
   const productsWithCoords = useMemo(() => products.filter((product) => {
     const { lat, lng } = product.source ?? {}
     return lat != null && lng != null && !isNaN(Number(lat)) && !isNaN(Number(lng))
   }), [products])
 
   return (
-    <MapContainer center={[4.2105, 101.9758]} zoom={6} scrollWheelZoom="center" className="h-full w-full" style={{ zIndex: 1 }}>
+    <div className="h-full w-full" role="region" aria-label={t("title")}><MapContainer center={[4.2105, 101.9758]} zoom={6} scrollWheelZoom="center" className="h-full w-full" style={{ zIndex: 1 }}>
       <FitBounds products={productsWithCoords} />
       <TileLayer attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {productsWithCoords.map((product) => (
@@ -45,6 +47,6 @@ export function HomeMapClient({ products }: { products: Product[] }) {
           </Popup>
         </Marker>
       ))}
-    </MapContainer>
+    </MapContainer></div>
   )
 }

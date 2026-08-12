@@ -24,7 +24,14 @@ interface HomeFiltersProps {
   resultCount: number
 }
 
-const WATER_TYPES = ["Underground", "Spring", "Municipal", "Oxygenated", "Mineral", "Drinking"]
+const WATER_TYPES = [
+  { value: "Underground", label: "typeUnderground" },
+  { value: "Spring", label: "typeSpring" },
+  { value: "Municipal", label: "typeMunicipal" },
+  { value: "Oxygenated", label: "typeOxygenated" },
+  { value: "Mineral", label: "typeMineral" },
+  { value: "Drinking", label: "typeDrinking" },
+] as const
 
 export function HomeFilters({ brands, currentQuery, currentTypes, currentBrands, currentMinPh,
   currentMaxPh, currentMinTds, currentMaxTds, currentSort, resultCount }: HomeFiltersProps) {
@@ -72,12 +79,12 @@ export function HomeFilters({ brands, currentQuery, currentTypes, currentBrands,
 
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-      <div className="flex min-w-0 flex-1 gap-2">
+      <form className="flex min-w-0 flex-1 gap-2" onSubmit={(event) => { event.preventDefault(); applyFilters() }}>
         <div className="relative min-w-0 flex-1">
           <SearchGlyph />
           <Label htmlFor="registry-search" className="sr-only">{ts("searchPlaceholder")}</Label>
-          <Input id="registry-search" placeholder={ts("searchPlaceholder")} value={query}
-            onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => event.key === "Enter" && applyFilters()}
+          <Input id="registry-search" name="q" autoComplete="off" placeholder={ts("searchPlaceholder")} value={query}
+            onChange={(event) => setQuery(event.target.value)}
             className="h-11 rounded-md border-border bg-background pl-10 pr-10 shadow-none focus-visible:ring-1" />
           {query && (
             <button type="button" onClick={() => setQuery("")} aria-label={tf("reset")}
@@ -86,8 +93,8 @@ export function HomeFilters({ brands, currentQuery, currentTypes, currentBrands,
             </button>
           )}
         </div>
-        <Button onClick={applyFilters} className="h-11 rounded-md px-5 active:scale-[.98]">{ts("search")}</Button>
-      </div>
+        <Button type="submit" className="h-11 rounded-md px-5 active:scale-[.98]">{ts("search")}</Button>
+      </form>
 
       <div className="flex items-center gap-2">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -99,25 +106,29 @@ export function HomeFilters({ brands, currentQuery, currentTypes, currentBrands,
           </SheetTrigger>
           <SheetContent side="right" className="w-full border-l border-border bg-background p-0 sm:max-w-md">
             <SheetHeader className="border-b border-border px-6 py-6 text-left">
-              <p className="section-index">Registry controls</p>
+              <p className="section-index">{tf("controlsLabel")}</p>
               <SheetTitle className="font-display text-3xl font-normal tracking-[-0.03em]">{tf("title")}</SheetTitle>
             </SheetHeader>
-            <div className="h-[calc(100dvh-11rem)] space-y-8 overflow-y-auto px-6 py-7">
+            <div className="h-[calc(100dvh-11rem)] space-y-8 overflow-y-auto overscroll-contain px-6 py-7">
               <FilterSection title={tf("waterType")}>
                 <div className="grid grid-cols-2 gap-2">
                   {WATER_TYPES.map((type) => (
-                    <label key={type} htmlFor={`type-${type}`} className="flex cursor-pointer items-center gap-2.5 rounded-md border border-border px-3 py-2.5 text-sm transition-colors hover:bg-muted">
-                      <Checkbox id={`type-${type}`} checked={types.includes(type)} onCheckedChange={(checked) => setTypes(checked ? [...types, type] : types.filter((item) => item !== type))} />
-                      {type}
+                    <label key={type.value} htmlFor={`type-${type.value}`} className="flex cursor-pointer items-center gap-2.5 rounded-md border border-border px-3 py-2.5 text-sm transition-colors hover:bg-muted">
+                      <Checkbox id={`type-${type.value}`} checked={types.includes(type.value)} onCheckedChange={(checked) => setTypes(checked ? [...types, type.value] : types.filter((item) => item !== type.value))} />
+                      {tf(type.label)}
                     </label>
                   ))}
                 </div>
               </FilterSection>
               <FilterSection title={tf("phLevel")} value={`${phRange[0]} — ${phRange[1]}`}>
-                <Slider value={phRange} min={0} max={14} step={0.1} onValueChange={(value) => setPhRange(value as [number, number])} />
+                <Slider value={phRange} min={0} max={14} step={0.1}
+                  thumbLabels={[tf("minimumValue", { metric: tf("phLevel") }), tf("maximumValue", { metric: tf("phLevel") })]}
+                  onValueChange={(value) => setPhRange(value as [number, number])} />
               </FilterSection>
               <FilterSection title={tf("tds")} value={`${tdsRange[0]} — ${tdsRange[1]}`}>
-                <Slider value={tdsRange} min={0} max={500} step={10} onValueChange={(value) => setTdsRange(value as [number, number])} />
+                <Slider value={tdsRange} min={0} max={500} step={10}
+                  thumbLabels={[tf("minimumValue", { metric: tf("tds") }), tf("maximumValue", { metric: tf("tds") })]}
+                  onValueChange={(value) => setTdsRange(value as [number, number])} />
               </FilterSection>
               <FilterSection title={tf("brands")}>
                 <div className="max-h-52 space-y-1 overflow-y-auto pr-2">
@@ -130,7 +141,7 @@ export function HomeFilters({ brands, currentQuery, currentTypes, currentBrands,
                 </div>
               </FilterSection>
             </div>
-            <div className="absolute inset-x-0 bottom-0 flex gap-2 border-t border-border bg-background p-4">
+            <div className="absolute inset-x-0 bottom-0 flex gap-2 border-t border-border bg-background p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <Button onClick={applyFilters} className="h-11 flex-1">{tf("applyFilters")}</Button>
               <Button variant="outline" onClick={clearFilters} className="h-11 border-border shadow-none">{tf("clearAll")}</Button>
             </div>
@@ -138,7 +149,7 @@ export function HomeFilters({ brands, currentQuery, currentTypes, currentBrands,
         </Sheet>
 
         <Select onValueChange={handleSort} value={currentSort}>
-          <SelectTrigger className="h-10 w-[9.5rem] rounded-md border-border bg-background shadow-none sm:w-[11rem]">
+          <SelectTrigger aria-label={tso("label")} className="h-10 w-[9.5rem] rounded-md border-border bg-background shadow-none sm:w-[11rem]">
             <SelectValue placeholder={tso("placeholder")} />
           </SelectTrigger>
           <SelectContent>
@@ -147,7 +158,7 @@ export function HomeFilters({ brands, currentQuery, currentTypes, currentBrands,
             <SelectItem value="tds_asc">{tso("tdsAsc")}</SelectItem><SelectItem value="tds_desc">{tso("tdsDesc")}</SelectItem>
           </SelectContent>
         </Select>
-        <span className="ml-auto hidden whitespace-nowrap font-mono text-[11px] text-muted-foreground sm:block">{ts("waterSourcesFound", { count: resultCount })}</span>
+        <span className="ml-auto hidden whitespace-nowrap font-mono text-[11px] text-muted-foreground sm:block" aria-live="polite">{ts("waterSourcesFound", { count: resultCount })}</span>
       </div>
     </div>
   )

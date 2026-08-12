@@ -25,27 +25,27 @@ export function HealthBenefitsPanel({ minerals, phLevel, tds, productName }: Pro
   ]
 
   const categories = [
-    { id: "bone", title: "Bone & teeth", benefits: [] as string[] },
-    { id: "heart", title: "Cardiovascular", benefits: [] as string[] },
-    { id: "muscle", title: "Muscle & energy", benefits: [] as string[] },
-    { id: "hydration", title: "Hydration & balance", benefits: [] as string[] },
-    { id: "brain", title: "Nervous system", benefits: [] as string[] },
-    { id: "immune", title: "Immune system", benefits: [] as string[] },
+    { id: "bone", title: t("categoryBone"), benefits: [] as string[] },
+    { id: "heart", title: t("categoryHeart"), benefits: [] as string[] },
+    { id: "muscle", title: t("categoryMuscle"), benefits: [] as string[] },
+    { id: "hydration", title: t("categoryHydration"), benefits: [] as string[] },
+    { id: "brain", title: t("categoryNervous"), benefits: [] as string[] },
+    { id: "immune", title: t("categoryImmune"), benefits: [] as string[] },
   ]
 
   for (const mineral of minerals) {
     const name = mineral.name.toLowerCase()
-    if (name.includes("calcium")) { categories[0].benefits.push(`Calcium (${mineral.amount} mg/L) supports bones and teeth.`); categories[1].benefits.push("Calcium supports heart-muscle function.") }
-    if (name.includes("magnesium")) { categories[2].benefits.push(`Magnesium (${mineral.amount} mg/L) supports energy production and muscle function.`); categories[4].benefits.push("Magnesium supports nervous-system function.") }
-    if (name.includes("potassium")) { categories[1].benefits.push(`Potassium (${mineral.amount} mg/L) supports normal heart rhythm.`); categories[3].benefits.push("Potassium contributes to fluid balance.") }
-    if (name.includes("sodium")) { categories[3].benefits.push(`Sodium (${mineral.amount} mg/L) contributes to fluid balance.`); categories[4].benefits.push("Sodium helps transmit nerve signals.") }
-    if (name.includes("bicarbonate")) categories[3].benefits.push("Bicarbonate contributes to the water's buffering profile.")
-    if (name.includes("silica")) categories[0].benefits.push("Silica is associated with connective tissue.")
-    if (name.includes("fluoride")) categories[0].benefits.push(`Fluoride (${mineral.amount} mg/L) contributes to tooth-mineral content.`)
-    if (name.includes("zinc")) categories[5].benefits.push(`Zinc (${mineral.amount} mg/L) supports normal immune function.`)
-    if (name.includes("iron")) categories[2].benefits.push("Iron contributes to normal oxygen transport.")
+    if (name.includes("calcium")) { categories[0].benefits.push(t("calciumBones", { amount: mineral.amount })); categories[1].benefits.push(t("calciumHeart")) }
+    if (name.includes("magnesium")) { categories[2].benefits.push(t("magnesiumEnergy", { amount: mineral.amount })); categories[4].benefits.push(t("magnesiumNervous")) }
+    if (name.includes("potassium")) { categories[1].benefits.push(t("potassiumHeart", { amount: mineral.amount })); categories[3].benefits.push(t("potassiumFluid")) }
+    if (name.includes("sodium")) { categories[3].benefits.push(t("sodiumFluid", { amount: mineral.amount })); categories[4].benefits.push(t("sodiumNervous")) }
+    if (name.includes("bicarbonate")) categories[3].benefits.push(t("bicarbonateBuffering"))
+    if (name.includes("silica")) categories[0].benefits.push(t("silicaTissue"))
+    if (name.includes("fluoride")) categories[0].benefits.push(t("fluorideTeeth", { amount: mineral.amount }))
+    if (name.includes("zinc")) categories[5].benefits.push(t("zincImmune", { amount: mineral.amount }))
+    if (name.includes("iron")) categories[2].benefits.push(t("ironOxygen"))
   }
-  if (phLevel && phLevel >= 6.5 && phLevel <= 8.5) categories[3].benefits.push(`The measured pH is ${phLevel}, within the common bottled-water range.`)
+  if (phLevel && phLevel >= 6.5 && phLevel <= 8.5) categories[3].benefits.push(t("phCommonRange", { ph: phLevel }))
   const activeCategories = categories.filter((category) => category.benefits.length > 0)
 
   const highlights: { text: string; benefit: string }[] = []
@@ -64,7 +64,8 @@ export function HealthBenefitsPanel({ minerals, phLevel, tds, productName }: Pro
       <div className="space-y-10 p-6 sm:p-8">
         <div className="rounded-lg border border-border bg-[#f4f2ec] p-4">
           <p className="section-index text-center">{t("waterQualityProfile")}</p>
-          <ResponsiveContainer width="100%" height={260}><RadarChart data={radarData}><PolarGrid stroke="#cbc8be" /><PolarAngleAxis dataKey="category" tick={{ fill: "#66645f", fontSize: 11 }} /><PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} /><Radar name="Quality score" dataKey="value" stroke="#66765a" fill="#9cab91" fillOpacity={0.38} /></RadarChart></ResponsiveContainer>
+          <div aria-hidden="true"><ResponsiveContainer width="100%" height={260}><RadarChart data={radarData}><PolarGrid stroke="#cbc8be" /><PolarAngleAxis dataKey="category" tick={{ fill: "#66645f", fontSize: 11 }} /><PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} /><Radar name={t("qualityScore")} dataKey="value" stroke="#66765a" fill="#9cab91" fillOpacity={0.38} /></RadarChart></ResponsiveContainer></div>
+          <ul className="sr-only">{radarData.map((item) => <li key={item.category}>{item.category}: {Math.round(item.value)} / 100</li>)}</ul>
         </div>
 
         {highlights.length > 0 && <div className="grid gap-3 sm:grid-cols-2">{highlights.map((highlight, index) => <article key={highlight.text} className="rounded-lg border border-border bg-[#edf3ec] p-5"><span className="font-mono text-[10px] text-[#346538]">0{index + 1}</span><h3 className="mt-4 text-sm font-semibold text-[#346538]">{highlight.text}</h3><p className="mt-1 text-xs leading-5 text-muted-foreground">{highlight.benefit}</p></article>)}</div>}

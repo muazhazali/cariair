@@ -3,7 +3,7 @@ import Link from "next/link"
 import { getBrands, searchWaterSources } from "@/lib/products"
 import { getSources } from "@/lib/db/sources"
 import { getProducts } from "@/lib/db/products"
-import { getTranslations } from "next-intl/server"
+import { getFormatter, getTranslations } from "next-intl/server"
 import { HomeContent } from "@/components/home-content"
 import { HomeMap } from "@/components/home-map"
 import { HomeFilters } from "@/components/home-filters"
@@ -16,6 +16,7 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 export default async function HomePage(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams
   const t = await getTranslations("home")
+  const format = await getFormatter()
 
   const query = (searchParams.q as string) || ""
   const sort = (searchParams.sort as string) || "name_asc"
@@ -85,9 +86,9 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
           </div>
 
           <div className="mt-16 grid border-y border-border sm:grid-cols-3 lg:mt-24">
-            <Stat value={allProductsResult.total} label={t("statsProducts")} index="01" />
-            <Stat value={brands.length} label={t("statsBrands")} index="02" />
-            <Stat value={allSources.length} label={t("statsWaterSources")} index="03" />
+            <Stat value={format.number(allProductsResult.total)} label={t("statsProducts")} index="01" />
+            <Stat value={format.number(brands.length)} label={t("statsBrands")} index="02" />
+            <Stat value={format.number(allSources.length)} label={t("statsWaterSources")} index="03" />
           </div>
           <p className="mt-4 text-xs tracking-wide text-muted-foreground">{t("heroSourceNote")}</p>
         </div>
@@ -97,7 +98,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
         <div className="mx-auto max-w-[88rem] px-5 sm:px-8 lg:px-12">
           <div className="mb-8 grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
             <div>
-              <p className="section-index">Field notes / 01</p>
+              <p className="section-index">{t("mapSectionIndex")}</p>
               <h2 className="mt-3 max-w-2xl font-display text-4xl leading-none tracking-[-0.035em] sm:text-6xl">
                 {t("exploreMap")}
               </h2>
@@ -112,7 +113,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
               <HomeMap products={sortedProducts} />
             </Suspense>
             <div className="pointer-events-none absolute left-4 top-4 z-10 border border-border bg-background/95 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground backdrop-blur-sm">
-              {sortedProducts.length} {t("statsProducts")} / Malaysia
+              {format.number(sortedProducts.length)} {t("statsProducts")} / Malaysia
             </div>
           </div>
         </div>
@@ -139,7 +140,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
         <div className="mx-auto max-w-[88rem] px-5 pb-24 pt-14 sm:px-8 sm:pt-20 lg:px-12 lg:pb-32">
           <div className="mb-10 grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
             <div>
-              <p className="section-index">Registry / 02</p>
+              <p className="section-index">{t("registrySectionIndex")}</p>
               <h2 className="mt-3 font-display text-4xl leading-none tracking-[-0.035em] sm:text-6xl">
                 {hasFilters ? t("matchingProducts") : t("allWaterSources")}
               </h2>
@@ -161,7 +162,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
   )
 }
 
-function Stat({ value, label, index }: { value: number; label: string; index: string }) {
+function Stat({ value, label, index }: { value: string; label: string; index: string }) {
   return (
     <div className="group relative flex items-end justify-between gap-4 border-b border-border px-1 py-6 last:border-b-0 sm:border-b-0 sm:border-r sm:px-7 sm:first:pl-0 sm:last:border-r-0 sm:last:pr-0">
       <div>
@@ -182,5 +183,5 @@ function ArrowIcon({ className = "" }: { className?: string }) {
 }
 
 function MapSkeleton() {
-  return <div className="h-full w-full animate-pulse bg-muted" aria-label="Loading map" />
+  return <div className="h-full w-full animate-pulse bg-muted" aria-hidden="true" />
 }

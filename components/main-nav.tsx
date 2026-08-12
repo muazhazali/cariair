@@ -51,14 +51,14 @@ export function MainNav({ initialLocale }: MainNavProps) {
           <LanguageSwitcher initialLocale={initialLocale} />
           <button type="button" onClick={() => setMobileOpen((value) => !value)}
             className="grid h-9 w-9 place-items-center rounded-md border border-border bg-background transition-colors hover:bg-muted md:hidden"
-            aria-label={t("moreOptions")} aria-expanded={mobileOpen}>
+            aria-label={t("moreOptions")} aria-expanded={mobileOpen} aria-controls="mobile-navigation">
             <MenuGlyph open={mobileOpen} />
           </button>
         </div>
       </div>
 
       {mobileOpen && (
-        <nav className="border-t border-border bg-background px-5 py-4 md:hidden" aria-label="Mobile navigation">
+        <nav id="mobile-navigation" className="border-t border-border bg-background px-5 py-4 md:hidden" aria-label={t("mobileNavigation")}>
           <div className="mx-auto flex max-w-[88rem] flex-col">
             {routes.map((route, index) => (
               <Link key={route.href} href={route.href} onClick={() => setMobileOpen(false)}

@@ -39,7 +39,7 @@ export function BrandCard({ brand, translations }: BrandCardProps) {
   return (
     <Link
       href={href}
-      className="group flex flex-col bg-card border rounded-xl overflow-hidden hover:border-primary/40 hover:shadow-md transition-all"
+      className="group flex flex-col overflow-hidden rounded-xl border bg-card transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_4px_18px_rgba(52,50,42,0.04)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       {/* Image */}
       <div className="relative h-44 bg-muted">

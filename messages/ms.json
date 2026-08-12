@@ -1,8 +1,8 @@
 {
   "common": {
-    "loading": "Memuatkan...",
-    "loadingMap": "Memuatkan peta...",
-    "loadingForm": "Memuatkan borang...",
+    "loading": "Memuatkan…",
+    "loadingMap": "Memuatkan peta…",
+    "loadingForm": "Memuatkan borang…",
     "cancel": "Batal",
     "save": "Simpan",
     "submit": "Hantar",
@@ -27,6 +27,7 @@
     "docs": "API",
     "github": "GitHub",
     "moreOptions": "Lagi Pilihan",
+    "mobileNavigation": "Navigasi mudah alih",
     "contributeCta": "Sumbang data"
   },
   "footer": {
@@ -60,6 +61,8 @@
     "statsProducts": "Produk",
     "statsBrands": "Jenama",
     "statsWaterSources": "Sumber Air",
+    "mapSectionIndex": "Catatan lapangan / 01",
+    "registrySectionIndex": "Daftar / 02",
     "browseAllSources": "Semak Semua Sumber",
     "exploreMap": "Terokai Sumber Air Di Seluruh Malaysia",
     "featuredSources": "Sumber Air Pilihan",
@@ -118,7 +121,7 @@
   "map": {
     "title": "Peta Sumber Air",
     "description": "Taburan geografi sumber air mineral dan minuman berdaftar di Malaysia.",
-    "loadingMap": "Memuatkan peta..."
+    "loadingMap": "Memuatkan peta…"
   },
   "learn": {
     "title": "Pelajari Tentang Air Mineral",
@@ -260,7 +263,7 @@
     "productImage": "Gambar Produk",
     "productImageDesc": "Muat naik foto botol/label yang jelas.",
     "submitProduct": "Serahkan Produk",
-    "submitting": "Menghantar...",
+    "submitting": "Menghantar…",
     "submitSuccess": "Penyerahan Berjaya",
     "submitSuccessDesc": "Produk anda telah diserahkan untuk semakan.",
     "submitFailed": "Penyerahan Gagal",
@@ -303,7 +306,7 @@
     "sourceAddFailed": "Gagal menambah sumber",
     "addSourceButton": "Tambah Sumber",
     "cancel": "Batal",
-    "loading": "Memuatkan borang..."
+    "loading": "Memuatkan borang…"
   },
   "product": {
     "backToSources": "Kembali ke semua sumber",
@@ -327,14 +330,17 @@
     "sourceLocation": "Lokasi Sumber",
     "sourceLocationDesc": "Lokasi geografi sumber air",
     "locationNotAvailable": "Data lokasi tidak tersedia",
-    "unknown": "Tidak diketahui"
+    "unknown": "Tidak diketahui",
+    "sourceRecord": "Rekod sumber",
+    "productImage": "Imej produk",
+    "pending": "Menunggu"
   },
   "sourcesView": {
-    "updating": "Mengemas kini...",
+    "updating": "Mengemas kini…",
     "waterSourcesFound": "{count, plural, one {# sumber air ditemui} other {# sumber air ditemui}}",
     "waterSourceFound": "sumber air",
     "waterSourcesFoundPlural": "sumber air ditemui",
-    "searchPlaceholder": "Cari mengikut jenama, produk...",
+    "searchPlaceholder": "Cari jenama atau produk, cth. Spritzer…",
     "search": "Cari",
     "showingResultsFor": "Menunjukkan keputusan untuk",
     "noResults": "Tiada keputusan ditemui",
@@ -348,6 +354,9 @@
     "clearAll": "Kosongkan Semua",
     "reset": "Set Semula",
     "filterButton": "Penapis",
+    "controlsLabel": "Kawalan daftar",
+    "minimumValue": "{metric} minimum",
+    "maximumValue": "{metric} maksimum",
     "recommendedForMe": "Disyorkan untuk Saya",
     "waterType": "Jenis Air",
     "phLevel": "Tahap pH",
@@ -357,6 +366,12 @@
     "selected": "{count} dipilih",
     "type": "Jenis",
     "brand": "Jenama",
+    "typeUnderground": "Bawah tanah",
+    "typeSpring": "Mata air",
+    "typeMunicipal": "Perbandaran",
+    "typeOxygenated": "Beroksigen",
+    "typeMineral": "Mineral",
+    "typeDrinking": "Minuman",
     "presetBone": "Kesihatan Tulang",
     "presetBoneDesc": "Kandungan kalsium tinggi",
     "presetHeart": "Kesihatan Jantung",
@@ -367,7 +382,8 @@
     "presetEnergyDesc": "Kaya magnesium"
   },
   "sort": {
-    "placeholder": "Susun mengikut...",
+    "label": "Susun sumber air",
+    "placeholder": "Susun mengikut…",
     "nameAsc": "Nama (A-Z)",
     "nameDesc": "Nama (Z-A)",
     "phAsc": "pH (Rendah ke Tinggi)",
@@ -442,7 +458,28 @@
     "alkalineWater": "Air Beralkali",
     "alkalineWaterBenefit": "Mungkin Membantu Mengimbangi pH",
     "mineralRich": "Kaya Mineral",
-    "mineralRichBenefit": "Profil Nutrisi yang Pelbagai"
+    "mineralRichBenefit": "Profil Nutrisi yang Pelbagai",
+    "qualityScore": "Skor kualiti",
+    "categoryBone": "Tulang & gigi",
+    "categoryHeart": "Kardiovaskular",
+    "categoryMuscle": "Otot & tenaga",
+    "categoryHydration": "Hidrasi & keseimbangan",
+    "categoryNervous": "Sistem saraf",
+    "categoryImmune": "Sistem imun",
+    "calciumBones": "Kalsium ({amount} mg/L) menyokong tulang dan gigi.",
+    "calciumHeart": "Kalsium menyokong fungsi otot jantung.",
+    "magnesiumEnergy": "Magnesium ({amount} mg/L) menyokong penghasilan tenaga dan fungsi otot.",
+    "magnesiumNervous": "Magnesium menyokong fungsi sistem saraf.",
+    "potassiumHeart": "Kalium ({amount} mg/L) menyokong ritma jantung normal.",
+    "potassiumFluid": "Kalium menyumbang kepada keseimbangan cecair.",
+    "sodiumFluid": "Natrium ({amount} mg/L) menyumbang kepada keseimbangan cecair.",
+    "sodiumNervous": "Natrium membantu menghantar isyarat saraf.",
+    "bicarbonateBuffering": "Bikarbonat menyumbang kepada profil penimbal air.",
+    "silicaTissue": "Silika dikaitkan dengan tisu penghubung.",
+    "fluorideTeeth": "Fluorida ({amount} mg/L) menyumbang kepada kandungan mineral gigi.",
+    "zincImmune": "Zink ({amount} mg/L) menyokong fungsi imun normal.",
+    "ironOxygen": "Zat besi menyumbang kepada pengangkutan oksigen normal.",
+    "phCommonRange": "pH yang diukur ialah {ph}, dalam julat biasa air botol."
   },
   "auth": {
     "welcomeBack": "Selamat Kembali",

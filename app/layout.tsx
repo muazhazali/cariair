@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
 import { Toaster } from "@/components/ui/toaster"
@@ -20,6 +20,10 @@ export const metadata: Metadata = {
     description: 'Trace bottled water to its source and compare its composition.',
     type: 'website',
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#f8f7f2',
 }
 
 export default async function RootLayout({

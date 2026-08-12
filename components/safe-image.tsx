@@ -1,15 +1,22 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type ImgHTMLAttributes } from "react"
 
-interface SafeImageProps {
+interface SafeImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "src" | "alt" | "onError"> {
   src: string
   alt: string
   fallback?: string
-  className?: string
 }
 
-export function SafeImage({ src, alt, fallback = "/placeholder.svg", className }: SafeImageProps) {
+export function SafeImage({
+  src,
+  alt,
+  fallback = "/placeholder.svg",
+  width = 640,
+  height = 640,
+  loading = "lazy",
+  ...props
+}: SafeImageProps) {
   const [currentSrc, setCurrentSrc] = useState(src)
 
   return (
@@ -17,8 +24,12 @@ export function SafeImage({ src, alt, fallback = "/placeholder.svg", className }
     <img
       src={currentSrc}
       alt={alt}
-      className={className}
+      width={width}
+      height={height}
+      loading={loading}
+      decoding="async"
       onError={() => setCurrentSrc(fallback)}
+      {...props}
     />
   )
 }

@@ -1,21 +1,24 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useLocale, useTranslations } from "next-intl"
 
 export function ClientDate({ date }: { date: string | null }) {
-  const [formatted, setFormatted] = useState<string>('');
+  const locale = useLocale()
+  const t = useTranslations("product")
+  const [formatted, setFormatted] = useState<string>("")
   
   useEffect(() => {
     if (date) {
-      setFormatted(new Date(date).toLocaleDateString('en-US', {
+      setFormatted(new Intl.DateTimeFormat(locale, {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
-      }));
+      }).format(new Date(date)))
     } else {
-      setFormatted('Unknown');
+      setFormatted("")
     }
-  }, [date]);
+  }, [date, locale])
   
-  return <span>{formatted || 'Loading...'}</span>;
+  return <span aria-live="polite">{formatted || (date ? "…" : t("unknown"))}</span>
 }

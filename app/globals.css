@@ -67,6 +67,13 @@
     line-height: 1.6;
   }
 
+  a,
+  button,
+  [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(64, 80, 57, 0.14);
+  }
+
   ::selection {
     background: #dde6d7;
     color: #24251f;
