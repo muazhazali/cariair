@@ -9,6 +9,7 @@ import { HomeMap } from "@/components/home-map"
 import { HomeFilters } from "@/components/home-filters"
 import { WaterMetricsHelp } from "@/components/water-metrics-help"
 import { CompareDock } from "@/components/compare/compare-dock"
+import { isViewMode, type ViewMode } from "@/lib/view"
 
 export const dynamic = "force-dynamic"
 
@@ -31,6 +32,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
   const maxPh = searchParams.max_ph ? Number(searchParams.max_ph) : undefined
   const minTds = searchParams.min_tds ? Number(searchParams.min_tds) : undefined
   const maxTds = searchParams.max_tds ? Number(searchParams.max_tds) : undefined
+  const view: ViewMode = isViewMode(searchParams.view) ? searchParams.view : "cards"
 
   const [products, brands, allSources, allProductsResult] = await Promise.all([
     searchWaterSources({ query, types, brands: brandIds, minPh, maxPh, minTds, maxTds }),
@@ -158,7 +160,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
               tdsLow: t("helpTdsLow"), tdsMedium: t("helpTdsMedium"), tdsHigh: t("helpTdsHigh"),
             }} />
           </div>
-          <HomeContent products={sortedProducts} />
+          <HomeContent products={sortedProducts} view={view} />
         </div>
       </section>
 

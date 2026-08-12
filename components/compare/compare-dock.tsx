@@ -49,9 +49,9 @@ export function CompareDock({ productsById }: CompareDockProps) {
               if (!s) return null
               return (
                 <li key={id} className="flex shrink-0 items-center gap-2 rounded-md border border-border bg-card px-2 py-1.5">
-                  <Thumbnail src={s.imageUrl} alt={s.productName || s.brandName} />
+                  <Thumbnail src={s.imageUrl} alt={s.brandName} />
                   <span className="hidden max-w-[10rem] truncate text-xs font-medium sm:block">
-                    {s.productName || s.brandName}
+                    {s.brandName}
                   </span>
                   <button
                     type="button"

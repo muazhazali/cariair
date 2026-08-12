@@ -3,10 +3,18 @@
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { ProductCard } from "./product-card"
+import { SourcesTable } from "./sources-table"
 import { Product } from "@/lib/types/db"
 import { RegistryGlyph } from "./editorial-primitives"
+import { ViewToggle } from "./view-toggle"
+import type { ViewMode } from "@/lib/view"
 
-export function HomeContent({ products }: { products: Product[] }) {
+interface HomeContentProps {
+  products: Product[]
+  view: ViewMode
+}
+
+export function HomeContent({ products, view }: HomeContentProps) {
   const t = useTranslations("sourcesView")
   const filters = useTranslations("filters")
   if (products.length === 0) {
@@ -19,5 +27,20 @@ export function HomeContent({ products }: { products: Product[] }) {
       </div>
     )
   }
-  return <div className="registry-grid grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">{products.map((product, index) => <ProductCard key={product.id} product={product} index={index} />)}</div>
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <ViewToggle current={view} />
+      </div>
+      {view === "table" ? (
+        <SourcesTable products={products} />
+      ) : (
+        <div className="registry-grid grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {products.map((product, index) => (
+            <ProductCard key={product.id} product={product} index={index} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }

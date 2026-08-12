@@ -250,8 +250,8 @@ export function CompareTable({ products, onClose }: CompareTableProps) {
 
 function ProductColumnHeader({ product }: { product: Product }) {
   const imageUrl = product.images?.[0]?.url ?? "/placeholder.svg"
-  const name = product.product_name || product.brand?.brand_name || "—"
   const brand = product.brand?.brand_name ?? "Independent"
+  const productName = product.product_name
 
   return (
     <Link
@@ -262,17 +262,19 @@ function ProductColumnHeader({ product }: { product: Product }) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imageUrl}
-          alt={name}
+          alt={brand}
           loading="lazy"
           className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover/header:scale-[1.03]"
         />
       </span>
-      <span className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+      <span className="block text-sm font-semibold leading-snug tracking-[-0.015em] line-clamp-2">
         {brand}
       </span>
-      <span className="block text-sm font-semibold leading-snug tracking-[-0.015em] line-clamp-2">
-        {name}
-      </span>
+      {productName && productName !== brand && (
+        <span className="-mt-1 block text-[10px] leading-tight text-muted-foreground line-clamp-1">
+          {productName}
+        </span>
+      )}
       <span className="mt-0.5 inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-survey-foreground group-hover/header:underline">
         View details
         <svg viewBox="0 0 12 12" fill="none" className="h-2.5 w-2.5">

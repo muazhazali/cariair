@@ -375,7 +375,14 @@
     "search": "Cari",
     "showingResultsFor": "Menunjukkan keputusan untuk",
     "noResults": "Tiada keputusan ditemui",
-    "noResultsDesc": "Cuba laraskan carian atau penapis anda untuk mencari apa yang anda cari"
+    "noResultsDesc": "Cuba laraskan carian atau penapis anda untuk mencari apa yang anda cari",
+    "viewToggleLabel": "Paparan senarai",
+    "viewCards": "Kad",
+    "viewTable": "Jadual",
+    "colBrand": "Jenama",
+    "colWaterType": "Jenis",
+    "colSource": "Sumber",
+    "colCompare": "Banding"
   },
   "filters": {
     "title": "Tapis Sumber Air",

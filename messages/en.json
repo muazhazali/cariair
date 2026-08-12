@@ -375,7 +375,14 @@
     "search": "Search",
     "showingResultsFor": "Showing results for",
     "noResults": "No results found",
-    "noResultsDesc": "Try adjusting your search or filters to find what you're looking for"
+    "noResultsDesc": "Try adjusting your search or filters to find what you're looking for",
+    "viewToggleLabel": "Listing view",
+    "viewCards": "Cards",
+    "viewTable": "Table",
+    "colBrand": "Brand",
+    "colWaterType": "Type",
+    "colSource": "Source",
+    "colCompare": "Compare"
   },
   "filters": {
     "title": "Filter Water Sources",
